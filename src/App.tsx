@@ -3,6 +3,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 
 import React from "react";
 import "./App.css";
+import Button from "@material-ui/core/Button";
 
 function App() {
   return (
@@ -51,14 +52,50 @@ function App() {
               Найти
             </button>
 
-            <button type="button" className="btn btn-info">
+            <button type="button" className="btn btn-info" onClick={login}>
               Войти
             </button>
           </form>
         </div>
       </nav>
+      <Button variant="contained" color="primary">
+        Hello World
+      </Button>
     </div>
   );
+}
+
+function login(): void {
+  var xhr = new XMLHttpRequest();
+
+  var body =
+    "name=" +
+    encodeURIComponent("exchange") +
+    "&surname=" +
+    encodeURIComponent("exchange2016");
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/LoginIn",
+    true,
+    "exchange",
+    "exchange2016"
+  );
+  /*xhr.setRequestHeader(
+    "Authorization",
+    "Basic " + btoa("exchange:exchange2016")
+  );*/
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  //xhr.setRequestHeader("Authorization", "");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  //xhr.withCredentials = true;
+  xhr.onreadystatechange = function () {
+    console.log("onreadystatechange");
+  };
+
+  xhr.send(body);
 }
 
 export default App;
