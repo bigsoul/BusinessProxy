@@ -10,6 +10,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
+import { contractRefresh } from "../../request";
 
 const columns = [
   { id: "name", label: "Наименование", minWidth: 170 },
@@ -55,6 +56,17 @@ function StickyHeadTable(props) {
                   {column.label}
                 </TableCell>
               ))}
+              <TableCell key={"-1"}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  style={{ float: "right" }}
+                  onClick={(e) => contractRefresh(e)}
+                >
+                  {"Обновить"}
+                </Button>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

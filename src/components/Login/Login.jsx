@@ -4,51 +4,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
-
-function login() {
-  const inputLogin = document.getElementById("input-login");
-  const inputPassword = document.getElementById("input-password");
-
-  let xhr = new XMLHttpRequest();
-
-  let data = {
-    login: inputLogin.value,
-    password: inputPassword.value,
-  };
-
-  let body = JSON.stringify(data);
-
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/LoginIn",
-    true,
-    "exchange",
-    "exchange2016"
-  );
-  /*xhr.setRequestHeader(
-      "Authorization",
-      "Basic " + btoa("exchange:exchange2016")
-    );*/
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  //xhr.setRequestHeader("Authorization", "");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.withCredentials = true;
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      const response = JSON.parse(xhr.response);
-      if (response.apikey !== "") {
-        response.loginState = { state: 1 };
-      } else {
-        response.loginState = { state: 2 };
-      }
-      window.store.dispatch({ type: "LOGIN", response: response });
-    }
-  };
-
-  xhr.send(body);
-}
+import { login } from "../../request";
 
 const useStyles = makeStyles((theme) => ({
   root: {

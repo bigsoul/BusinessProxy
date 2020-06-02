@@ -9,36 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 
-function logout() {
-  let xhr = new XMLHttpRequest();
-
-  const state = window.store.getState();
-
-  let data = { apikey: state.apikey };
-
-  let body = JSON.stringify(data);
-
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/LoginOut",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.withCredentials = false;
-
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      const response = JSON.parse(xhr.response);
-      window.store.dispatch({ type: "LOGOUT", response: response });
-    }
-  };
-
-  xhr.send(body);
-}
+import { logout } from "../../request";
 
 const useStyles = makeStyles((theme) => ({
   grow: {

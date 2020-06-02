@@ -77,10 +77,20 @@ function Reports(props) {
       <Button
         variant="outlined"
         color="secondary"
+        size="small"
         style={{ marginTop: "10px", marginLeft: "10px" }}
         onClick={beackOnClick}
       >
         {"Назад к списку договоров"}
+      </Button>
+      <Button
+        variant="outlined"
+        color="primary"
+        size="small"
+        style={{ marginTop: "10px", marginRight: "10px", float: "right" }}
+        onClick={beackOnClick}
+      >
+        {"Обновить"}
       </Button>
       <MaterialTable
         icons={tableIcons}
@@ -195,7 +205,11 @@ function onClickStartMatching(e, rowData) {
 function reportOnClick(e, rowData) {
   e.stopPropagation();
   console.log(rowData);
-  window.store.dispatch({ type: "FILE-CURRENT-SET", id: "" });
+  window.store.dispatch({
+    type: "FILE-CURRENT-SET",
+    contractId: rowData.contractId,
+    reportId: rowData.id,
+  });
 }
 
 const beackOnClick = () => {

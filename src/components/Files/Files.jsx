@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import MaterialTable from "material-table";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { forwardRef } from "react";
 
@@ -20,6 +22,9 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import { connect } from "react-redux";
+
+import { fileUpload } from "../../request";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -45,74 +50,97 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-function Files() {
-  const { useState } = React;
-
-  const [columns, setColumns] = useState([
+function Files(props) {
+  const columns = [
     { title: "Name", field: "name" },
     {
-      title: "Surname",
-      field: "surname",
-      initialEditValue: "initial edit value",
+      title: "",
+      field: "",
+      initialEditValue: "",
+      render: generateButton,
     },
-    { title: "Birth Year", field: "birthYear", type: "numeric" },
-    {
-      title: "Birth Place",
-      field: "birthCity",
-      lookup: { 34: "İstanbul", 63: "Şanlıurfa" },
-    },
-  ]);
-
-  const [data, setData] = useState([
-    { name: "Mehmet", surname: "Baran", birthYear: 1987, birthCity: 63 },
-    { name: "Zerya Betül", surname: "Baran", birthYear: 2017, birthCity: 34 },
-  ]);
+  ];
 
   return (
     <>
       <Button
-        variant="contained"
-        color="primary"
-        style={{ marginTop: "10px" }}
-        onClick={onClick}
+        variant="outlined"
+        color="secondary"
+        style={{ marginTop: "10px", marginLeft: "10px" }}
+        onClick={beackOnClickContract}
+      >
+        {"Назад к списку договоров"}
+      </Button>
+      <Button
+        variant="outlined"
+        color="secondary"
+        style={{ marginTop: "10px", marginLeft: "10px" }}
+        onClick={(e) => beackOnClickReport(props.contractId, e)}
       >
         {"Назад к списку отчетов"}
       </Button>
       <MaterialTable
         icons={tableIcons}
-        title="Editable Preview"
+        title="Список файлов по отчету: "
         columns={columns}
-        data={data}
+        data={props.files}
+        onRowClick={() => {}}
+        localization={{
+          header: { actions: "" },
+          toolbar: {
+            searchTooltip: "Найти файл ...",
+            searchPlaceholder: "Найти файл ...",
+          },
+          pagination: { labelRowsSelect: "строк" },
+          body: { editRow: { deleteText: "Вы уверены ?" } },
+        }}
         editable={{
           onRowAdd: (newData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                setData([...data, newData]);
-
                 resolve();
-              }, 1000);
+
+                window.store.dispatch({
+                  type: "FILE-ADD",
+                  contractId: props.contractId,
+                  reportId: props.reportId,
+                  newData: newData,
+                });
+              }, 0);
             }),
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                const dataUpdate = [...data];
+                const dataUpdate = [...props.files];
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
-                setData([...dataUpdate]);
 
                 resolve();
-              }, 1000);
+
+                window.store.dispatch({
+                  type: "FILE-UPDATE",
+                  contractId: props.contractId,
+                  reportId: props.reportId,
+                  dataUpdate: dataUpdate,
+                });
+              }, 0);
             }),
           onRowDelete: (oldData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                const dataDelete = [...data];
+                const dataDelete = [...props.files];
                 const index = oldData.tableData.id;
                 dataDelete.splice(index, 1);
-                setData([...dataDelete]);
 
                 resolve();
-              }, 1000);
+
+                window.store.dispatch({
+                  type: "FILE-DELETE",
+                  contractId: props.contractId,
+                  reportId: props.reportId,
+                  dataDelete: dataDelete,
+                });
+              }, 0);
             }),
         }}
       />
@@ -120,8 +148,84 @@ function Files() {
   );
 }
 
-const onClick = () => {
+function generateButton(rowData) {
+  if (rowData && !rowData.loaded) {
+    return (
+      <div>
+        <UploadButtons rowData={rowData} />
+      </div>
+    );
+  } else if (rowData) {
+    return (
+      <Button
+        variant="outlined"
+        size="small"
+        style={{ float: "right" }}
+        onClick={(e) => fileDownload(e, rowData)}
+      >
+        {"Скачать"}
+      </Button>
+    );
+  }
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      float: "right",
+    },
+  },
+  input: {
+    display: "none",
+  },
+}));
+
+function UploadButtons(props) {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      <input
+        accept="image/*"
+        className={classes.input}
+        id={"upload-" + props.rowData.id}
+        multiple
+        type="file"
+        onChange={(e) => fileUpload(e, props.rowData)}
+      />
+      <label htmlFor={"upload-" + props.rowData.id}>
+        <Button
+          variant="outlined"
+          color="primary"
+          component="span"
+          size="small"
+        >
+          Загрузить
+        </Button>
+      </label>
+    </div>
+  );
+}
+
+const fileDownload = (e, rowData) => {
+  e.preventDefault();
+};
+
+const beackOnClickContract = () => {
   window.store.dispatch({ type: "REPORT-CURRENT-DEL" });
 };
 
-export default Files;
+const beackOnClickReport = (id, e) => {
+  e.preventDefault();
+  window.store.dispatch({ type: "REPORT-CURRENT-SET", contractId: id });
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    files: state.files,
+    reportId: state.reportId,
+    contractId: state.contractId,
+  };
+};
+
+export default connect(mapStateToProps)(Files);

@@ -15,7 +15,11 @@ function App(props) {
       ) : props.reports !== null ? (
         <Reports reports={props.reports} contractId={props.contractId} />
       ) : props.files !== null ? (
-        <Files files={props.files} />
+        <Files
+          files={props.files}
+          contractId={props.contractId}
+          reportId={props.reportId}
+        />
       ) : (
         <Contracts contracts={props.contracts} />
       )}
@@ -27,6 +31,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     apikey: state.apikey,
     files: state.files,
+    reportId: state.reportId,
     reports: state.reports,
     contractId: state.contractId,
     contracts: state.contracts,
