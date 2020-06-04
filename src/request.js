@@ -189,12 +189,186 @@ export function contractRefresh(e) {
     }
   };
 
-  /*xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        const response = JSON.parse(xhr.response);
-        window.store.dispatch({ type: "LOGOUT", response: response });
-      }
-    };*/
+  xhr.send(body);
+}
+
+export function reportRefresh(e, contractId) {
+  let xhr = new XMLHttpRequest();
+
+  const state = window.store.getState();
+
+  let data = { apikey: state.apikey, contractId: contractId };
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/GetReports",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "UPDATE-REPORTS",
+        contractId: contractId,
+        reports: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка.");
+    }
+  };
+
+  xhr.send(body);
+}
+
+export function setReports(id, contractId, name, state) {
+  let xhr = new XMLHttpRequest();
+
+  const _state = window.store.getState();
+
+  let data = [
+    {
+      apikey: _state.apikey,
+      id: id ? id : "",
+      contractId: contractId,
+      name: name,
+      state: state,
+    },
+  ];
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/SetReports",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "REPORT-ADD",
+        newData: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+    }
+  };
+
+  xhr.onerror = function (e) {
+    console.log("Не удалось создать отчет на сервере:" + e.target.status);
+  };
+
+  xhr.send(body);
+}
+
+export function delReports(id, contractId) {
+  let xhr = new XMLHttpRequest();
+
+  const _state = window.store.getState();
+
+  let data = [
+    {
+      apikey: _state.apikey,
+      id: id ? id : "",
+      contractId: contractId,
+    },
+  ];
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/DelReports",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "REPORT-DELETE",
+        dataDelete: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+    }
+  };
+
+  xhr.onerror = function (e) {
+    console.log("Не удалось создать отчет на сервере:" + e.target.status);
+  };
+
+  xhr.send(body);
+}
+
+export function updReports(id, contractId) {
+  let xhr = new XMLHttpRequest();
+
+  const _state = window.store.getState();
+
+  let data = [
+    {
+      apikey: _state.apikey,
+      id: id ? id : "",
+      contractId: contractId,
+    },
+  ];
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/UpdReports",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "REPORT-DELETE",
+        dataDelete: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+    }
+  };
+
+  xhr.onerror = function (e) {
+    console.log("Не удалось создать отчет на сервере:" + e.target.status);
+  };
 
   xhr.send(body);
 }

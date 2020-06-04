@@ -23,6 +23,7 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { connect } from "react-redux";
 import Icon from "@material-ui/core/Icon";
+import { reportRefresh, setReports, delReports } from "../../request";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -88,7 +89,7 @@ function Reports(props) {
         color="primary"
         size="small"
         style={{ marginTop: "10px", marginRight: "10px", float: "right" }}
-        onClick={beackOnClick}
+        onClick={(e) => reportRefresh(e, props.contractId)}
       >
         {"Обновить"}
       </Button>
@@ -113,11 +114,12 @@ function Reports(props) {
               setTimeout(() => {
                 resolve();
 
-                window.store.dispatch({
-                  type: "REPORT-ADD",
-                  contractId: props.contractId,
-                  newData: newData,
-                });
+                setReports(
+                  newData.id,
+                  props.contractId,
+                  newData.name,
+                  newData.state
+                );
               }, 0);
             }),
           onRowUpdate: (newData, oldData) =>
@@ -141,15 +143,11 @@ function Reports(props) {
               setTimeout(() => {
                 const dataDelete = [...props.reports];
                 const index = oldData.tableData.id;
-                dataDelete.splice(index, 1);
+                const elem = dataDelete.splice(index, 1);
 
                 resolve();
 
-                window.store.dispatch({
-                  type: "REPORT-DELETE",
-                  contractId: props.contractId,
-                  dataDelete: dataDelete,
-                });
+                delReports(elem[0].id, elem[0].contractId);
               }, 0);
             }),
         }}
@@ -199,7 +197,6 @@ function startMatching(rowData) {
 
 function onClickStartMatching(e, rowData) {
   e.stopPropagation();
-  console.log(rowData);
 }
 
 function reportOnClick(e, rowData) {

@@ -7,7 +7,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { v4 as uuidv4 } from "uuid";
-import { contractRefresh } from "./request";
+import { contractRefresh, reportRefresh } from "./request";
 
 const initState = () => {
   return {
@@ -100,16 +100,22 @@ const reducer = (curState = initState(), action) => {
       return newState;
     }
     case "REPORT-ADD": {
-      const contract = getContractById(curState.contracts, action.contractId);
+      const newData = action.newData[0];
+
+      const contract = getContractById(curState.contracts, newData.contractId);
       const newState = {
         ...curState,
       };
       newState.contracts.forEach((element) => {
         if (element.id === contract.id) {
           element.reports = [...element.reports];
-          element.reports.push(
-            addReport(action.contractId, action.newData.name)
-          );
+          element.reports.push({
+            id: newData.id,
+            contractId: newData.contractId,
+            name: newData.name,
+            state: newData.state,
+            files: [],
+          });
         }
       });
       return reducerReportCurrentSet(newState, contract.id);
@@ -127,19 +133,31 @@ const reducer = (curState = initState(), action) => {
       return reducerReportCurrentSet(newState, contract.id);
     }
     case "REPORT-DELETE": {
-      const contract = getContractById(curState.contracts, action.contractId);
+      const delData = action.dataDelete[0];
+
+      const contract = getContractById(curState.contracts, delData.contractId);
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((element) => {
-        if (element.id === contract.id) {
-          element.reports = [...action.dataDelete];
+      newState.contracts.forEach((contr) => {
+        if (contr.id === contract.id) {
+          contr.reports = [...contr.reports];
+          contr.reports.forEach((rep, index) => {
+            if (rep.id === delData.id) {
+              contr.reports.splice(index, 1);
+            }
+          });
         }
       });
       return reducerReportCurrentSet(newState, contract.id);
     }
     case "REPORT-CURRENT-SET": {
-      return reducerReportCurrentSet(curState, action.contractId);
+      const newState = reducerReportCurrentSet(curState, action.contractId);
+
+      if (newState.reports.length === 0)
+        setTimeout(reportRefresh, 0, null, newState.contractId);
+
+      return newState;
     }
     case "REPORT-CURRENT-DEL": {
       const newState = {
@@ -227,38 +245,22 @@ const reducer = (curState = initState(), action) => {
 
       return newState;
     }
+    case "UPDATE-REPORTS": {
+      const newState = {
+        ...curState,
+      };
+
+      const contract = getContractById(newState.contracts, action.contractId);
+
+      contract.reports = action.reports;
+      newState.reports = action.reports;
+
+      return newState;
+    }
     default:
       return curState;
   }
 };
-
-function addReport(contractId, name) {
-  const id = uuidv4();
-  const report = {
-    id: id,
-    contractId: contractId,
-    name: name,
-    state: "Новый",
-    files: [
-      {
-        id: uuidv4(),
-        raportId: id,
-        contractId: contractId,
-        loaded: false,
-        name: "Файл 1",
-      },
-      {
-        id: uuidv4(),
-        raportId: id,
-        contractId: contractId,
-        loaded: false,
-        name: "Файл 2",
-      },
-    ],
-  };
-
-  return report;
-}
 
 function reducerReportCurrentSet(curState, contractId) {
   const contract = getContractById(curState.contracts, contractId);
