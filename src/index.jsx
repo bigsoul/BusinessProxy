@@ -133,6 +133,7 @@ const reducer = (curState = initState(), action) => {
           contr.reports.forEach((rep) => {
             if (rep.id === newData.id) {
               rep.name = newData.name;
+              rep.state = newData.state;
             }
           });
         }

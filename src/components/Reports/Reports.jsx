@@ -28,6 +28,7 @@ import {
   setReports,
   delReports,
   updReports,
+  conform,
 } from "../../request";
 
 const tableIcons = {
@@ -166,7 +167,7 @@ function startMatching(rowData) {
           size="small"
           color="primary"
           style={{ float: "right" }}
-          onClick={(e) => onClickStartMatching(e, rowData)}
+          onClick={() => conform(rowData.id)}
         >
           {"Согласовать"}
         </Button>

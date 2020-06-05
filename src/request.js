@@ -562,3 +562,49 @@ export function delFiles(id, contractId, reportId) {
 
   xhr.send(body);
 }
+
+export function conform(reportId) {
+  let xhr = new XMLHttpRequest();
+
+  const state = window.store.getState();
+
+  let data = [
+    {
+      apikey: state.apikey,
+      reportId: reportId,
+    },
+  ];
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/Conform",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "REPORT-UPDATE",
+        newData: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+    }
+  };
+
+  xhr.onerror = function (e) {
+    console.log("Не удалось создать отчет на сервере:" + e.target.status);
+  };
+
+  xhr.send(body);
+}
