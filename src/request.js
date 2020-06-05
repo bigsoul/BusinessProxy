@@ -73,7 +73,7 @@ export function logout() {
   xhr.send(body);
 }
 
-export function fileUpload(e, rowData) {
+export function fileUpload(e, rowData, contractId) {
   const inputNode = document.getElementById("upload-" + rowData.id);
 
   if (inputNode.files.length > 0) {
@@ -85,7 +85,7 @@ export function fileUpload(e, rowData) {
 
     reader.onload = function (event) {
       const state = window.store.getState();
-      let data = { apikey: state.apikey };
+      let data = { apikey: state.apikey, id: rowData.id, name: file.name };
       let bodyJSON = JSON.stringify(data);
 
       const fileBuffer = event.target.result;
@@ -139,7 +139,11 @@ export function fileUpload(e, rowData) {
       xhr.onload = function () {
         if (xhr.status === 200) {
           const response = JSON.parse(xhr.response);
-          console.log(response);
+          window.store.dispatch({
+            type: "FILE-UPDATE",
+            contractId: contractId,
+            newData: response,
+          });
         } else {
           console.log("Загрузка файла на сервер закончилась неудачей.");
         }
@@ -326,7 +330,7 @@ export function delReports(id, contractId) {
   xhr.send(body);
 }
 
-export function updReports(id, contractId) {
+export function updReports(id, contractId, newData) {
   let xhr = new XMLHttpRequest();
 
   const _state = window.store.getState();
@@ -336,6 +340,7 @@ export function updReports(id, contractId) {
       apikey: _state.apikey,
       id: id ? id : "",
       contractId: contractId,
+      name: newData.name,
     },
   ];
 
@@ -358,8 +363,8 @@ export function updReports(id, contractId) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "REPORT-DELETE",
-        dataDelete: response,
+        type: "REPORT-UPDATE",
+        newData: response,
       });
     } else {
       console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
@@ -368,6 +373,191 @@ export function updReports(id, contractId) {
 
   xhr.onerror = function (e) {
     console.log("Не удалось создать отчет на сервере:" + e.target.status);
+  };
+
+  xhr.send(body);
+}
+
+export function getFiles(contractId, reportId) {
+  let xhr = new XMLHttpRequest();
+
+  const state = window.store.getState();
+
+  let data = { apikey: state.apikey, reportId: reportId };
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/GetFiles",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "UPDATE-FILES",
+        contractId: contractId,
+        reportId: reportId,
+        files: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка.");
+    }
+  };
+
+  xhr.send(body);
+}
+
+export function setFiles(id, contractId, reportId, name) {
+  let xhr = new XMLHttpRequest();
+
+  const state = window.store.getState();
+
+  let data = [
+    {
+      apikey: state.apikey,
+      id: id ? id : "",
+      reportId: reportId,
+      name: name,
+    },
+  ];
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/SetFiles",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "FILE-ADD",
+        contractId: contractId,
+        newData: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+    }
+  };
+
+  xhr.onerror = function (e) {
+    console.log("Не удалось создать файл на сервере:" + e.target.status);
+  };
+
+  xhr.send(body);
+}
+
+export function updFiles(id, contractId, reportId, name) {
+  let xhr = new XMLHttpRequest();
+
+  const _state = window.store.getState();
+
+  let data = [
+    {
+      apikey: _state.apikey,
+      id: id ? id : "",
+      reportId: reportId,
+      name: name,
+    },
+  ];
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/UpdFiles",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "FILE-UPDATE",
+        contractId: contractId,
+        newData: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+    }
+  };
+
+  xhr.onerror = function (e) {
+    console.log("Не удалось создать файл на сервере:" + e.target.status);
+  };
+
+  xhr.send(body);
+}
+
+export function delFiles(id, contractId, reportId) {
+  let xhr = new XMLHttpRequest();
+
+  const state = window.store.getState();
+
+  let data = [
+    {
+      apikey: state.apikey,
+      id: id ? id : "",
+      reportId: reportId,
+    },
+  ];
+
+  let body = JSON.stringify(data);
+
+  xhr.open(
+    "POST",
+    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/DelFiles",
+    true
+  );
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = false;
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch({
+        type: "FILE-DELETE",
+        contractId: contractId,
+        dataDelete: response,
+      });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+    }
+  };
+
+  xhr.onerror = function (e) {
+    console.log("Не удалось создать файл на сервере:" + e.target.status);
   };
 
   xhr.send(body);

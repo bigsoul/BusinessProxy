@@ -23,7 +23,12 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { connect } from "react-redux";
 import Icon from "@material-ui/core/Icon";
-import { reportRefresh, setReports, delReports } from "../../request";
+import {
+  reportRefresh,
+  setReports,
+  delReports,
+  updReports,
+} from "../../request";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -131,11 +136,7 @@ function Reports(props) {
 
                 resolve();
 
-                window.store.dispatch({
-                  type: "REPORT-UPDATE",
-                  contractId: props.contractId,
-                  dataUpdate: dataUpdate,
-                });
+                updReports(newData.id, props.contractId, newData);
               }, 0);
             }),
           onRowDelete: (oldData) =>
@@ -201,7 +202,7 @@ function onClickStartMatching(e, rowData) {
 
 function reportOnClick(e, rowData) {
   e.stopPropagation();
-  console.log(rowData);
+
   window.store.dispatch({
     type: "FILE-CURRENT-SET",
     contractId: rowData.contractId,

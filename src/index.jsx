@@ -7,7 +7,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { v4 as uuidv4 } from "uuid";
-import { contractRefresh, reportRefresh } from "./request";
+import { contractRefresh, reportRefresh, getFiles } from "./request";
 
 const initState = () => {
   return {
@@ -121,13 +121,20 @@ const reducer = (curState = initState(), action) => {
       return reducerReportCurrentSet(newState, contract.id);
     }
     case "REPORT-UPDATE": {
-      const contract = getContractById(curState.contracts, action.contractId);
+      const newData = action.newData[0];
+
+      const contract = getContractById(curState.contracts, newData.contractId);
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((element) => {
-        if (element.id === contract.id) {
-          element.reports = [...action.dataUpdate];
+      newState.contracts.forEach((contr) => {
+        if (contr.id === contract.id) {
+          contr.reports = [...contr.reports];
+          contr.reports.forEach((rep) => {
+            if (rep.id === newData.id) {
+              rep.name = newData.name;
+            }
+          });
         }
       });
       return reducerReportCurrentSet(newState, contract.id);
@@ -179,11 +186,17 @@ const reducer = (curState = initState(), action) => {
         reports: null,
         files: [...report.files],
       };
+
+      if (newState.files.length === 0)
+        setTimeout(getFiles, 0, contract.id, report.id);
+
       return newState;
     }
     case "FILE-ADD": {
+      const newData = action.newData[0];
+
       const contract = getContractById(curState.contracts, action.contractId);
-      const report = getReportById(contract.reports, action.reportId);
+      const report = getReportById(contract.reports, newData.reportId);
       const newState = {
         ...curState,
       };
@@ -192,7 +205,7 @@ const reducer = (curState = initState(), action) => {
           contr.reports.forEach((rep) => {
             if (rep.id === report.id) {
               rep.files = [...rep.files];
-              rep.files.push(action.newData);
+              rep.files.push(newData);
               newState.files = rep.files;
             }
           });
@@ -202,8 +215,10 @@ const reducer = (curState = initState(), action) => {
       return newState;
     }
     case "FILE-UPDATE": {
+      const newData = action.newData[0];
+
       const contract = getContractById(curState.contracts, action.contractId);
-      const report = getReportById(contract.reports, action.reportId);
+      const report = getReportById(contract.reports, newData.reportId);
       const newState = {
         ...curState,
       };
@@ -211,7 +226,10 @@ const reducer = (curState = initState(), action) => {
         if (contr.id === contract.id) {
           contr.reports.forEach((rep) => {
             if (rep.id === report.id) {
-              rep.files = [...action.dataUpdate];
+              rep.files = [...rep.files];
+              rep.files.forEach((file, i) => {
+                if (file.id === newData.id) rep.files[i] = newData;
+              });
               newState.files = rep.files;
             }
           });
@@ -220,8 +238,10 @@ const reducer = (curState = initState(), action) => {
       return newState;
     }
     case "FILE-DELETE": {
+      const delData = action.dataDelete[0];
+
       const contract = getContractById(curState.contracts, action.contractId);
-      const report = getReportById(contract.reports, action.reportId);
+      const report = getReportById(contract.reports, delData.reportId);
       const newState = {
         ...curState,
       };
@@ -229,7 +249,12 @@ const reducer = (curState = initState(), action) => {
         if (contr.id === contract.id) {
           contr.reports.forEach((rep) => {
             if (rep.id === report.id) {
-              rep.files = [...action.dataDelete];
+              rep.files = [...rep.files];
+              rep.files.forEach((file, index) => {
+                if (file.id === delData.id) {
+                  rep.files.splice(index, 1);
+                }
+              });
               newState.files = rep.files;
             }
           });
@@ -255,6 +280,24 @@ const reducer = (curState = initState(), action) => {
       contract.reports = action.reports;
       newState.reports = action.reports;
 
+      return newState;
+    }
+    case "UPDATE-FILES": {
+      const contract = getContractById(curState.contracts, action.contractId);
+      const report = getReportById(contract.reports, action.reportId);
+      const newState = {
+        ...curState,
+      };
+      newState.contracts.forEach((contr) => {
+        if (contr.id === contract.id) {
+          contr.reports.forEach((rep) => {
+            if (rep.id === report.id) {
+              rep.files = [...action.files];
+              newState.files = rep.files;
+            }
+          });
+        }
+      });
       return newState;
     }
     default:

@@ -24,7 +24,13 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { connect } from "react-redux";
 
-import { fileUpload } from "../../request";
+import {
+  fileUpload,
+  getFiles,
+  setFiles,
+  updFiles,
+  delFiles,
+} from "../../request";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -57,7 +63,7 @@ function Files(props) {
       title: "",
       field: "",
       initialEditValue: "",
-      render: generateButton,
+      render: (rowData) => generateButton(rowData, props.contractId),
     },
   ];
 
@@ -66,6 +72,7 @@ function Files(props) {
       <Button
         variant="outlined"
         color="secondary"
+        size="small"
         style={{ marginTop: "10px", marginLeft: "10px" }}
         onClick={beackOnClickContract}
       >
@@ -74,10 +81,20 @@ function Files(props) {
       <Button
         variant="outlined"
         color="secondary"
+        size="small"
         style={{ marginTop: "10px", marginLeft: "10px" }}
         onClick={(e) => beackOnClickReport(props.contractId, e)}
       >
         {"Назад к списку отчетов"}
+      </Button>
+      <Button
+        variant="outlined"
+        color="primary"
+        size="small"
+        style={{ marginTop: "10px", marginRight: "10px", float: "right" }}
+        onClick={() => getFiles(props.contractId, props.reportId)}
+      >
+        {"Обновить"}
       </Button>
       <MaterialTable
         icons={tableIcons}
@@ -100,12 +117,12 @@ function Files(props) {
               setTimeout(() => {
                 resolve();
 
-                window.store.dispatch({
-                  type: "FILE-ADD",
-                  contractId: props.contractId,
-                  reportId: props.reportId,
-                  newData: newData,
-                });
+                setFiles(
+                  newData.id,
+                  props.contractId,
+                  props.reportId,
+                  newData.name
+                );
               }, 0);
             }),
           onRowUpdate: (newData, oldData) =>
@@ -117,12 +134,12 @@ function Files(props) {
 
                 resolve();
 
-                window.store.dispatch({
-                  type: "FILE-UPDATE",
-                  contractId: props.contractId,
-                  reportId: props.reportId,
-                  dataUpdate: dataUpdate,
-                });
+                updFiles(
+                  newData.id,
+                  props.contractId,
+                  props.reportId,
+                  newData.name
+                );
               }, 0);
             }),
           onRowDelete: (oldData) =>
@@ -130,16 +147,11 @@ function Files(props) {
               setTimeout(() => {
                 const dataDelete = [...props.files];
                 const index = oldData.tableData.id;
-                dataDelete.splice(index, 1);
+                const elem = dataDelete.splice(index, 1);
 
                 resolve();
 
-                window.store.dispatch({
-                  type: "FILE-DELETE",
-                  contractId: props.contractId,
-                  reportId: props.reportId,
-                  dataDelete: dataDelete,
-                });
+                delFiles(elem[0].id, props.contractId, props.reportId);
               }, 0);
             }),
         }}
@@ -148,11 +160,11 @@ function Files(props) {
   );
 }
 
-function generateButton(rowData) {
+function generateButton(rowData, contractId) {
   if (rowData && !rowData.loaded) {
     return (
       <div>
-        <UploadButtons rowData={rowData} />
+        <UploadButtons rowData={rowData} contractId={contractId} />
       </div>
     );
   } else if (rowData) {
@@ -191,7 +203,7 @@ function UploadButtons(props) {
         id={"upload-" + props.rowData.id}
         multiple
         type="file"
-        onChange={(e) => fileUpload(e, props.rowData)}
+        onChange={(e) => fileUpload(e, props.rowData, props.contractId)}
       />
       <label htmlFor={"upload-" + props.rowData.id}>
         <Button
