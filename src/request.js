@@ -1,8 +1,25 @@
+var _login = "exchange";
+var _password = "exchange2016";
+var _url = "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/";
+
+function getXhr(method) {
+  let xhr = new XMLHttpRequest();
+
+  xhr.open("POST", _url + method, true, _login, _password);
+
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.withCredentials = true;
+
+  return xhr;
+}
+
 export function login() {
   const inputLoginNode = document.getElementById("input-login");
   const inputPasswordNode = document.getElementById("input-password");
-
-  let xhr = new XMLHttpRequest();
 
   let data = {
     login: inputLoginNode.value,
@@ -11,20 +28,7 @@ export function login() {
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/LoginIn",
-    true,
-    "exchange",
-    "exchange2016"
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = true;
+  const xhr = getXhr("LoginIn");
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
@@ -42,26 +46,13 @@ export function login() {
 }
 
 export function logout() {
-  let xhr = new XMLHttpRequest();
-
   const state = window.store.getState();
 
   let data = { apikey: state.apikey };
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/LoginOut",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("LoginOut");
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
@@ -116,23 +107,7 @@ export function fileUpload(e, rowData, contractId) {
       sendUint8.set(dataUint8, segmentSize);
       sendUint8.set(fileUint8, dataUint8.length + segmentSize + balanseDiff);
 
-      let xhr = new XMLHttpRequest();
-
-      xhr.open(
-        "POST",
-        "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/FileUpload",
-        true
-      );
-
-      xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-      xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-      xhr.setRequestHeader(
-        "Access-Control-Allow-Methods",
-        "POST, GET, OPTIONS"
-      );
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-      xhr.withCredentials = false;
+      const xhr = getXhr("FileUpload");
 
       xhr.send(sendUint8.buffer);
 
@@ -163,26 +138,13 @@ export function fileUpload(e, rowData, contractId) {
 }
 
 export function contractRefresh(e) {
-  let xhr = new XMLHttpRequest();
-
   const state = window.store.getState();
 
   let data = { apikey: state.apikey };
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/GetContracts",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("GetContracts");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -197,26 +159,13 @@ export function contractRefresh(e) {
 }
 
 export function reportRefresh(e, contractId) {
-  let xhr = new XMLHttpRequest();
-
   const state = window.store.getState();
 
   let data = { apikey: state.apikey, contractId: contractId };
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/GetReports",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("GetReports");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -235,8 +184,6 @@ export function reportRefresh(e, contractId) {
 }
 
 export function setReports(id, contractId, name, state) {
-  let xhr = new XMLHttpRequest();
-
   const _state = window.store.getState();
 
   let data = [
@@ -251,18 +198,7 @@ export function setReports(id, contractId, name, state) {
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/SetReports",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("SetReports");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -284,8 +220,6 @@ export function setReports(id, contractId, name, state) {
 }
 
 export function delReports(id, contractId) {
-  let xhr = new XMLHttpRequest();
-
   const _state = window.store.getState();
 
   let data = [
@@ -298,18 +232,7 @@ export function delReports(id, contractId) {
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/DelReports",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("DelReports");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -331,8 +254,6 @@ export function delReports(id, contractId) {
 }
 
 export function updReports(id, contractId, newData) {
-  let xhr = new XMLHttpRequest();
-
   const _state = window.store.getState();
 
   let data = [
@@ -346,18 +267,7 @@ export function updReports(id, contractId, newData) {
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/UpdReports",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("UpdReports");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -379,26 +289,13 @@ export function updReports(id, contractId, newData) {
 }
 
 export function getFiles(contractId, reportId) {
-  let xhr = new XMLHttpRequest();
-
   const state = window.store.getState();
 
   let data = { apikey: state.apikey, reportId: reportId };
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/GetFiles",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("GetFiles");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -418,8 +315,6 @@ export function getFiles(contractId, reportId) {
 }
 
 export function setFiles(id, contractId, reportId, name) {
-  let xhr = new XMLHttpRequest();
-
   const state = window.store.getState();
 
   let data = [
@@ -433,18 +328,7 @@ export function setFiles(id, contractId, reportId, name) {
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/SetFiles",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("SetFiles");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -467,8 +351,6 @@ export function setFiles(id, contractId, reportId, name) {
 }
 
 export function updFiles(id, contractId, reportId, name) {
-  let xhr = new XMLHttpRequest();
-
   const _state = window.store.getState();
 
   let data = [
@@ -482,18 +364,7 @@ export function updFiles(id, contractId, reportId, name) {
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/UpdFiles",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("UpdFiles");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -516,8 +387,6 @@ export function updFiles(id, contractId, reportId, name) {
 }
 
 export function delFiles(id, contractId, reportId) {
-  let xhr = new XMLHttpRequest();
-
   const state = window.store.getState();
 
   let data = [
@@ -530,18 +399,7 @@ export function delFiles(id, contractId, reportId) {
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/DelFiles",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("DelFiles");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
@@ -564,8 +422,6 @@ export function delFiles(id, contractId, reportId) {
 }
 
 export function conform(reportId) {
-  let xhr = new XMLHttpRequest();
-
   const state = window.store.getState();
 
   let data = [
@@ -577,18 +433,7 @@ export function conform(reportId) {
 
   let body = JSON.stringify(data);
 
-  xhr.open(
-    "POST",
-    "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/Conform",
-    true
-  );
-
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
-  xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.withCredentials = false;
+  const xhr = getXhr("Conform");
 
   xhr.onload = function () {
     if (xhr.status === 200) {
