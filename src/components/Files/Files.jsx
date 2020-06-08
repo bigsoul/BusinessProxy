@@ -23,6 +23,10 @@ import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { connect } from "react-redux";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
 
 import {
   fileUpload,
@@ -59,6 +63,12 @@ const tableIcons = {
 function Files(props) {
   const columns = [
     { title: "Name", field: "name" },
+    {
+      title: "Тип",
+      field: "type",
+      initialEditValue: "",
+      render: (rowData) => generateSelect(rowData, props.contractId),
+    },
     {
       title: "",
       field: "",
@@ -121,7 +131,8 @@ function Files(props) {
                   newData.id,
                   props.contractId,
                   props.reportId,
-                  newData.name
+                  newData.name,
+                  newData.type
                 );
               }, 0);
             }),
@@ -138,7 +149,8 @@ function Files(props) {
                   newData.id,
                   props.contractId,
                   props.reportId,
-                  newData.name
+                  newData.name,
+                  newData.type
                 );
               }, 0);
             }),
@@ -190,6 +202,13 @@ const useStyles = makeStyles((theme) => ({
   input: {
     display: "none",
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
 function UploadButtons(props) {
@@ -216,6 +235,52 @@ function UploadButtons(props) {
         </Button>
       </label>
     </div>
+  );
+}
+
+/*const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));*/
+
+function generateSelect(rowData, contractId) {
+  const classes = {
+    margin: "100px",
+    minWidth: "120px",
+  };
+
+  const handleChange = (event) => {
+    updFiles(
+      rowData.id,
+      contractId,
+      rowData.reportId,
+      rowData.name,
+      event.target.value
+    );
+  };
+
+  return (
+    <FormControl className={classes}>
+      <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        value={rowData.type ? rowData.type : 0}
+        onChange={handleChange}
+        className={{ minWidth: "120px" }}
+      >
+        <MenuItem value={0}>выберите тип документа ...</MenuItem>
+        <MenuItem value={10}>Акт о приемке выполненых работ КС2</MenuItem>
+        <MenuItem value={20}>
+          Справка о стоимости выполненных работ КС3
+        </MenuItem>
+        <MenuItem value={30}>Исполнительная документация</MenuItem>
+      </Select>
+    </FormControl>
   );
 }
 

@@ -19,8 +19,7 @@ const initState = () => {
     reports: null,
     contractId: null,
     contracts: [
-      /*
-      {
+      /*{
         id: "665be996-5677-4a33-8ba0-de6857cfffe1",
         name: "Договор 1",
         state: "На согласовании",
@@ -35,6 +34,7 @@ const initState = () => {
                 id: "173dbd54-46db-40eb-a6e6-7b03a2b2022a",
                 raportId: "73025e53-f30d-47cc-b6b2-d09591243e0c",
                 contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
+                type: "",
                 loaded: true,
                 name: "Файл 1",
               },
@@ -42,6 +42,7 @@ const initState = () => {
                 id: "3f4e1283-c86f-47b8-bde5-b998eabdbcba",
                 raportId: "73025e53-f30d-47cc-b6b2-d09591243e0c",
                 contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
+                type: "",
                 loaded: false,
                 name: "Файл 2",
               },
@@ -57,6 +58,7 @@ const initState = () => {
                 id: "2b18834a-2c80-4831-96f4-2746e20daf66",
                 raportId: "a4dafb57-c788-426e-bcd7-266467f3d4b4",
                 contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
+                type: "",
                 loaded: true,
                 name: "Файл 1",
               },
@@ -64,14 +66,14 @@ const initState = () => {
                 id: "456df632-b22e-4f5c-837e-af7d93e04b80",
                 raportId: "a4dafb57-c788-426e-bcd7-266467f3d4b4",
                 contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
+                type: "",
                 loaded: false,
                 name: "Файл 2",
               },
             ],
           },
         ],
-      },
-    */
+      },*/
     ],
   };
 };

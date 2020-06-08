@@ -314,7 +314,7 @@ export function getFiles(contractId, reportId) {
   xhr.send(body);
 }
 
-export function setFiles(id, contractId, reportId, name) {
+export function setFiles(id, contractId, reportId, name, type) {
   const state = window.store.getState();
 
   let data = [
@@ -323,6 +323,7 @@ export function setFiles(id, contractId, reportId, name) {
       id: id ? id : "",
       reportId: reportId,
       name: name,
+      type: type ? type : 0,
     },
   ];
 
@@ -350,7 +351,7 @@ export function setFiles(id, contractId, reportId, name) {
   xhr.send(body);
 }
 
-export function updFiles(id, contractId, reportId, name) {
+export function updFiles(id, contractId, reportId, name, type) {
   const _state = window.store.getState();
 
   let data = [
@@ -359,6 +360,7 @@ export function updFiles(id, contractId, reportId, name) {
       id: id ? id : "",
       reportId: reportId,
       name: name,
+      type: type,
     },
   ];
 
