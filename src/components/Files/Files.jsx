@@ -173,22 +173,34 @@ function Files(props) {
 }
 
 function generateButton(rowData, contractId) {
-  if (rowData && !rowData.loaded) {
+  if (rowData) {
     return (
       <div>
-        <UploadButtons rowData={rowData} contractId={contractId} />
+        {rowData.loadedOriginal ? (
+          <Button
+            variant="outlined"
+            size="small"
+            style={{ float: "right" }}
+            onClick={(e) => fileDownload(e, rowData)}
+          >
+            {"Скачать оригинал"}
+          </Button>
+        ) : (
+          <UploadButtonsOriginal rowData={rowData} contractId={contractId} />
+        )}
+        {rowData.loadedDraft ? (
+          <Button
+            variant="outlined"
+            size="small"
+            style={{ float: "right", marginRight: "10px" }}
+            onClick={(e) => fileDownload(e, rowData)}
+          >
+            {"Скачать черновик"}
+          </Button>
+        ) : (
+          <UploadButtonsDraft rowData={rowData} contractId={contractId} />
+        )}
       </div>
-    );
-  } else if (rowData) {
-    return (
-      <Button
-        variant="outlined"
-        size="small"
-        style={{ float: "right" }}
-        onClick={(e) => fileDownload(e, rowData)}
-      >
-        {"Скачать"}
-      </Button>
     );
   }
 }
@@ -197,6 +209,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     "& > *": {
       float: "right",
+      marginRight: "10px",
     },
   },
   input: {
@@ -211,7 +224,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function UploadButtons(props) {
+function UploadButtonsDraft(props) {
   const classes = useStyles();
 
   return (
@@ -222,7 +235,7 @@ function UploadButtons(props) {
         id={"upload-" + props.rowData.id}
         multiple
         type="file"
-        onChange={(e) => fileUpload(e, props.rowData, props.contractId)}
+        onChange={(e) => fileUpload(e, props.rowData, props.contractId, false)}
       />
       <label htmlFor={"upload-" + props.rowData.id}>
         <Button
@@ -231,22 +244,39 @@ function UploadButtons(props) {
           component="span"
           size="small"
         >
-          Загрузить
+          Загрузить черновик
         </Button>
       </label>
     </div>
   );
 }
 
-/*const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-}));*/
+function UploadButtonsOriginal(props) {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      <input
+        accept="image/*"
+        className={classes.input}
+        id={"upload-" + props.rowData.id}
+        multiple
+        type="file"
+        onChange={(e) => fileUpload(e, props.rowData, props.contractId, true)}
+      />
+      <label htmlFor={"upload-" + props.rowData.id}>
+        <Button
+          variant="outlined"
+          color="primary"
+          component="span"
+          size="small"
+        >
+          Загрузить оригинал
+        </Button>
+      </label>
+    </div>
+  );
+}
 
 function generateSelect(rowData, contractId) {
   const classes = {

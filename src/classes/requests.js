@@ -64,7 +64,7 @@ export function logout() {
   xhr.send(body);
 }
 
-export function fileUpload(e, rowData, contractId) {
+export function fileUpload(e, rowData, contractId, isOriginal) {
   const inputNode = document.getElementById("upload-" + rowData.id);
 
   if (inputNode.files.length > 0) {
@@ -76,7 +76,12 @@ export function fileUpload(e, rowData, contractId) {
 
     reader.onload = function (event) {
       const state = window.store.getState();
-      let data = { apikey: state.apikey, id: rowData.id, name: file.name };
+      let data = {
+        apikey: state.apikey,
+        id: rowData.id,
+        name: file.name,
+        isOriginal: isOriginal,
+      };
       let bodyJSON = JSON.stringify(data);
 
       const fileBuffer = event.target.result;
