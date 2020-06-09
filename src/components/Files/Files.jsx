@@ -34,7 +34,7 @@ import {
   setFiles,
   updFiles,
   delFiles,
-} from "../../request";
+} from "../../classes/requests";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),

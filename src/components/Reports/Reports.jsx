@@ -29,7 +29,8 @@ import {
   delReports,
   updReports,
   conform,
-} from "../../request";
+} from "../../classes/requests";
+import moment from "moment";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -56,13 +57,11 @@ const tableIcons = {
 };
 
 function Reports(props) {
-  const date = new Date();
-
   const columns = [
     {
       title: "Наименование",
       field: "name",
-      initialEditValue: "Отчет от " + date.format("yyyy-mm-dd"),
+      initialEditValue: "Отчет от " + moment().format().substr(0, 10),
     },
     {
       title: "Состояние",
