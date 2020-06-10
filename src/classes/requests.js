@@ -428,13 +428,14 @@ export function delFiles(id, contractId, reportId) {
   xhr.send(body);
 }
 
-export function conform(reportId) {
+export function conform(reportId, isOriginal) {
   const state = window.store.getState();
 
   let data = [
     {
       apikey: state.apikey,
       reportId: reportId,
+      isOriginal: isOriginal,
     },
   ];
 

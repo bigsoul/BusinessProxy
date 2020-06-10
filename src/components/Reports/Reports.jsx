@@ -166,9 +166,41 @@ function startMatching(rowData) {
           size="small"
           color="primary"
           style={{ float: "right" }}
-          onClick={() => conform(rowData.id)}
+          onClick={() => conform(rowData.id, true)}
         >
-          {"Согласовать"}
+          {"Согласовать оригинал"}
+        </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          color="primary"
+          style={{ float: "right", marginRight: "10px" }}
+          onClick={() => conform(rowData.id, false)}
+        >
+          {"Согласовать черновик"}
+        </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          color="primary"
+          style={{ float: "right", marginRight: "10px" }}
+          onClick={(e) => reportOnClick(e, rowData)}
+        >
+          {"Изменить файлы"}
+        </Button>
+      </div>
+    );
+  } else if (rowData && rowData.state === "К регистрации") {
+    return (
+      <div>
+        <Button
+          variant="outlined"
+          size="small"
+          color="primary"
+          style={{ float: "right" }}
+          onClick={() => conform(rowData.id, true)}
+        >
+          {"Согласовать оригинал"}
         </Button>
         <Button
           variant="outlined"
