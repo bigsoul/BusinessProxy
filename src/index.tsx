@@ -9,14 +9,29 @@ import ReactDOM from "react-dom";
 import { createStore } from "redux";
 // react-redux
 import { Provider } from "react-redux";
+// constants
+import { LOGIN } from "./types/TAction";
+import { LOGOUT } from "./types/TAction";
+import { REPORT_ADD } from "./types/TAction";
+import { REPORT_UPDATE } from "./types/TAction";
+import { REPORT_DELETE } from "./types/TAction";
+import { REPORT_CURRENT_SET } from "./types/TAction";
+import { REPORT_CURRENT_DEL } from "./types/TAction";
+import { FILE_CURRENT_SET } from "./types/TAction";
+import { FILE_ADD } from "./types/TAction";
+import { FILE_UPDATE } from "./types/TAction";
+import { FILE_DELETE } from "./types/TAction";
+import { UPDATE_CONTRACTS } from "./types/TAction";
+import { UPDATE_REPORTS } from "./types/TAction";
+import { UPDATE_FILES } from "./types/TAction";
 // types
 import { TAction } from "./types/TAction";
 // interfaces
 import IStore from "./interfaces/IStore";
-// components
-import App from "./App";
 // classes
 import { contractRefresh, reportRefresh, getFiles } from "./classes/Requests";
+// components
+import App from "./App";
 // others
 import "typeface-roboto";
 // development
@@ -35,9 +50,9 @@ const initState = (): IStore => {
   };
 };
 
-const reducer = (curState: IStore = initState(), action: TAction) => {
+const reducer = (curState: IStore = initState(), action: TAction): IStore => {
   switch (action.type) {
-    case "LOGIN": {
+    case LOGIN: {
       const newState = {
         ...curState,
         apikey: action.response.apikey,
@@ -50,7 +65,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
       setTimeout(contractRefresh, 0);
       return newState;
     }
-    case "LOGOUT": {
+    case LOGOUT: {
       const newState = {
         ...curState,
         apikey: action.response.apikey,
@@ -58,7 +73,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
       };
       return newState;
     }
-    case "REPORT_ADD": {
+    case REPORT_ADD: {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, newData.contractId);
@@ -79,7 +94,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
       });
       return reducerReportCurrentSet(newState, contract.id);
     }
-    case "REPORT_UPDATE": {
+    case REPORT_UPDATE: {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, newData.contractId);
@@ -99,7 +114,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
       });
       return reducerReportCurrentSet(newState, contract.id);
     }
-    case "REPORT_DELETE": {
+    case REPORT_DELETE: {
       const delData = action.dataDelete[0];
 
       const contract = getContractById(curState.contracts, delData.contractId);
@@ -118,7 +133,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
       });
       return reducerReportCurrentSet(newState, contract.id);
     }
-    case "REPORT_CURRENT_SET": {
+    case REPORT_CURRENT_SET: {
       const newState = reducerReportCurrentSet(curState, action.contractId);
 
       if (newState.reports.length === 0)
@@ -126,24 +141,24 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
 
       return newState;
     }
-    case "REPORT_CURRENT_DEL": {
+    case REPORT_CURRENT_DEL: {
       const newState = {
         ...curState,
-        contractId: null,
-        reports: null,
-        reportId: null,
-        files: null,
+        contractId: "",
+        reports: [],
+        reportId: "",
+        files: [],
       };
       return newState;
     }
-    case "FILE_CURRENT_SET": {
+    case FILE_CURRENT_SET: {
       const contract = getContractById(curState.contracts, action.contractId);
       const report = getReportById(contract.reports, action.reportId);
       const newState = {
         ...curState,
         contractId: action.contractId,
         reportId: action.reportId,
-        reports: null,
+        reports: [],
         files: [...report.files],
       };
 
@@ -152,7 +167,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
 
       return newState;
     }
-    case "FILE_ADD": {
+    case FILE_ADD: {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, action.contractId);
@@ -174,7 +189,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
 
       return newState;
     }
-    case "FILE_UPDATE": {
+    case FILE_UPDATE: {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, action.contractId);
@@ -197,7 +212,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
       });
       return newState;
     }
-    case "FILE_DELETE": {
+    case FILE_DELETE: {
       const delData = action.dataDelete[0];
 
       const contract = getContractById(curState.contracts, action.contractId);
@@ -222,7 +237,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
       });
       return newState;
     }
-    case "UPDATE_CONTRACTS": {
+    case UPDATE_CONTRACTS: {
       const newState = {
         ...curState,
         contracts: action.contracts,
@@ -230,7 +245,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
 
       return newState;
     }
-    case "UPDATE_REPORTS": {
+    case UPDATE_REPORTS: {
       const newState = {
         ...curState,
       };
@@ -242,7 +257,7 @@ const reducer = (curState: IStore = initState(), action: TAction) => {
 
       return newState;
     }
-    case "UPDATE_FILES": {
+    case UPDATE_FILES: {
       const contract = getContractById(curState.contracts, action.contractId);
       const report = getReportById(contract.reports, action.reportId);
       const newState = {
