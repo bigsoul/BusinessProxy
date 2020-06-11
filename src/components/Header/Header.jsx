@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 
-import { logout } from "../../classes/requests";
+import { logout } from "../../classes/Requests";
 
 const useStyles = makeStyles((theme) => ({
   grow: {

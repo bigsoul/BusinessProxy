@@ -34,7 +34,7 @@ import {
   setFiles,
   updFiles,
   delFiles,
-} from "../../classes/requests";
+} from "../../classes/Requests";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -319,12 +319,12 @@ const fileDownload = (e, rowData) => {
 };
 
 const beackOnClickContract = () => {
-  window.store.dispatch({ type: "REPORT-CURRENT-DEL" });
+  window.store.dispatch({ type: "REPORT_CURRENT_DEL" });
 };
 
 const beackOnClickReport = (id, e) => {
   e.preventDefault();
-  window.store.dispatch({ type: "REPORT-CURRENT-SET", contractId: id });
+  window.store.dispatch({ type: "REPORT_CURRENT_SET", contractId: id });
 };
 
 const mapStateToProps = (state, ownProps) => {

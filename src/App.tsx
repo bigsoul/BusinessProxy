@@ -1,6 +1,6 @@
 // react
 import React, { Component } from "react";
-// redux
+// react-redux
 import { connect } from "react-redux";
 // components
 import Files from "./components/Files/Files";

@@ -10,7 +10,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
-import { contractRefresh } from "../../classes/requests";
+import { contractRefresh } from "../../classes/Requests";
 
 const columns = [
   { id: "name", label: "Наименование", minWidth: 170 },
@@ -123,7 +123,7 @@ function StickyHeadTable(props) {
 
 function contractOnClick(id, e) {
   e.preventDefault();
-  window.store.dispatch({ type: "REPORT-CURRENT-SET", contractId: id });
+  window.store.dispatch({ type: "REPORT_CURRENT_SET", contractId: id });
 }
 
 const mapStateToProps = (state, ownProps) => {

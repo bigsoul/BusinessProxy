@@ -120,7 +120,7 @@ export function fileUpload(e, rowData, contractId, isOriginal) {
         if (xhr.status === 200) {
           const response = JSON.parse(xhr.response);
           window.store.dispatch({
-            type: "FILE-UPDATE",
+            type: "FILE_UPDATE",
             contractId: contractId,
             newData: response,
           });
@@ -154,7 +154,7 @@ export function contractRefresh(e) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({ type: "UPDATE-CONTRACTS", contracts: response });
+      window.store.dispatch({ type: "UPDATE_CONTRACTS", contracts: response });
     } else {
       console.log("Не удалось выполнить обновление, ошибка.");
     }
@@ -176,7 +176,7 @@ export function reportRefresh(e, contractId) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "UPDATE-REPORTS",
+        type: "UPDATE_REPORTS",
         contractId: contractId,
         reports: response,
       });
@@ -209,7 +209,7 @@ export function setReports(id, contractId, name, state) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "REPORT-ADD",
+        type: "REPORT_ADD",
         newData: response,
       });
     } else {
@@ -243,7 +243,7 @@ export function delReports(id, contractId) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "REPORT-DELETE",
+        type: "REPORT_DELETE",
         dataDelete: response,
       });
     } else {
@@ -278,7 +278,7 @@ export function updReports(id, contractId, newData) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "REPORT-UPDATE",
+        type: "REPORT_UPDATE",
         newData: response,
       });
     } else {
@@ -306,7 +306,7 @@ export function getFiles(contractId, reportId) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "UPDATE-FILES",
+        type: "UPDATE_FILES",
         contractId: contractId,
         reportId: reportId,
         files: response,
@@ -340,7 +340,7 @@ export function setFiles(id, contractId, reportId, name, type) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "FILE-ADD",
+        type: "FILE_ADD",
         contractId: contractId,
         newData: response,
       });
@@ -377,7 +377,7 @@ export function updFiles(id, contractId, reportId, name, type) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "FILE-UPDATE",
+        type: "FILE_UPDATE",
         contractId: contractId,
         newData: response,
       });
@@ -412,7 +412,7 @@ export function delFiles(id, contractId, reportId) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "FILE-DELETE",
+        type: "FILE_DELETE",
         contractId: contractId,
         dataDelete: response,
       });
@@ -447,7 +447,7 @@ export function conform(reportId, isOriginal) {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
       window.store.dispatch({
-        type: "REPORT-UPDATE",
+        type: "REPORT_UPDATE",
         newData: response,
       });
     } else {

@@ -1,86 +1,41 @@
-import "typeface-roboto";
+/// <reference path="./globals.d.ts" />
+
+// css
+import "./index.css";
+// react
 import React from "react";
 import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
+// redux
 import { createStore } from "redux";
-import "./index.css";
+// react-redux
+import { Provider } from "react-redux";
+// types
+import { TAction } from "./types/TAction";
+// interfaces
+import IStore from "./interfaces/IStore";
+// components
 import App from "./App";
-import { contractRefresh, reportRefresh, getFiles } from "./classes/requests";
+// classes
+import { contractRefresh, reportRefresh, getFiles } from "./classes/Requests";
+// others
+import "typeface-roboto";
+// development
+import { composeWithDevTools } from "redux-devtools-extension";
 
-const initState = () => {
+const initState = (): IStore => {
   return {
     apikey: "",
     name: "",
     loginState: { state: 0 },
-    files: null,
-    reportId: null,
-    reports: null,
-    contractId: null,
-    contracts: [
-      /*{
-        id: "665be996-5677-4a33-8ba0-de6857cfffe1",
-        name: "Договор 1",
-        state: "На согласовании",
-        reports: [
-          {
-            id: "73025e53-f30d-47cc-b6b2-d09591243e0c",
-            contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
-            name: "Отчет 1",
-            state: "Согласован",
-            files: [
-              {
-                id: "173dbd54-46db-40eb-a6e6-7b03a2b2022a",
-                raportId: "73025e53-f30d-47cc-b6b2-d09591243e0c",
-                contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
-                type: "",
-                loadedDraft: true,
-                loadedOriginal: true,
-                name: "Файл 1",
-              },
-              {
-                id: "3f4e1283-c86f-47b8-bde5-b998eabdbcba",
-                raportId: "73025e53-f30d-47cc-b6b2-d09591243e0c",
-                contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
-                type: "",
-                loadedDraft: true,
-                loadedOriginal: true,
-                name: "Файл 2",
-              },
-            ],
-          },
-          {
-            id: "a4dafb57-c788-426e-bcd7-266467f3d4b4",
-            contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
-            name: "Отчет 2",
-            state: "На согласовании",
-            files: [
-              {
-                id: "2b18834a-2c80-4831-96f4-2746e20daf66",
-                raportId: "a4dafb57-c788-426e-bcd7-266467f3d4b4",
-                contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
-                type: "",
-                loadedDraft: true,
-                loadedOriginal: true,
-                name: "Файл 1",
-              },
-              {
-                id: "456df632-b22e-4f5c-837e-af7d93e04b80",
-                raportId: "a4dafb57-c788-426e-bcd7-266467f3d4b4",
-                contractId: "665be996-5677-4a33-8ba0-de6857cfffe1",
-                type: "",
-                loadedDraft: true,
-                loadedOriginal: true,
-                name: "Файл 2",
-              },
-            ],
-          },
-        ],
-      },*/
-    ],
+    files: [],
+    reportId: "",
+    reports: [],
+    contractId: "",
+    contracts: [],
   };
 };
 
-const reducer = (curState = initState(), action) => {
+const reducer = (curState: IStore = initState(), action: TAction) => {
   switch (action.type) {
     case "LOGIN": {
       const newState = {
@@ -103,14 +58,14 @@ const reducer = (curState = initState(), action) => {
       };
       return newState;
     }
-    case "REPORT-ADD": {
+    case "REPORT_ADD": {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, newData.contractId);
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((element) => {
+      newState.contracts.forEach((element: any) => {
         if (element.id === contract.id) {
           element.reports = [...element.reports];
           element.reports.push({
@@ -124,17 +79,17 @@ const reducer = (curState = initState(), action) => {
       });
       return reducerReportCurrentSet(newState, contract.id);
     }
-    case "REPORT-UPDATE": {
+    case "REPORT_UPDATE": {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, newData.contractId);
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr) => {
+      newState.contracts.forEach((contr: any) => {
         if (contr.id === contract.id) {
           contr.reports = [...contr.reports];
-          contr.reports.forEach((rep) => {
+          contr.reports.forEach((rep: any) => {
             if (rep.id === newData.id) {
               rep.name = newData.name;
               rep.state = newData.state;
@@ -144,17 +99,17 @@ const reducer = (curState = initState(), action) => {
       });
       return reducerReportCurrentSet(newState, contract.id);
     }
-    case "REPORT-DELETE": {
+    case "REPORT_DELETE": {
       const delData = action.dataDelete[0];
 
       const contract = getContractById(curState.contracts, delData.contractId);
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr) => {
+      newState.contracts.forEach((contr: any) => {
         if (contr.id === contract.id) {
           contr.reports = [...contr.reports];
-          contr.reports.forEach((rep, index) => {
+          contr.reports.forEach((rep: any, index: any) => {
             if (rep.id === delData.id) {
               contr.reports.splice(index, 1);
             }
@@ -163,7 +118,7 @@ const reducer = (curState = initState(), action) => {
       });
       return reducerReportCurrentSet(newState, contract.id);
     }
-    case "REPORT-CURRENT-SET": {
+    case "REPORT_CURRENT_SET": {
       const newState = reducerReportCurrentSet(curState, action.contractId);
 
       if (newState.reports.length === 0)
@@ -171,7 +126,7 @@ const reducer = (curState = initState(), action) => {
 
       return newState;
     }
-    case "REPORT-CURRENT-DEL": {
+    case "REPORT_CURRENT_DEL": {
       const newState = {
         ...curState,
         contractId: null,
@@ -181,7 +136,7 @@ const reducer = (curState = initState(), action) => {
       };
       return newState;
     }
-    case "FILE-CURRENT-SET": {
+    case "FILE_CURRENT_SET": {
       const contract = getContractById(curState.contracts, action.contractId);
       const report = getReportById(contract.reports, action.reportId);
       const newState = {
@@ -197,7 +152,7 @@ const reducer = (curState = initState(), action) => {
 
       return newState;
     }
-    case "FILE-ADD": {
+    case "FILE_ADD": {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, action.contractId);
@@ -205,9 +160,9 @@ const reducer = (curState = initState(), action) => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr) => {
+      newState.contracts.forEach((contr: any) => {
         if (contr.id === contract.id) {
-          contr.reports.forEach((rep) => {
+          contr.reports.forEach((rep: any) => {
             if (rep.id === report.id) {
               rep.files = [...rep.files];
               rep.files.push(newData);
@@ -219,7 +174,7 @@ const reducer = (curState = initState(), action) => {
 
       return newState;
     }
-    case "FILE-UPDATE": {
+    case "FILE_UPDATE": {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, action.contractId);
@@ -227,12 +182,12 @@ const reducer = (curState = initState(), action) => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr) => {
+      newState.contracts.forEach((contr: any) => {
         if (contr.id === contract.id) {
-          contr.reports.forEach((rep) => {
+          contr.reports.forEach((rep: any) => {
             if (rep.id === report.id) {
               rep.files = [...rep.files];
-              rep.files.forEach((file, i) => {
+              rep.files.forEach((file: any, i: any) => {
                 if (file.id === newData.id) rep.files[i] = newData;
               });
               newState.files = rep.files;
@@ -242,7 +197,7 @@ const reducer = (curState = initState(), action) => {
       });
       return newState;
     }
-    case "FILE-DELETE": {
+    case "FILE_DELETE": {
       const delData = action.dataDelete[0];
 
       const contract = getContractById(curState.contracts, action.contractId);
@@ -250,12 +205,12 @@ const reducer = (curState = initState(), action) => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr) => {
+      newState.contracts.forEach((contr: any) => {
         if (contr.id === contract.id) {
-          contr.reports.forEach((rep) => {
+          contr.reports.forEach((rep: any) => {
             if (rep.id === report.id) {
               rep.files = [...rep.files];
-              rep.files.forEach((file, index) => {
+              rep.files.forEach((file: any, index: any) => {
                 if (file.id === delData.id) {
                   rep.files.splice(index, 1);
                 }
@@ -267,7 +222,7 @@ const reducer = (curState = initState(), action) => {
       });
       return newState;
     }
-    case "UPDATE-CONTRACTS": {
+    case "UPDATE_CONTRACTS": {
       const newState = {
         ...curState,
         contracts: action.contracts,
@@ -275,7 +230,7 @@ const reducer = (curState = initState(), action) => {
 
       return newState;
     }
-    case "UPDATE-REPORTS": {
+    case "UPDATE_REPORTS": {
       const newState = {
         ...curState,
       };
@@ -287,15 +242,15 @@ const reducer = (curState = initState(), action) => {
 
       return newState;
     }
-    case "UPDATE-FILES": {
+    case "UPDATE_FILES": {
       const contract = getContractById(curState.contracts, action.contractId);
       const report = getReportById(contract.reports, action.reportId);
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr) => {
+      newState.contracts.forEach((contr: any) => {
         if (contr.id === contract.id) {
-          contr.reports.forEach((rep) => {
+          contr.reports.forEach((rep: any) => {
             if (rep.id === report.id) {
               rep.files = [...action.files];
               newState.files = rep.files;
@@ -310,7 +265,7 @@ const reducer = (curState = initState(), action) => {
   }
 };
 
-function reducerReportCurrentSet(curState, contractId) {
+function reducerReportCurrentSet(curState: any, contractId: any) {
   const contract = getContractById(curState.contracts, contractId);
   const newState = {
     ...curState,
@@ -321,8 +276,8 @@ function reducerReportCurrentSet(curState, contractId) {
   return newState;
 }
 
-function getReportById(arr, id) {
-  const report = arr.find((item, index, array) => {
+function getReportById(arr: any, id: any) {
+  const report = arr.find((item: any, index: any, array: any) => {
     if (item.id === id) {
       return true;
     }
@@ -331,8 +286,8 @@ function getReportById(arr, id) {
   return report;
 }
 
-function getContractById(arr, id) {
-  const contract = arr.find((item, index, array) => {
+function getContractById(arr: any, id: any) {
+  const contract = arr.find((item: any, index: any, array: any) => {
     if (item.id === id) {
       return true;
     }
@@ -341,9 +296,10 @@ function getContractById(arr, id) {
   return contract;
 }
 
-var store = createStore(
+const store = createStore(
   reducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  initState(),
+  composeWithDevTools && composeWithDevTools()
 );
 
 window.store = store;
@@ -352,10 +308,14 @@ ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
       <App
-        contracts={store.getState().contracts}
-        reports={null}
-        files={null}
         apikey={""}
+        name={""}
+        loginState={{ state: 0 }}
+        files={null}
+        reportId={null}
+        reports={null}
+        contractId={null}
+        contracts={store.getState().contracts}
       />
     </React.StrictMode>
   </Provider>,

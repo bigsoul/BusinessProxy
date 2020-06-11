@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
-import { login } from "../../classes/requests";
+import { login } from "../../classes/Requests";
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -29,7 +29,7 @@ import {
   delReports,
   updReports,
   conform,
-} from "../../classes/requests";
+} from "../../classes/Requests";
 import moment from "moment";
 
 const tableIcons = {
@@ -236,14 +236,14 @@ function reportOnClick(e, rowData) {
   e.stopPropagation();
 
   window.store.dispatch({
-    type: "FILE-CURRENT-SET",
+    type: "FILE_CURRENT_SET",
     contractId: rowData.contractId,
     reportId: rowData.id,
   });
 }
 
 const beackOnClick = () => {
-  window.store.dispatch({ type: "REPORT-CURRENT-DEL" });
+  window.store.dispatch({ type: "REPORT_CURRENT_DEL" });
 };
 
 const mapStateToProps = (state, ownProps) => {
