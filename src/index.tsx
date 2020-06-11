@@ -36,6 +36,9 @@ import App from "./App";
 import "typeface-roboto";
 // development
 import { composeWithDevTools } from "redux-devtools-extension";
+import IContract from "./interfaces/IContract";
+import IReport from "./interfaces/IReport";
+import IFile from "./interfaces/IFile";
 
 const initState = (): IStore => {
   return {
@@ -80,7 +83,7 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((element: any) => {
+      newState.contracts.forEach((element: IContract) => {
         if (element.id === contract.id) {
           element.reports = [...element.reports];
           element.reports.push({
@@ -101,10 +104,10 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr: any) => {
+      newState.contracts.forEach((contr: IContract) => {
         if (contr.id === contract.id) {
           contr.reports = [...contr.reports];
-          contr.reports.forEach((rep: any) => {
+          contr.reports.forEach((rep: IReport) => {
             if (rep.id === newData.id) {
               rep.name = newData.name;
               rep.state = newData.state;
@@ -121,10 +124,10 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr: any) => {
+      newState.contracts.forEach((contr: IContract) => {
         if (contr.id === contract.id) {
           contr.reports = [...contr.reports];
-          contr.reports.forEach((rep: any, index: any) => {
+          contr.reports.forEach((rep: IReport, index: number) => {
             if (rep.id === delData.id) {
               contr.reports.splice(index, 1);
             }
@@ -175,9 +178,9 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr: any) => {
+      newState.contracts.forEach((contr: IContract) => {
         if (contr.id === contract.id) {
-          contr.reports.forEach((rep: any) => {
+          contr.reports.forEach((rep: IReport) => {
             if (rep.id === report.id) {
               rep.files = [...rep.files];
               rep.files.push(newData);
@@ -197,12 +200,12 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr: any) => {
+      newState.contracts.forEach((contr: IContract) => {
         if (contr.id === contract.id) {
-          contr.reports.forEach((rep: any) => {
+          contr.reports.forEach((rep: IReport) => {
             if (rep.id === report.id) {
               rep.files = [...rep.files];
-              rep.files.forEach((file: any, i: any) => {
+              rep.files.forEach((file: IFile, i: number) => {
                 if (file.id === newData.id) rep.files[i] = newData;
               });
               newState.files = rep.files;
@@ -220,12 +223,12 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr: any) => {
+      newState.contracts.forEach((contr: IContract) => {
         if (contr.id === contract.id) {
-          contr.reports.forEach((rep: any) => {
+          contr.reports.forEach((rep: IReport) => {
             if (rep.id === report.id) {
               rep.files = [...rep.files];
-              rep.files.forEach((file: any, index: any) => {
+              rep.files.forEach((file: IFile, index: number) => {
                 if (file.id === delData.id) {
                   rep.files.splice(index, 1);
                 }
@@ -263,9 +266,9 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
       const newState = {
         ...curState,
       };
-      newState.contracts.forEach((contr: any) => {
+      newState.contracts.forEach((contr: IContract) => {
         if (contr.id === contract.id) {
-          contr.reports.forEach((rep: any) => {
+          contr.reports.forEach((rep: IReport) => {
             if (rep.id === report.id) {
               rep.files = [...action.files];
               newState.files = rep.files;
@@ -280,7 +283,10 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
   }
 };
 
-function reducerReportCurrentSet(curState: any, contractId: any) {
+const reducerReportCurrentSet = (
+  curState: IStore,
+  contractId: string
+): IStore => {
   const contract = getContractById(curState.contracts, contractId);
   const newState = {
     ...curState,
@@ -289,27 +295,37 @@ function reducerReportCurrentSet(curState: any, contractId: any) {
   };
 
   return newState;
-}
+};
 
-function getReportById(arr: any, id: any) {
-  const report = arr.find((item: any, index: any, array: any) => {
+const getReportById = (arr: IReport[], id: string): IReport => {
+  const report = arr.find((item: IReport, index: number, array: IReport[]) => {
     if (item.id === id) {
       return true;
     }
   });
 
-  return report;
-}
+  if (report) {
+    return report;
+  } else {
+    throw new EvalError("[getReportById] = Report not found.");
+  }
+};
 
-function getContractById(arr: any, id: any) {
-  const contract = arr.find((item: any, index: any, array: any) => {
-    if (item.id === id) {
-      return true;
+const getContractById = (arr: IContract[], id: string): IContract => {
+  const contract = arr.find(
+    (item: IContract, index: number, array: IContract[]) => {
+      if (item.id === id) {
+        return true;
+      }
     }
-  });
+  );
 
-  return contract;
-}
+  if (contract) {
+    return contract;
+  } else {
+    throw new EvalError("[getContractById] = Contract not found.");
+  }
+};
 
 const store = createStore(
   reducer,
