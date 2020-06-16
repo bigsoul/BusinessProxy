@@ -2,6 +2,11 @@
 import React, { Component } from "react";
 // react-redux
 import { connect } from "react-redux";
+// interfaces
+import IStore from "./interfaces/IStore";
+import IFile from "./interfaces/IFile";
+import IReport from "./interfaces/IReport";
+import IContract from "./interfaces/IContract";
 // components
 import Files from "./components/Files/Files";
 import Login from "./components/Login/Login";
@@ -12,41 +17,35 @@ import Contracts from "./components/Contracts/Contracts";
 interface IAppProps {
   apikey: string;
   name: string;
-  loginState: { state: any };
-  files: any;
-  reportId: any;
-  reports: any;
-  contractId: any;
-  contracts: any;
+  loginState: { state: number };
+  files: IFile[];
+  reportId: string;
+  reports: IReport[];
+  contractId: string;
+  contracts: IContract[];
 }
 
 class App extends Component<IAppProps> {
   render = () => {
+    const { apikey, reports, contractId, files, reportId, contracts } = this.props;
     return (
       <>
         <Header />
-        {this.props.apikey === "" ? (
+        {apikey === "" ? (
           <Login />
-        ) : this.props.reports !== null ? (
-          <Reports
-            reports={this.props.reports}
-            contractId={this.props.contractId}
-          />
-        ) : this.props.files !== null ? (
-          <Files
-            files={this.props.files}
-            contractId={this.props.contractId}
-            reportId={this.props.reportId}
-          />
+        ) : reports.length > 0 ? (
+          <Reports reports={reports} contractId={contractId} />
+        ) : files.length > 0 ? (
+          <Files files={files} contractId={contractId} reportId={reportId} />
         ) : (
-          <Contracts contracts={this.props.contracts} />
+          <Contracts contracts={contracts} />
         )}
       </>
     );
   };
 }
 
-const mapStateToProps = (state: IAppProps, ownProps: IAppProps) => {
+const mapStateToProps = (state: IStore, ownProps: IAppProps): IAppProps => {
   return {
     apikey: state.apikey,
     name: state.name,

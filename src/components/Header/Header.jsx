@@ -33,12 +33,7 @@ const PrimarySearchAppBar = (props) => {
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="open drawer">
             <MenuIcon />
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
@@ -48,11 +43,7 @@ const PrimarySearchAppBar = (props) => {
           {props.name === "" ? (
             ""
           ) : (
-            <Typography
-              variant="h6"
-              component="h2"
-              style={{ paddingRight: "10px" }}
-            >
+            <Typography variant="h6" component="h2" style={{ paddingRight: "10px" }}>
               {props.name}
             </Typography>
           )}

@@ -24,27 +24,11 @@ const Login = (props) => {
 
   return (
     <div className={classes.root}>
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justify="center"
-        style={{ minHeight: "70vh" }}
-      >
+      <Grid container spacing={0} direction="column" alignItems="center" justify="center" style={{ minHeight: "70vh" }}>
         {state === 2 ? (
-          <TextField
-            error
-            id="input-login"
-            label="Логин"
-            className={classes.rootLogin}
-          />
+          <TextField error id="input-login" label="Логин" className={classes.rootLogin} />
         ) : (
-          <TextField
-            id="input-login"
-            label="Логин"
-            className={classes.rootLogin}
-          />
+          <TextField id="input-login" label="Логин" className={classes.rootLogin} />
         )}
         {state === 2 ? (
           <TextField
@@ -56,12 +40,7 @@ const Login = (props) => {
             helperText="Не верный логин или пароль."
           />
         ) : (
-          <TextField
-            id="input-password"
-            label="Пароль"
-            type="password"
-            className={classes.rootPassword}
-          />
+          <TextField id="input-password" label="Пароль" type="password" className={classes.rootPassword} />
         )}
         <Button variant="contained" color="secondary" onClick={login}>
           Войти

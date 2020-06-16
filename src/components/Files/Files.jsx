@@ -28,31 +28,21 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 
-import {
-  fileUpload,
-  getFiles,
-  setFiles,
-  updFiles,
-  delFiles,
-} from "../../classes/Requests";
+import { fileUpload, getFiles, setFiles, updFiles, delFiles } from "../../classes/Requests";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
   Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-  DetailPanel: forwardRef((props, ref) => (
-    <ChevronRight {...props} ref={ref} />
-  )),
+  DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
   Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
   Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
   Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
   LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
   NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-  PreviousPage: forwardRef((props, ref) => (
-    <ChevronLeft {...props} ref={ref} />
-  )),
+  PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
   ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
   Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
@@ -127,13 +117,7 @@ function Files(props) {
               setTimeout(() => {
                 resolve();
 
-                setFiles(
-                  newData.id,
-                  props.contractId,
-                  props.reportId,
-                  newData.name,
-                  newData.type
-                );
+                setFiles(newData.id, props.contractId, props.reportId, newData.name, newData.type);
               }, 0);
             }),
           onRowUpdate: (newData, oldData) =>
@@ -145,13 +129,7 @@ function Files(props) {
 
                 resolve();
 
-                updFiles(
-                  newData.id,
-                  props.contractId,
-                  props.reportId,
-                  newData.name,
-                  newData.type
-                );
+                updFiles(newData.id, props.contractId, props.reportId, newData.name, newData.type);
               }, 0);
             }),
           onRowDelete: (oldData) =>
@@ -177,24 +155,14 @@ function generateButton(rowData, contractId) {
     return (
       <div>
         {rowData.loadedOriginal ? (
-          <Button
-            variant="outlined"
-            size="small"
-            style={{ float: "right" }}
-            onClick={(e) => fileDownload(e, rowData)}
-          >
+          <Button variant="outlined" size="small" style={{ float: "right" }} onClick={(e) => fileDownload(e, rowData)}>
             {"Скачать оригинал"}
           </Button>
         ) : (
           <UploadButtonsOriginal rowData={rowData} contractId={contractId} />
         )}
         {rowData.loadedDraft ? (
-          <Button
-            variant="outlined"
-            size="small"
-            style={{ float: "right", marginRight: "10px" }}
-            onClick={(e) => fileDownload(e, rowData)}
-          >
+          <Button variant="outlined" size="small" style={{ float: "right", marginRight: "10px" }} onClick={(e) => fileDownload(e, rowData)}>
             {"Скачать черновик"}
           </Button>
         ) : (
@@ -238,12 +206,7 @@ function UploadButtonsDraft(props) {
         onChange={(e) => fileUpload(e, props.rowData, props.contractId, false)}
       />
       <label htmlFor={"upload-" + props.rowData.id}>
-        <Button
-          variant="outlined"
-          color="primary"
-          component="span"
-          size="small"
-        >
+        <Button variant="outlined" color="primary" component="span" size="small">
           Загрузить черновик
         </Button>
       </label>
@@ -265,12 +228,7 @@ function UploadButtonsOriginal(props) {
         onChange={(e) => fileUpload(e, props.rowData, props.contractId, true)}
       />
       <label htmlFor={"upload-" + props.rowData.id}>
-        <Button
-          variant="outlined"
-          color="primary"
-          component="span"
-          size="small"
-        >
+        <Button variant="outlined" color="primary" component="span" size="small">
           Загрузить оригинал
         </Button>
       </label>
@@ -285,13 +243,7 @@ function generateSelect(rowData, contractId) {
   };
 
   const handleChange = (event) => {
-    updFiles(
-      rowData.id,
-      contractId,
-      rowData.reportId,
-      rowData.name,
-      event.target.value
-    );
+    updFiles(rowData.id, contractId, rowData.reportId, rowData.name, event.target.value);
   };
 
   return (
@@ -305,9 +257,7 @@ function generateSelect(rowData, contractId) {
       >
         <MenuItem value={0}>выберите тип документа ...</MenuItem>
         <MenuItem value={10}>Акт о приемке выполненых работ КС2</MenuItem>
-        <MenuItem value={20}>
-          Справка о стоимости выполненных работ КС3
-        </MenuItem>
+        <MenuItem value={20}>Справка о стоимости выполненных работ КС3</MenuItem>
         <MenuItem value={30}>Исполнительная документация</MenuItem>
       </Select>
     </FormControl>

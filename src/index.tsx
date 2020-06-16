@@ -2,6 +2,8 @@
 
 // css
 import "./index.css";
+// theme
+import theme from "./themes/theme";
 // react
 import React from "react";
 import ReactDOM from "react-dom";
@@ -28,17 +30,19 @@ import { UPDATE_FILES } from "./types/TAction";
 import { TAction } from "./types/TAction";
 // interfaces
 import IStore from "./interfaces/IStore";
+import IContract from "./interfaces/IContract";
+import IReport from "./interfaces/IReport";
+import IFile from "./interfaces/IFile";
 // classes
 import { contractRefresh, reportRefresh, getFiles } from "./classes/Requests";
+// components-material-ui
+import { ThemeProvider } from "@material-ui/core/styles";
 // components
 import App from "./App";
 // others
 import "typeface-roboto";
 // development
 import { composeWithDevTools } from "redux-devtools-extension";
-import IContract from "./interfaces/IContract";
-import IReport from "./interfaces/IReport";
-import IFile from "./interfaces/IFile";
 
 const initState = (): IStore => {
   return {
@@ -139,8 +143,7 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
     case REPORT_CURRENT_SET: {
       const newState = reducerReportCurrentSet(curState, action.contractId);
 
-      if (newState.reports.length === 0)
-        setTimeout(reportRefresh, 0, null, newState.contractId);
+      if (newState.reports.length === 0) setTimeout(reportRefresh, 0, null, newState.contractId);
 
       return newState;
     }
@@ -165,8 +168,7 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
         files: [...report.files],
       };
 
-      if (newState.files.length === 0)
-        setTimeout(getFiles, 0, contract.id, report.id);
+      if (newState.files.length === 0) setTimeout(getFiles, 0, contract.id, report.id);
 
       return newState;
     }
@@ -283,10 +285,7 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
   }
 };
 
-const reducerReportCurrentSet = (
-  curState: IStore,
-  contractId: string
-): IStore => {
+const reducerReportCurrentSet = (curState: IStore, contractId: string): IStore => {
   const contract = getContractById(curState.contracts, contractId);
   const newState = {
     ...curState,
@@ -312,13 +311,11 @@ const getReportById = (arr: IReport[], id: string): IReport => {
 };
 
 const getContractById = (arr: IContract[], id: string): IContract => {
-  const contract = arr.find(
-    (item: IContract, index: number, array: IContract[]) => {
-      if (item.id === id) {
-        return true;
-      }
+  const contract = arr.find((item: IContract, index: number, array: IContract[]) => {
+    if (item.id === id) {
+      return true;
     }
-  );
+  });
 
   if (contract) {
     return contract;
@@ -327,28 +324,44 @@ const getContractById = (arr: IContract[], id: string): IContract => {
   }
 };
 
-const store = createStore(
-  reducer,
-  initState(),
-  composeWithDevTools && composeWithDevTools()
-);
+const store = createStore(reducer, initState(), composeWithDevTools && composeWithDevTools());
 
 window.store = store;
 
 ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
-      <App
-        apikey={""}
-        name={""}
-        loginState={{ state: 0 }}
-        files={null}
-        reportId={null}
-        reports={null}
-        contractId={null}
-        contracts={store.getState().contracts}
-      />
+      <ThemeProvider theme={theme}>
+        <App
+          apikey={""}
+          name={""}
+          loginState={{ state: 0 }}
+          files={[]}
+          reportId={""}
+          reports={[]}
+          contractId={""}
+          contracts={store.getState().contracts}
+        />
+      </ThemeProvider>
     </React.StrictMode>
   </Provider>,
   document.getElementById("root")
 );
+
+/*ReactDOM.render(
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <App
+        apikey={""}
+        name={""}
+        loginState={{ state: 0 }}
+        files={[]}
+        reportId={""}
+        reports={[]}
+        contractId={""}
+        contracts={store.getState().contracts}
+      />
+    </ThemeProvider>
+  </Provider>,
+  document.getElementById("root")
+);*/
