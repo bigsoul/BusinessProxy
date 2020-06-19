@@ -1,7 +1,17 @@
 // react
-import React, { Component } from "react";
+import React, { Component, ReactElement } from "react";
 // react-redux
 import { connect } from "react-redux";
+// constants
+import { REPORT_CURRENT_SET } from "../../types/TAction";
+// types
+import { TContractFields } from "./../../interfaces/IContract";
+// interfaces
+import { IReportCurrentSetAction } from "../../types/TAction";
+import IStore from "../../interfaces/IStore";
+import IContract from "../../interfaces/IContract";
+// classes
+import { contractRefresh } from "../../classes/Requests";
 // components-material-ui
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -13,50 +23,48 @@ import TableHead from "@material-ui/core/TableHead";
 import TableContainer from "@material-ui/core/TableContainer";
 import TablePagination from "@material-ui/core/TablePagination";
 // classes-material-ui
-import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
-// constants
-import { REPORT_CURRENT_SET } from "../../types/TAction";
-// types
-import { TContractFields } from "./../../interfaces/IContract";
-// interfaces
-import { IReportCurrentSetAction } from "../../types/TAction";
-import IStore from "../../interfaces/IStore";
-import IContract from "../../interfaces/IContract";
-// classes
-import { contractRefresh } from "../../classes/Requests";
+import { createStyles, withStyles, WithStyles, Theme, styled } from "@material-ui/core/styles";
 
-interface MyTableCellProps extends TableCellProps {
+// difination styling plan
+
+type TStyleClasses = "paper" | "tableContainer" | "nameHeadTableCell" | "stateHeadTableCell" | "buttonTableCell";
+
+const sourceStyles: Record<TStyleClasses, {}> = {
+  paper: { width: "100%", height: "85%" },
+  tableContainer: { maxHeight: "100%", background: "red" },
+  nameHeadTableCell: { minWidth: 170 },
+  stateHeadTableCell: { minWidth: 100 },
+  buttonTableCell: { float: "right" },
+};
+
+let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
+
+interface IContractsTableCellProps extends TableCellProps {
   id: TContractFields;
+  styleClass: TStyleClasses;
   label: string;
-  minWidth: number;
 }
 
-const columns: MyTableCellProps[] = [
-  { id: "name", label: "Наименование", minWidth: 170, align: "left" },
-  { id: "state", label: "Состояние", minWidth: 100, align: "left" },
+const columns: IContractsTableCellProps[] = [
+  { id: "name", styleClass: "nameHeadTableCell", label: "Наименование", align: "left" },
+  { id: "state", styleClass: "stateHeadTableCell", label: "Состояние", align: "left" },
 ];
-
-const styles = (theme: Theme) =>
-  createStyles({
-    paper: { width: "100%", height: "85%" },
-    tableContainer: { maxHeight: "100%", background: "red" },
-  });
 
 interface IContractsProps extends WithStyles<typeof styles> {
   contracts: IContract[];
 }
 
 class Contracts extends Component<IContractsProps> {
+  state = {
+    page: 0,
+    rowsPerPage: 10,
+  };
+
   constructor(props: IContractsProps) {
     super(props);
 
     console.log("Contracts: constructor");
   }
-
-  state = {
-    page: 0,
-    rowsPerPage: 10,
-  };
 
   handleChangePage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number): void => {
     this.setState({ page: newPage });
@@ -78,18 +86,24 @@ class Contracts extends Component<IContractsProps> {
     console.log("Contracts: render");
 
     return (
-      <Paper className={classes.paper}>
-        <TableContainer className={classes.tableContainer}>
+      <Paper className={classes["paper"]}>
+        <TableContainer className={classes["tableContainer"]}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                {columns.map((column: MyTableCellProps) => (
-                  <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                {columns.map((column: IContractsTableCellProps) => (
+                  <TableCell key={column.id} className={classes[column.styleClass]} align={column.align}>
                     {column.label}
                   </TableCell>
                 ))}
                 <TableCell key={"-1"}>
-                  <Button variant="outlined" size="small" color="primary" style={{ float: "right" }} onClick={(e) => contractRefresh(e)}>
+                  <Button
+                    className={classes["buttonTableCell"]}
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => contractRefresh(e)}
+                  >
                     {"Обновить"}
                   </Button>
                 </TableCell>
@@ -99,7 +113,7 @@ class Contracts extends Component<IContractsProps> {
               {contracts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: IContract) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.id} onClick={() => {}}>
-                    {columns.map((column: MyTableCellProps) => {
+                    {columns.map((column: IContractsTableCellProps) => {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align}>
@@ -109,10 +123,10 @@ class Contracts extends Component<IContractsProps> {
                     })}
                     <TableCell key={"-1"}>
                       <Button
+                        className={classes["buttonTableCell"]}
                         variant="outlined"
                         size="small"
                         color="primary"
-                        style={{ float: "right" }}
                         onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.reportCurrentSetAction(e, row.id)}
                       >
                         {"Просмотреть отчеты"}
@@ -137,11 +151,11 @@ class Contracts extends Component<IContractsProps> {
     );
   };
 
-  componentDidMount = () => {
+  componentDidMount = (): void => {
     console.log("Contracts: componentDidMount");
   };
 
-  componentWillUnmount = () => {
+  componentWillUnmount = (): void => {
     console.log("Contracts: componentWillUnmount");
   };
 }

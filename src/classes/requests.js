@@ -91,8 +91,7 @@ export function fileUpload(e, rowData, contractId, isOriginal) {
 
       const segmentSize = 4;
 
-      let sendLength =
-        segmentSize + dataUint8.byteLength + fileBuffer.byteLength;
+      let sendLength = segmentSize + dataUint8.byteLength + fileBuffer.byteLength;
 
       const balance = sendLength % segmentSize;
       let balanseDiff = 0;
@@ -131,9 +130,7 @@ export function fileUpload(e, rowData, contractId, isOriginal) {
     };
 
     reader.onerror = function (event) {
-      console.error(
-        "Файл не может быть прочитан! код " + event.target.error.code
-      );
+      console.error("Файл не может быть прочитан! код " + event.target.error.code);
     };
 
     reader.readAsArrayBuffer(file);

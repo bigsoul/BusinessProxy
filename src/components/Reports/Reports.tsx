@@ -1,11 +1,12 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import MaterialTable from "material-table";
-import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
-
-import { forwardRef } from "react";
-
+// react
+import React, { Component, forwardRef } from "react";
+// react-redux
+import { connect } from "react-redux";
+// constants
+import { REPORT_CURRENT_DEL } from "./../../types/TAction";
+// classes
+import { reportRefresh, setReports, delReports, updReports, conform } from "../../classes/Requests";
+// components-material-ui
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
@@ -21,43 +22,47 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import { connect } from "react-redux";
-import Icon from "@material-ui/core/Icon";
-import {
-  reportRefresh,
-  setReports,
-  delReports,
-  updReports,
-  conform,
-} from "../../classes/Requests";
+import Button from "@material-ui/core/Button";
+import MaterialTable, { Column } from "material-table";
+// classes-material-ui
+import { makeStyles } from "@material-ui/core/styles";
+// others
 import moment from "moment";
 
+import IStore from "../../interfaces/IStore";
+import IReport from "../../interfaces/IReport";
+
 const tableIcons = {
-  Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-  Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-  DetailPanel: forwardRef((props, ref) => (
-    <ChevronRight {...props} ref={ref} />
-  )),
-  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-  Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
-  Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-  FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-  LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-  NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-  PreviousPage: forwardRef((props, ref) => (
-    <ChevronLeft {...props} ref={ref} />
-  )),
-  ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-  SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
-  ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-  ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+  Add: forwardRef<SVGSVGElement, {}>((props, ref) => <AddBox {...props} ref={ref} />),
+  Check: forwardRef<SVGSVGElement, {}>((props, ref) => <Check {...props} ref={ref} />),
+  Clear: forwardRef<SVGSVGElement, {}>((props, ref) => <Clear {...props} ref={ref} />),
+  Delete: forwardRef<SVGSVGElement, {}>((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  DetailPanel: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronRight {...props} ref={ref} />),
+  Edit: forwardRef<SVGSVGElement, {}>((props, ref) => <Edit {...props} ref={ref} />),
+  Export: forwardRef<SVGSVGElement, {}>((props, ref) => <SaveAlt {...props} ref={ref} />),
+  Filter: forwardRef<SVGSVGElement, {}>((props, ref) => <FilterList {...props} ref={ref} />),
+  FirstPage: forwardRef<SVGSVGElement, {}>((props, ref) => <FirstPage {...props} ref={ref} />),
+  LastPage: forwardRef<SVGSVGElement, {}>((props, ref) => <LastPage {...props} ref={ref} />),
+  NextPage: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronRight {...props} ref={ref} />),
+  PreviousPage: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronLeft {...props} ref={ref} />),
+  ResetSearch: forwardRef<SVGSVGElement, {}>((props, ref) => <Clear {...props} ref={ref} />),
+  Search: forwardRef<SVGSVGElement, {}>((props, ref) => <Search {...props} ref={ref} />),
+  SortArrow: forwardRef<SVGSVGElement, {}>((props, ref) => <ArrowDownward {...props} ref={ref} />),
+  ThirdStateCheck: forwardRef<SVGSVGElement, {}>((props, ref) => <Remove {...props} ref={ref} />),
+  ViewColumn: forwardRef<SVGSVGElement, {}>((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-function Reports(props) {
-  const columns = [
+interface IReportsProps {
+  reports: IReport[];
+  contractId: string;
+}
+
+interface IReportTable extends IReport {
+  tableData?: { editing: string; id: number };
+}
+
+function Reports(props: IReportsProps) {
+  const columns: Column<IReport>[] = [
     {
       title: "Наименование",
       field: "name",
@@ -67,7 +72,6 @@ function Reports(props) {
       title: "Состояние",
       field: "state",
       initialEditValue: "Новый",
-      readonly: true,
       editable: "never",
     },
     {
@@ -80,13 +84,7 @@ function Reports(props) {
 
   return (
     <>
-      <Button
-        variant="outlined"
-        color="secondary"
-        size="small"
-        style={{ marginTop: "10px", marginLeft: "10px" }}
-        onClick={beackOnClick}
-      >
+      <Button variant="outlined" color="secondary" size="small" style={{ marginTop: "10px", marginLeft: "10px" }} onClick={beackOnClick}>
         {"Назад к списку договоров"}
       </Button>
       <Button
@@ -94,7 +92,7 @@ function Reports(props) {
         color="primary"
         size="small"
         style={{ marginTop: "10px", marginRight: "10px", float: "right" }}
-        onClick={(e) => reportRefresh(e, props.contractId)}
+        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => reportRefresh(e, props.contractId)}
       >
         {"Обновить"}
       </Button>
@@ -114,23 +112,24 @@ function Reports(props) {
         }}
         onRowClick={() => {}}
         editable={{
-          onRowAdd: (newData) =>
+          onRowAdd: (newData: IReport) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 resolve();
 
-                setReports(
-                  newData.id,
-                  props.contractId,
-                  newData.name,
-                  newData.state
-                );
+                setReports(newData.id, props.contractId, newData.name, newData.state);
               }, 0);
             }),
-          onRowUpdate: (newData, oldData) =>
+          onRowUpdate: (newData: IReport, oldData: IReportTable | undefined) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 const dataUpdate = [...props.reports];
+
+                if (!oldData || !oldData.tableData) {
+                  resolve();
+                  return;
+                }
+
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
 
@@ -139,10 +138,16 @@ function Reports(props) {
                 updReports(newData.id, props.contractId, newData);
               }, 0);
             }),
-          onRowDelete: (oldData) =>
+          onRowDelete: (oldData: IReportTable | undefined) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 const dataDelete = [...props.reports];
+
+                if (!oldData || !oldData.tableData) {
+                  resolve();
+                  return;
+                }
+
                 const index = oldData.tableData.id;
                 const elem = dataDelete.splice(index, 1);
 
@@ -157,17 +162,11 @@ function Reports(props) {
   );
 }
 
-function startMatching(rowData) {
+function startMatching(rowData: IReport) {
   if (rowData && rowData.state === "Новый") {
     return (
       <div>
-        <Button
-          variant="outlined"
-          size="small"
-          color="primary"
-          style={{ float: "right" }}
-          onClick={() => conform(rowData.id, true)}
-        >
+        <Button variant="outlined" size="small" color="primary" style={{ float: "right" }} onClick={() => conform(rowData.id, true)}>
           {"Согласовать оригинал"}
         </Button>
         <Button
@@ -184,7 +183,7 @@ function startMatching(rowData) {
           size="small"
           color="primary"
           style={{ float: "right", marginRight: "10px" }}
-          onClick={(e) => reportOnClick(e, rowData)}
+          onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => reportOnClick(e, rowData)}
         >
           {"Изменить файлы"}
         </Button>
@@ -193,13 +192,7 @@ function startMatching(rowData) {
   } else if (rowData && rowData.state === "К регистрации") {
     return (
       <div>
-        <Button
-          variant="outlined"
-          size="small"
-          color="primary"
-          style={{ float: "right" }}
-          onClick={() => conform(rowData.id, true)}
-        >
+        <Button variant="outlined" size="small" color="primary" style={{ float: "right" }} onClick={() => conform(rowData.id, true)}>
           {"Согласовать оригинал"}
         </Button>
         <Button
@@ -220,7 +213,7 @@ function startMatching(rowData) {
         size="small"
         color="primary"
         style={{ float: "right" }}
-        onClick={(e) => reportOnClick(e, rowData)}
+        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => reportOnClick(e, rowData)}
       >
         {"Просмотреть файлы"}
       </Button>
@@ -228,11 +221,7 @@ function startMatching(rowData) {
   }
 }
 
-function onClickStartMatching(e, rowData) {
-  e.stopPropagation();
-}
-
-function reportOnClick(e, rowData) {
+function reportOnClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, rowData: IReport) {
   e.stopPropagation();
 
   window.store.dispatch({
@@ -246,7 +235,7 @@ const beackOnClick = () => {
   window.store.dispatch({ type: "REPORT_CURRENT_DEL" });
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: IStore, ownProps: IReportsProps): IReportsProps => {
   return {
     contractId: state.contractId,
     reports: state.reports,
