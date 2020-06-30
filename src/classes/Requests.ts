@@ -1,8 +1,35 @@
+import {
+  ILoginAction,
+  ILogoutAction,
+  LOGIN,
+  LOGOUT,
+  FILE_UPDATE,
+  IFileUpdateAction,
+  UPDATE_CONTRACTS,
+  IUpdateContractsAction,
+  UPDATE_REPORTS,
+  IUpdateReportsAction,
+  REPORT_ADD,
+  IReportAddAction,
+  REPORT_DELETE,
+  IReportDeleteAction,
+  REPORT_UPDATE,
+  IReportUpdateAction,
+  UPDATE_FILES,
+  IUpdateFilesAction,
+  FILE_ADD,
+  IFileAddAction,
+  IFileDeleteAction,
+  FILE_DELETE,
+} from "../types/TAction";
+import IFile from "../interfaces/IFile";
+import IReport from "../interfaces/IReport";
+
 var _login = "exchange";
 var _password = "exchange2016";
 var _url = "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/";
 
-function getXhr(method) {
+function getXhr(method: string) {
   let xhr = new XMLHttpRequest();
 
   xhr.open("POST", _url + method, true, _login, _password);
@@ -17,13 +44,10 @@ function getXhr(method) {
   return xhr;
 }
 
-export function login() {
-  const inputLoginNode = document.getElementById("input-login");
-  const inputPasswordNode = document.getElementById("input-password");
-
+export function login(login: string, password: string): void {
   let data = {
-    login: inputLoginNode.value,
-    password: inputPasswordNode.value,
+    login,
+    password,
   };
 
   let body = JSON.stringify(data);
@@ -38,14 +62,14 @@ export function login() {
       } else {
         response.loginState = { state: 2 };
       }
-      window.store.dispatch({ type: "LOGIN", response: response });
+      window.store.dispatch<ILoginAction>({ type: LOGIN, response: response });
     }
   };
 
   xhr.send(body);
 }
 
-export function logout() {
+export function logout(): void {
   const state = window.store.getState();
 
   let data = { apikey: state.apikey };
@@ -57,89 +81,94 @@ export function logout() {
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({ type: "LOGOUT", response: response });
+      window.store.dispatch<ILogoutAction>({ type: LOGOUT, response: response });
     }
   };
 
   xhr.send(body);
 }
 
-export function fileUpload(e, rowData, contractId, isOriginal) {
-  const inputNode = document.getElementById("upload-" + rowData.id);
+export function fileUpload(files: FileList, rowData: IFile, contractId: string, isOriginal: boolean): void {
+  const file = files[0];
 
-  if (inputNode.files.length > 0) {
-    const file = inputNode.files[0];
+  var reader = new FileReader();
 
-    inputNode.value = "";
+  reader.onload = function (event) {
+    const state = window.store.getState();
 
-    var reader = new FileReader();
+    let data = {
+      apikey: state.apikey,
+      id: rowData.id,
+      name: file.name,
+      isOriginal: isOriginal,
+    };
 
-    reader.onload = function (event) {
-      const state = window.store.getState();
-      let data = {
-        apikey: state.apikey,
-        id: rowData.id,
-        name: file.name,
-        isOriginal: isOriginal,
-      };
-      let bodyJSON = JSON.stringify(data);
+    let bodyJSON = JSON.stringify(data);
 
-      const fileBuffer = event.target.result;
+    const fileBuffer = event.target?.result;
 
-      const dataUint8 = new TextEncoder("utf-8").encode(bodyJSON);
-      const fileUint8 = new Uint8Array(fileBuffer);
+    if (!event.target || !fileBuffer || typeof fileBuffer === "string") {
+      console.log("Ошибка загрузки файла на стороне клиента.");
+      return;
+    }
 
-      const segmentSize = 4;
+    const dataUint8 = new TextEncoder().encode(bodyJSON);
+    const fileUint8 = new Uint8Array(fileBuffer);
 
-      let sendLength = segmentSize + dataUint8.byteLength + fileBuffer.byteLength;
+    const segmentSize = 4;
 
-      const balance = sendLength % segmentSize;
-      let balanseDiff = 0;
+    let sendLength = segmentSize + dataUint8.byteLength + fileBuffer.byteLength;
 
-      if (balance > 0) {
-        balanseDiff = segmentSize - balance;
-        sendLength += balanseDiff;
+    const balance = sendLength % segmentSize;
+    let balanseDiff = 0;
+
+    if (balance > 0) {
+      balanseDiff = segmentSize - balance;
+      sendLength += balanseDiff;
+    }
+
+    const sendBuffer = new ArrayBuffer(sendLength);
+
+    const sendUint32 = new Uint32Array(sendBuffer);
+    const sendUint8 = new Uint8Array(sendBuffer);
+
+    sendUint32[0] = dataUint8.byteLength + segmentSize + balanseDiff;
+
+    sendUint8.set(dataUint8, segmentSize);
+    sendUint8.set(fileUint8, dataUint8.length + segmentSize + balanseDiff);
+
+    const xhr = getXhr("FileUpload");
+
+    xhr.send(sendUint8.buffer);
+
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.response);
+        window.store.dispatch<IFileUpdateAction>({
+          type: FILE_UPDATE,
+          contractId: contractId,
+          newData: response,
+        });
+      } else {
+        console.log("Загрузка файла на сервер закончилась неудачей.");
       }
-
-      const sendBuffer = new ArrayBuffer(sendLength);
-
-      const sendUint32 = new Uint32Array(sendBuffer);
-      const sendUint8 = new Uint8Array(sendBuffer);
-
-      sendUint32[0] = dataUint8.byteLength + segmentSize + balanseDiff;
-
-      sendUint8.set(dataUint8, segmentSize);
-      sendUint8.set(fileUint8, dataUint8.length + segmentSize + balanseDiff);
-
-      const xhr = getXhr("FileUpload");
-
-      xhr.send(sendUint8.buffer);
-
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          const response = JSON.parse(xhr.response);
-          window.store.dispatch({
-            type: "FILE_UPDATE",
-            contractId: contractId,
-            newData: response,
-          });
-        } else {
-          console.log("Загрузка файла на сервер закончилась неудачей.");
-        }
-      };
     };
+  };
 
-    reader.onerror = function (event) {
-      console.error("Файл не может быть прочитан! код " + event.target.error.code);
-    };
+  reader.onerror = function (e) {
+    let code: number | null = null;
 
-    reader.readAsArrayBuffer(file);
-  } else {
-    console.log("Файл не выбран !");
-  }
+    if (e.target?.error?.code) code = e.target.error.code;
+
+    console.error("Файл не может быть прочитан! код [" + code + "]");
+  };
+
+  reader.readAsArrayBuffer(file);
 }
 
-export function contractRefresh(e) {
+export function fileDownload(rowData: IFile): void {}
+
+export function contractRefresh(): void {
   const state = window.store.getState();
 
   let data = { apikey: state.apikey };
@@ -151,7 +180,7 @@ export function contractRefresh(e) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({ type: "UPDATE_CONTRACTS", contracts: response });
+      window.store.dispatch<IUpdateContractsAction>({ type: UPDATE_CONTRACTS, contracts: response });
     } else {
       console.log("Не удалось выполнить обновление, ошибка.");
     }
@@ -160,7 +189,7 @@ export function contractRefresh(e) {
   xhr.send(body);
 }
 
-export function reportRefresh(e, contractId) {
+export function reportRefresh(contractId: string): void {
   const state = window.store.getState();
 
   let data = { apikey: state.apikey, contractId: contractId };
@@ -172,8 +201,8 @@ export function reportRefresh(e, contractId) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "UPDATE_REPORTS",
+      window.store.dispatch<IUpdateReportsAction>({
+        type: UPDATE_REPORTS,
         contractId: contractId,
         reports: response,
       });
@@ -185,7 +214,7 @@ export function reportRefresh(e, contractId) {
   xhr.send(body);
 }
 
-export function setReports(id, contractId, name, state) {
+export function setReports(id: string, contractId: string, name: string, state: string): void {
   const _state = window.store.getState();
 
   let data = [
@@ -205,8 +234,8 @@ export function setReports(id, contractId, name, state) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "REPORT_ADD",
+      window.store.dispatch<IReportAddAction>({
+        type: REPORT_ADD,
         newData: response,
       });
     } else {
@@ -214,14 +243,14 @@ export function setReports(id, contractId, name, state) {
     }
   };
 
-  xhr.onerror = function (e) {
-    console.log("Не удалось создать отчет на сервере:" + e.target.status);
+  xhr.onerror = function () {
+    console.log("Не удалось создать отчет на сервере:" + xhr.status);
   };
 
   xhr.send(body);
 }
 
-export function delReports(id, contractId) {
+export function delReports(id: string, contractId: string): void {
   const _state = window.store.getState();
 
   let data = [
@@ -239,8 +268,8 @@ export function delReports(id, contractId) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "REPORT_DELETE",
+      window.store.dispatch<IReportDeleteAction>({
+        type: REPORT_DELETE,
         dataDelete: response,
       });
     } else {
@@ -249,13 +278,13 @@ export function delReports(id, contractId) {
   };
 
   xhr.onerror = function (e) {
-    console.log("Не удалось создать отчет на сервере:" + e.target.status);
+    console.log("Не удалось создать отчет на сервере:" + xhr.status);
   };
 
   xhr.send(body);
 }
 
-export function updReports(id, contractId, newData) {
+export function updReports(id: string, contractId: string, newData: IReport): void {
   const _state = window.store.getState();
 
   let data = [
@@ -274,8 +303,8 @@ export function updReports(id, contractId, newData) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "REPORT_UPDATE",
+      window.store.dispatch<IReportUpdateAction>({
+        type: REPORT_UPDATE,
         newData: response,
       });
     } else {
@@ -283,14 +312,14 @@ export function updReports(id, contractId, newData) {
     }
   };
 
-  xhr.onerror = function (e) {
-    console.log("Не удалось создать отчет на сервере:" + e.target.status);
+  xhr.onerror = function () {
+    console.log("Не удалось создать отчет на сервере:" + xhr.status);
   };
 
   xhr.send(body);
 }
 
-export function getFiles(contractId, reportId) {
+export function getFiles(contractId: string, reportId: string): void {
   const state = window.store.getState();
 
   let data = { apikey: state.apikey, reportId: reportId };
@@ -302,8 +331,8 @@ export function getFiles(contractId, reportId) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "UPDATE_FILES",
+      window.store.dispatch<IUpdateFilesAction>({
+        type: UPDATE_FILES,
         contractId: contractId,
         reportId: reportId,
         files: response,
@@ -316,7 +345,7 @@ export function getFiles(contractId, reportId) {
   xhr.send(body);
 }
 
-export function setFiles(id, contractId, reportId, name, type) {
+export function setFiles(id: string, contractId: string, reportId: string, name: string, type: number): void {
   const state = window.store.getState();
 
   let data = [
@@ -336,8 +365,8 @@ export function setFiles(id, contractId, reportId, name, type) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "FILE_ADD",
+      window.store.dispatch<IFileAddAction>({
+        type: FILE_ADD,
         contractId: contractId,
         newData: response,
       });
@@ -346,14 +375,14 @@ export function setFiles(id, contractId, reportId, name, type) {
     }
   };
 
-  xhr.onerror = function (e) {
-    console.log("Не удалось создать файл на сервере:" + e.target.status);
+  xhr.onerror = function () {
+    console.log("Не удалось создать файл на сервере:" + xhr.status);
   };
 
   xhr.send(body);
 }
 
-export function updFiles(id, contractId, reportId, name, type) {
+export function updFiles(id: string, contractId: string, reportId: string, name: string, type: number) {
   const _state = window.store.getState();
 
   let data = [
@@ -373,8 +402,8 @@ export function updFiles(id, contractId, reportId, name, type) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "FILE_UPDATE",
+      window.store.dispatch<IFileUpdateAction>({
+        type: FILE_UPDATE,
         contractId: contractId,
         newData: response,
       });
@@ -383,14 +412,14 @@ export function updFiles(id, contractId, reportId, name, type) {
     }
   };
 
-  xhr.onerror = function (e) {
-    console.log("Не удалось создать файл на сервере:" + e.target.status);
+  xhr.onerror = function () {
+    console.log("Не удалось создать файл на сервере:" + xhr.status);
   };
 
   xhr.send(body);
 }
 
-export function delFiles(id, contractId, reportId) {
+export function delFiles(id: string, contractId: string, reportId: string): void {
   const state = window.store.getState();
 
   let data = [
@@ -408,8 +437,8 @@ export function delFiles(id, contractId, reportId) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "FILE_DELETE",
+      window.store.dispatch<IFileDeleteAction>({
+        type: FILE_DELETE,
         contractId: contractId,
         dataDelete: response,
       });
@@ -419,13 +448,13 @@ export function delFiles(id, contractId, reportId) {
   };
 
   xhr.onerror = function (e) {
-    console.log("Не удалось создать файл на сервере:" + e.target.status);
+    console.log("Не удалось создать файл на сервере:" + xhr.status);
   };
 
   xhr.send(body);
 }
 
-export function conform(reportId, isOriginal) {
+export function conform(reportId: string, isOriginal: boolean): void {
   const state = window.store.getState();
 
   let data = [
@@ -443,8 +472,8 @@ export function conform(reportId, isOriginal) {
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch({
-        type: "REPORT_UPDATE",
+      window.store.dispatch<IReportUpdateAction>({
+        type: REPORT_UPDATE,
         newData: response,
       });
     } else {
@@ -453,7 +482,7 @@ export function conform(reportId, isOriginal) {
   };
 
   xhr.onerror = function (e) {
-    console.log("Не удалось создать отчет на сервере:" + e.target.status);
+    console.log("Не удалось создать отчет на сервере:" + xhr.status);
   };
 
   xhr.send(body);

@@ -1,5 +1,5 @@
 // react
-import React, { Component, ReactElement } from "react";
+import React, { Component } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
@@ -23,21 +23,24 @@ import TableHead from "@material-ui/core/TableHead";
 import TableContainer from "@material-ui/core/TableContainer";
 import TablePagination from "@material-ui/core/TablePagination";
 // classes-material-ui
-import { createStyles, withStyles, WithStyles, Theme, styled } from "@material-ui/core/styles";
+import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 
 // difination styling plan
 
-type TStyleClasses = "paper" | "tableContainer" | "nameHeadTableCell" | "stateHeadTableCell" | "buttonTableCell";
+type TStyleClasses = "paper" | "tableContainer" | "nameHeadTableCell" | "stateHeadTableCell" | "refreshContracts" | "buttonTableCell";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
   paper: { width: "100%", height: "85%" },
-  tableContainer: { maxHeight: "100%", background: "red" },
+  tableContainer: { maxHeight: "100%" },
   nameHeadTableCell: { minWidth: 170 },
   stateHeadTableCell: { minWidth: 100 },
   buttonTableCell: { float: "right" },
+  refreshContracts: { float: "right" },
 };
 
 let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
+
+// own interfaces
 
 interface IContractsTableCellProps extends TableCellProps {
   id: TContractFields;
@@ -54,8 +57,13 @@ interface IContractsProps extends WithStyles<typeof styles> {
   contracts: IContract[];
 }
 
-class Contracts extends Component<IContractsProps> {
-  state = {
+interface IContractsState {
+  page: number;
+  rowsPerPage: number;
+}
+
+class Contracts extends Component<IContractsProps, IContractsState> {
+  state: IContractsState = {
     page: 0,
     rowsPerPage: 10,
   };
@@ -74,7 +82,7 @@ class Contracts extends Component<IContractsProps> {
     this.setState({ page: 0, rowsPerPage: +e.target.value });
   };
 
-  reportCurrentSetAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
+  handleReportCurrentSetAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
     e.preventDefault();
     window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: id });
   };
@@ -98,11 +106,11 @@ class Contracts extends Component<IContractsProps> {
                 ))}
                 <TableCell key={"-1"}>
                   <Button
-                    className={classes["buttonTableCell"]}
+                    className={classes["refreshContracts"]}
                     variant="outlined"
                     size="small"
                     color="primary"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => contractRefresh(e)}
+                    onClick={() => contractRefresh()}
                   >
                     {"Обновить"}
                   </Button>
@@ -127,7 +135,7 @@ class Contracts extends Component<IContractsProps> {
                         variant="outlined"
                         size="small"
                         color="primary"
-                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.reportCurrentSetAction(e, row.id)}
+                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleReportCurrentSetAction(e, row.id)}
                       >
                         {"Просмотреть отчеты"}
                       </Button>

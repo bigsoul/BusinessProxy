@@ -27,12 +27,12 @@ interface IAppProps {
 
 class App extends Component<IAppProps> {
   render = () => {
-    const { apikey, reports, contractId, files, reportId, contracts } = this.props;
+    const { apikey, name, reports, loginState, contractId, files, reportId, contracts } = this.props;
     return (
       <>
-        <Header />
+        <Header apikey={apikey} name={name} />
         {apikey === "" ? (
-          <Login />
+          <Login loginState={loginState} />
         ) : reports.length > 0 ? (
           <Reports reports={reports} contractId={contractId} />
         ) : files.length > 0 ? (

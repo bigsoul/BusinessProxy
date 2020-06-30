@@ -143,7 +143,7 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
     case REPORT_CURRENT_SET: {
       const newState = reducerReportCurrentSet(curState, action.contractId);
 
-      if (newState.reports.length === 0) setTimeout(reportRefresh, 0, null, newState.contractId);
+      if (newState.reports.length === 0) setTimeout(reportRefresh, 0, newState.contractId);
 
       return newState;
     }
@@ -301,6 +301,7 @@ const getReportById = (arr: IReport[], id: string): IReport => {
     if (item.id === id) {
       return true;
     }
+    return false;
   });
 
   if (report) {
@@ -315,6 +316,7 @@ const getContractById = (arr: IContract[], id: string): IContract => {
     if (item.id === id) {
       return true;
     }
+    return false;
   });
 
   if (contract) {

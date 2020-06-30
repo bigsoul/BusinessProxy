@@ -3,13 +3,14 @@ import React, { Component, forwardRef } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { REPORT_CURRENT_DEL, IReportCurrentDelAction } from "./../../types/TAction";
+import { REPORT_CURRENT_DEL, REPORT_CURRENT_SET, IReportCurrentDelAction, IReportCurrentSetAction } from "./../../types/TAction";
 // interfaces
 import IStore from "../../interfaces/IStore";
-import IReport from "../../interfaces/IReport";
+import IFile from "../../interfaces/IFile";
 // classes
-import { reportRefresh, setReports, delReports, updReports } from "../../classes/Requests";
+import { getFiles, setFiles, updFiles, delFiles } from "../../classes/Requests";
 // components-material-ui
+import Button from "@material-ui/core/Button";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
@@ -25,70 +26,65 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import Button from "@material-ui/core/Button";
 import MaterialTable, { Column } from "material-table";
+// components
+import FilesRowControlSelect from "./FilesRowControlSelect/FilesRowControlSelect";
+import FilesRowControlButton from "./FilesRowControlButton/FilesRowControlButton";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
-// components
-import ReportsRowControl from "./ReportsRowControl/ReportsRowControl";
-// others
-import moment from "moment";
 
 // difination styling plan
 
-type TStyleClasses = "backInConracts" | "refreshReports" | "nameHeadTableCell" | "stateHeadTableCell" | "buttonTableCell";
+type TStyleClasses = "beackOnClickContract" | "beackOnClickReport" | "getFiles";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
-  backInConracts: { marginTop: "10px", marginLeft: "10px" },
-  refreshReports: { marginTop: "10px", marginRight: "10px", float: "right" },
-  nameHeadTableCell: { minWidth: 170 },
-  stateHeadTableCell: { minWidth: 100 },
-  buttonTableCell: { float: "right" },
+  beackOnClickContract: { marginTop: "10px", marginLeft: "10px" },
+  beackOnClickReport: { marginTop: "10px", marginLeft: "10px" },
+  getFiles: { marginTop: "10px", marginRight: "10px", float: "right" },
 };
 
 let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
 
 // own interfaces
 
-interface IReportTable extends IReport {
+interface IFilesTable extends IFile {
   tableData?: { editing: string; id: number };
 }
 
-interface IReportsProps extends WithStyles<typeof styles> {
-  reports: IReport[];
+interface IFilesProps extends WithStyles<typeof styles> {
   contractId: string;
+  reportId: string;
+  files: IFile[];
 }
 
-interface IReportsState {
-  columns: Column<IReport>[];
+interface IFilesState {
+  columns: Column<IFile>[];
 }
 
-class Reports extends Component<IReportsProps, IReportsState> {
-  constructor(props: IReportsProps) {
+export class Files extends Component<IFilesProps, IFilesState> {
+  constructor(props: IFilesProps) {
     super(props);
 
-    console.log("Contracts: Reports");
+    console.log("Files: constructor");
   }
 
-  state: IReportsState = {
+  state: IFilesState = {
     columns: [
+      { title: "Name", field: "name", initialEditValue: "" },
       {
-        title: "Наименование",
-        field: "name",
-        initialEditValue: "Отчет от " + moment().format().substr(0, 10),
-      },
-      {
-        title: "Состояние",
-        field: "state",
-        initialEditValue: "Новый",
-        editable: "never",
+        title: "Тип",
+        field: "type",
+        initialEditValue: "",
+        render: (rowData: IFile) => {
+          return <FilesRowControlSelect rowData={rowData} contractId={this.props.contractId} />;
+        },
       },
       {
         title: "",
         field: "",
         initialEditValue: "",
-        render: (rowData: IReport) => {
-          return <ReportsRowControl rowData={rowData} />;
+        render: (rowData: IFile) => {
+          return <FilesRowControlButton rowData={rowData} contractId={this.props.contractId} />;
         },
       },
     ],
@@ -114,57 +110,71 @@ class Reports extends Component<IReportsProps, IReportsState> {
     ViewColumn: forwardRef<SVGSVGElement, {}>((props, ref) => <ViewColumn {...props} ref={ref} />),
   };
 
-  handleBeackOnClick = (): void => {
+  handleBeackOnClickContract = (): void => {
     window.store.dispatch<IReportCurrentDelAction>({ type: REPORT_CURRENT_DEL });
   };
 
+  handleBeackOnClickReport = (id: string, e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+    e.preventDefault();
+    window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: id });
+  };
+
   render = (): JSX.Element => {
-    const { contractId, reports, classes } = this.props;
+    const { classes, contractId, reportId, files } = this.props;
     const { columns } = this.state;
     const { tableIcons } = this;
 
     return (
       <>
-        <Button className={classes.backInConracts} variant="outlined" color="secondary" size="small" onClick={this.handleBeackOnClick}>
+        <Button
+          className={classes.beackOnClickContract}
+          variant="outlined"
+          color="secondary"
+          size="small"
+          onClick={this.handleBeackOnClickContract}
+        >
           {"Назад к списку договоров"}
         </Button>
         <Button
-          className={classes.refreshReports}
+          className={classes.beackOnClickReport}
           variant="outlined"
-          color="primary"
+          color="secondary"
           size="small"
-          onClick={(): void => reportRefresh(contractId)}
+          onClick={(e) => this.handleBeackOnClickReport(contractId, e)}
         >
+          {"Назад к списку отчетов"}
+        </Button>
+        <Button className={classes.getFiles} variant="outlined" color="primary" size="small" onClick={() => getFiles(contractId, reportId)}>
           {"Обновить"}
         </Button>
         <MaterialTable
           icons={tableIcons}
-          title="Список отчетов по договору: "
+          title="Список файлов по отчету: "
           columns={columns}
-          data={reports}
+          data={files}
+          onRowClick={() => {}}
           localization={{
             header: { actions: "" },
             toolbar: {
-              searchTooltip: "Найти договор ...",
-              searchPlaceholder: "Найти договор ...",
+              searchTooltip: "Найти файл ...",
+              searchPlaceholder: "Найти файл ...",
             },
             pagination: { labelRowsSelect: "строк" },
             body: { editRow: { deleteText: "Вы уверены ?" } },
           }}
-          onRowClick={() => {}}
           editable={{
-            onRowAdd: (newData: IReport) =>
+            onRowAdd: (newData: IFile) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
                   resolve();
 
-                  setReports(newData.id, contractId, newData.name, newData.state);
+                  setFiles(newData.id, contractId, reportId, newData.name, newData.type);
                 }, 0);
               }),
-            onRowUpdate: (newData: IReport, oldData: IReportTable | undefined) =>
+            onRowUpdate: (newData: IFile, oldData: IFilesTable | undefined) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const dataUpdate = [...reports];
+                  const dataUpdate = [...files];
 
                   if (!oldData || !oldData.tableData) {
                     resolve();
@@ -176,13 +186,13 @@ class Reports extends Component<IReportsProps, IReportsState> {
 
                   resolve();
 
-                  updReports(newData.id, contractId, newData);
+                  updFiles(newData.id, contractId, reportId, newData.name, newData.type);
                 }, 0);
               }),
-            onRowDelete: (oldData: IReportTable | undefined) =>
+            onRowDelete: (oldData: IFilesTable) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const dataDelete = [...reports];
+                  const dataDelete = [...files];
 
                   if (!oldData || !oldData.tableData) {
                     resolve();
@@ -194,7 +204,7 @@ class Reports extends Component<IReportsProps, IReportsState> {
 
                   resolve();
 
-                  delReports(elem[0].id, elem[0].contractId);
+                  delFiles(elem[0].id, contractId, reportId);
                 }, 0);
               }),
           }}
@@ -204,12 +214,13 @@ class Reports extends Component<IReportsProps, IReportsState> {
   };
 }
 
-const mapStateToProps = (state: IStore, ownProps: IReportsProps): IReportsProps => {
+const mapStateToProps = (state: IStore, ownProps: IFilesProps): IFilesProps => {
   return {
+    files: state.files,
+    reportId: state.reportId,
     contractId: state.contractId,
-    reports: state.reports,
     classes: ownProps.classes,
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(Reports));
+export default withStyles(styles)(connect(mapStateToProps)(Files));

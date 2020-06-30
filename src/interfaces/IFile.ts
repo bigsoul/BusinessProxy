@@ -1,6 +1,6 @@
 export default interface IFile {
   id: string;
-  raportId: string;
+  reportId: string;
   contractId: string;
   type: number;
   loadedDraft: boolean;
