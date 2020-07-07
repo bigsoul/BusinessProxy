@@ -13,6 +13,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 
 // difination styling plan
 
@@ -38,6 +39,7 @@ export class Login extends Component<ILoginProps> {
     const inputPasswordNode = document.getElementById("input-password") as HTMLTextAreaElement;
 
     login(inputLoginNode.value, inputPasswordNode.value);
+    window.history.pushState(null, "", "/#/contracts");
   };
 
   render = () => {
@@ -66,6 +68,7 @@ export class Login extends Component<ILoginProps> {
           <Button variant="contained" color="secondary" onClick={this.handleLoginOnClick}>
             Войти
           </Button>
+          <Link to={{ pathname: "/reports", search: "?sort=name", hash: "#the-hash", state: { fromDashboard: true } }}>123</Link>
         </Grid>
       </div>
     );
@@ -73,8 +76,9 @@ export class Login extends Component<ILoginProps> {
 }
 
 const mapStateToProps = (state: IStore, ownProps: ILoginProps): ILoginProps => {
+  const { app } = state;
   return {
-    loginState: state.loginState,
+    loginState: app.loginState,
     classes: ownProps.classes,
   };
 };

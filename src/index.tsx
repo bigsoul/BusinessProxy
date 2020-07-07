@@ -8,7 +8,7 @@ import theme from "./themes/theme";
 import React from "react";
 import ReactDOM from "react-dom";
 // redux
-import { createStore } from "redux";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 // react-redux
 import { Provider } from "react-redux";
 // constants
@@ -30,6 +30,7 @@ import { UPDATE_FILES } from "./types/TAction";
 import { TAction } from "./types/TAction";
 // interfaces
 import IStore from "./interfaces/IStore";
+import IApp from "./interfaces/IApp";
 import IContract from "./interfaces/IContract";
 import IReport from "./interfaces/IReport";
 import IFile from "./interfaces/IFile";
@@ -44,7 +45,14 @@ import "typeface-roboto";
 // development
 import { composeWithDevTools } from "redux-devtools-extension";
 
-const initState = (): IStore => {
+import { createBrowserHistory } from "history";
+//import { ConnectedRouter, connectRouter, routerMiddleware } from "connected-react-router";
+//import { ConnectedRouter } from "react-router-redux";
+import { ConnectedRouter, routerReducer, routerMiddleware } from "react-router-redux";
+import thunk from "redux-thunk";
+import { Router } from "react-router";
+
+const appInitState = (): IApp => {
   return {
     apikey: "",
     name: "",
@@ -57,7 +65,7 @@ const initState = (): IStore => {
   };
 };
 
-const reducer = (curState: IStore = initState(), action: TAction): IStore => {
+const appReducer = (curState: IApp = appInitState(), action: TAction): IApp => {
   switch (action.type) {
     case LOGIN: {
       const newState = {
@@ -285,7 +293,7 @@ const reducer = (curState: IStore = initState(), action: TAction): IStore => {
   }
 };
 
-const reducerReportCurrentSet = (curState: IStore, contractId: string): IStore => {
+const reducerReportCurrentSet = (curState: IApp, contractId: string): IApp => {
   const contract = getContractById(curState.contracts, contractId);
   const newState = {
     ...curState,
@@ -326,44 +334,66 @@ const getContractById = (arr: IContract[], id: string): IContract => {
   }
 };
 
-const store = createStore(reducer, initState(), composeWithDevTools && composeWithDevTools());
+const history = createBrowserHistory();
+
+const enhancers: any[] = [];
+const middleware = [thunk, routerMiddleware(history)];
+
+const composedEnhancers = composeWithDevTools(applyMiddleware(...middleware), ...enhancers);
+
+const rootReducer = combineReducers({
+  app: appReducer,
+  routing: routerReducer,
+});
+
+const rootInitState = { app: appInitState() };
+
+const store = createStore(rootReducer, rootInitState, composedEnhancers);
 
 window.store = store;
 
 ReactDOM.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <ThemeProvider theme={theme}>
-        <App
-          apikey={""}
-          name={""}
-          loginState={{ state: 0 }}
-          files={[]}
-          reportId={""}
-          reports={[]}
-          contractId={""}
-          contracts={store.getState().contracts}
-        />
-      </ThemeProvider>
-    </React.StrictMode>
-  </Provider>,
+  <React.StrictMode>
+    <Provider store={store}>
+      <ConnectedRouter history={history}>
+        <ThemeProvider theme={theme}>
+          <App
+            apikey={""}
+            name={""}
+            loginState={{ state: 0 }}
+            files={[]}
+            reportId={""}
+            reports={[]}
+            contractId={""}
+            contracts={store.getState().app.contracts}
+          />
+        </ThemeProvider>
+      </ConnectedRouter>
+    </Provider>
+  </React.StrictMode>,
   document.getElementById("root")
 );
 
-/*ReactDOM.render(
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <App
-        apikey={""}
-        name={""}
-        loginState={{ state: 0 }}
-        files={[]}
-        reportId={""}
-        reports={[]}
-        contractId={""}
-        contracts={store.getState().contracts}
-      />
-    </ThemeProvider>
-  </Provider>,
+/*
+ReactDOM.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <ConnectedRouter history={history}>
+        <ThemeProvider theme={theme}>
+          <App
+            apikey={""}
+            name={""}
+            loginState={{ state: 0 }}
+            files={[]}
+            reportId={""}
+            reports={[]}
+            contractId={""}
+            contracts={store.getState().app.contracts}
+          />
+        </ThemeProvider>
+      </ConnectedRouter>
+    </Provider>
+  </React.StrictMode>,
   document.getElementById("root")
-);*/
+);
+*/

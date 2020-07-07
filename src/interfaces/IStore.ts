@@ -1,16 +1,8 @@
-// interfaces
-import ILoginState from "./ILoginState";
-import IFile from "./IFile";
-import IReport from "./IReport";
-import IContract from "./IContract";
+import IApp from "./IApp";
+import { RouterState } from "react-router-redux";
+import { AnyAction, Reducer } from "redux";
 
 export default interface IStore {
-  apikey: string;
-  name: string;
-  loginState: ILoginState;
-  files: IFile[];
-  reportId: string;
-  reports: IReport[];
-  contractId: string;
-  contracts: IContract[];
+  app: IApp;
+  routing: Reducer<RouterState, AnyAction>;
 }

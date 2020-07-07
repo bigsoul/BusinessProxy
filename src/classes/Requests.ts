@@ -72,7 +72,7 @@ export function login(login: string, password: string): void {
 export function logout(): void {
   const state = window.store.getState();
 
-  let data = { apikey: state.apikey };
+  let data = { apikey: state.app.apikey };
 
   let body = JSON.stringify(data);
 
@@ -97,7 +97,7 @@ export function fileUpload(files: FileList, rowData: IFile, contractId: string, 
     const state = window.store.getState();
 
     let data = {
-      apikey: state.apikey,
+      apikey: state.app.apikey,
       id: rowData.id,
       name: file.name,
       isOriginal: isOriginal,
@@ -171,7 +171,7 @@ export function fileDownload(rowData: IFile): void {}
 export function contractRefresh(): void {
   const state = window.store.getState();
 
-  let data = { apikey: state.apikey };
+  let data = { apikey: state.app.apikey };
 
   let body = JSON.stringify(data);
 
@@ -192,7 +192,7 @@ export function contractRefresh(): void {
 export function reportRefresh(contractId: string): void {
   const state = window.store.getState();
 
-  let data = { apikey: state.apikey, contractId: contractId };
+  let data = { apikey: state.app.apikey, contractId: contractId };
 
   let body = JSON.stringify(data);
 
@@ -219,7 +219,7 @@ export function setReports(id: string, contractId: string, name: string, state: 
 
   let data = [
     {
-      apikey: _state.apikey,
+      apikey: _state.app.apikey,
       id: id ? id : "",
       contractId: contractId,
       name: name,
@@ -255,7 +255,7 @@ export function delReports(id: string, contractId: string): void {
 
   let data = [
     {
-      apikey: _state.apikey,
+      apikey: _state.app.apikey,
       id: id ? id : "",
       contractId: contractId,
     },
@@ -289,7 +289,7 @@ export function updReports(id: string, contractId: string, newData: IReport): vo
 
   let data = [
     {
-      apikey: _state.apikey,
+      apikey: _state.app.apikey,
       id: id ? id : "",
       contractId: contractId,
       name: newData.name,
@@ -322,7 +322,7 @@ export function updReports(id: string, contractId: string, newData: IReport): vo
 export function getFiles(contractId: string, reportId: string): void {
   const state = window.store.getState();
 
-  let data = { apikey: state.apikey, reportId: reportId };
+  let data = { apikey: state.app.apikey, reportId: reportId };
 
   let body = JSON.stringify(data);
 
@@ -350,7 +350,7 @@ export function setFiles(id: string, contractId: string, reportId: string, name:
 
   let data = [
     {
-      apikey: state.apikey,
+      apikey: state.app.apikey,
       id: id ? id : "",
       reportId: reportId,
       name: name,
@@ -387,7 +387,7 @@ export function updFiles(id: string, contractId: string, reportId: string, name:
 
   let data = [
     {
-      apikey: _state.apikey,
+      apikey: _state.app.apikey,
       id: id ? id : "",
       reportId: reportId,
       name: name,
@@ -424,7 +424,7 @@ export function delFiles(id: string, contractId: string, reportId: string): void
 
   let data = [
     {
-      apikey: state.apikey,
+      apikey: state.app.apikey,
       id: id ? id : "",
       reportId: reportId,
     },
@@ -459,7 +459,7 @@ export function conform(reportId: string, isOriginal: boolean): void {
 
   let data = [
     {
-      apikey: state.apikey,
+      apikey: state.app.apikey,
       reportId: reportId,
       isOriginal: isOriginal,
     },

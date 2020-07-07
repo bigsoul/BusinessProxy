@@ -67,7 +67,7 @@ class Reports extends Component<IReportsProps, IReportsState> {
   constructor(props: IReportsProps) {
     super(props);
 
-    console.log("Contracts: Reports");
+    console.log("Reports: constructor");
   }
 
   state: IReportsState = {
@@ -205,9 +205,10 @@ class Reports extends Component<IReportsProps, IReportsState> {
 }
 
 const mapStateToProps = (state: IStore, ownProps: IReportsProps): IReportsProps => {
+  const { app } = state;
   return {
-    contractId: state.contractId,
-    reports: state.reports,
+    contractId: app.contractId,
+    reports: app.reports,
     classes: ownProps.classes,
   };
 };

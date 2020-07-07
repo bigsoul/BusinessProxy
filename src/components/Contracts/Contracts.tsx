@@ -85,6 +85,7 @@ class Contracts extends Component<IContractsProps, IContractsState> {
   handleReportCurrentSetAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
     e.preventDefault();
     window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: id });
+    window.history.pushState(null, "", "/#/reports");
   };
 
   render = (): JSX.Element => {
@@ -169,8 +170,9 @@ class Contracts extends Component<IContractsProps, IContractsState> {
 }
 
 const mapStateToProps = (state: IStore, ownProps: IContractsProps): IContractsProps => {
+  const { app } = state;
   return {
-    contracts: state.contracts,
+    contracts: app.contracts,
     classes: ownProps.classes,
   };
 };

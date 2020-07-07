@@ -72,9 +72,10 @@ export class Header extends Component<IHeaderProps> {
 }
 
 const mapStateToProps = (state: IStore, ownProps: IHeaderProps): IHeaderProps => {
+  const { app } = state;
   return {
-    apikey: state.apikey,
-    name: state.name,
+    apikey: app.apikey,
+    name: app.name,
     classes: ownProps.classes,
   };
 };
