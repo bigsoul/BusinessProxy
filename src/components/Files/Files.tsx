@@ -81,7 +81,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
       },
       {
         title: "",
-        field: "",
+        field: "buttom",
         initialEditValue: "",
         render: (rowData: IFile) => {
           return <FilesRowControlButton rowData={rowData} contractId={this.props.contractId} />;

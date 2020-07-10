@@ -13,12 +13,15 @@ import Login from "./components/Login/Login";
 import Header from "./components/Header/Header";
 import Reports from "./components/Reports/Reports";
 import Contracts from "./components/Contracts/Contracts";
-import { Route, HashRouter, Switch, Redirect, Router, BrowserRouter } from "react-router-dom";
+import ReportAddSimply from "./components/Reports/ReportsAddSimply/ReportAddSimply";
+
+import { Route, HashRouter, Switch, Redirect, Router, BrowserRouter, Link } from "react-router-dom";
 
 interface IAppProps {
   apikey: string;
   name: string;
   loginState: { state: number };
+  path: string;
   files: IFile[];
   reportId: string;
   reports: IReport[];
@@ -28,35 +31,37 @@ interface IAppProps {
 
 class App extends Component<IAppProps> {
   render = () => {
-    const { apikey, name, reports, loginState, contractId, files, reportId, contracts } = this.props;
+    const { apikey, name, reports, loginState, contractId, files, reportId, contracts, path } = this.props;
+
     return (
-      <>
-        <Header apikey={apikey} name={name} />
-
-        <Switch>
-          <Route exact path="/" component={() => <Login loginState={loginState} />} />
-          <Route exact path="/contracts" component={() => <Contracts contracts={contracts} />} />
-          <Route exact path="/reports" component={() => <Reports reports={reports} contractId={contractId} />} />
-          <Route exact path="/files" component={() => <Files files={files} contractId={contractId} reportId={reportId} />} />
-        </Switch>
-      </>
-    );
-
-    /*return (
       <>
         <Header apikey={apikey} name={name} />
         {apikey === "" ? (
           <Login loginState={loginState} />
-        ) : reports.length > 0 ? (
+        ) : path === "ReportAddSimply" ? (
+          <ReportAddSimply contractId={contractId} />
+        ) : contractId !== "" && reportId === "" ? (
           <Reports reports={reports} contractId={contractId} />
-        ) : files.length > 0 ? (
+        ) : reportId !== "" ? (
           <Files files={files} contractId={contractId} reportId={reportId} />
         ) : (
           <Contracts contracts={contracts} />
         )}
-      </><Redirect exact path="/" to={apikey === "" ? "login" : "contracts"} />
-    );*/
+      </>
+    );
   };
+
+  /*return (
+      <>
+        <Header apikey={apikey} name={name} />
+        <Switch>
+          <Route path="/" component={() => <Login loginState={loginState} />} />
+          <Route path="/contracts/" component={() => <Contracts contracts={contracts} />} />
+          <Route path="/reports/" component={() => <Reports reports={reports} contractId={contractId} />} />
+          <Route path="/files/" component={() => <Files files={files} contractId={contractId} reportId={reportId} />} />
+        </Switch>
+      </>
+    );*/
 }
 
 const mapStateToProps = (state: IStore, ownProps: IAppProps): IAppProps => {
@@ -65,6 +70,7 @@ const mapStateToProps = (state: IStore, ownProps: IAppProps): IAppProps => {
     apikey: app.apikey,
     name: app.name,
     loginState: app.loginState,
+    path: app.path,
     files: app.files,
     reportId: app.reportId,
     reports: app.reports,

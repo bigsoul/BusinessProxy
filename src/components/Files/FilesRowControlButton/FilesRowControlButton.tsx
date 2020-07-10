@@ -61,7 +61,7 @@ export class FilesRowControlButton extends Component<IFilesRowControlButtonProps
             />
             <label htmlFor={"upload-" + rowData.id}>
               <Button variant="outlined" color="primary" component="span" size="small">
-                Загрузить оригинал
+                {"Загрузить оригинал"}
               </Button>
             </label>
           </div>
@@ -82,7 +82,7 @@ export class FilesRowControlButton extends Component<IFilesRowControlButtonProps
             />
             <label htmlFor={"upload-" + rowData.id}>
               <Button variant="outlined" color="primary" component="span" size="small">
-                Загрузить черновик
+                {"Загрузить черновик"}
               </Button>
             </label>
           </div>

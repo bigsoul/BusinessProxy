@@ -6,6 +6,7 @@ import { RouterState } from "react-router-redux";
 import { TAction } from "./types/TAction";
 // interfaces
 import IApp from "./interfaces/IApp";
+import BrowserHistory from "history";
 
 declare global {
   interface Window {
@@ -18,5 +19,6 @@ declare global {
     > & {
       dispatch: unknown;
     };
+    _history: BrowserHistory;
   }
 }

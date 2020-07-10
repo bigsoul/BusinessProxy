@@ -39,7 +39,7 @@ export class Login extends Component<ILoginProps> {
     const inputPasswordNode = document.getElementById("input-password") as HTMLTextAreaElement;
 
     login(inputLoginNode.value, inputPasswordNode.value);
-    window.history.pushState(null, "", "/#/contracts");
+    //window._history.push("/contracts");
   };
 
   render = () => {
@@ -68,12 +68,14 @@ export class Login extends Component<ILoginProps> {
           <Button variant="contained" color="secondary" onClick={this.handleLoginOnClick}>
             Войти
           </Button>
-          <Link to={{ pathname: "/reports", search: "?sort=name", hash: "#the-hash", state: { fromDashboard: true } }}>123</Link>
+          {/*<Link to={"/reports"}>123</Link>*/}
         </Grid>
       </div>
     );
   };
 }
+
+//<Link to={{ pathname: "/reports", search: "?sort=name", hash: "#the-hash", state: { fromDashboard: true } }}>123</Link>
 
 const mapStateToProps = (state: IStore, ownProps: ILoginProps): ILoginProps => {
   const { app } = state;

@@ -85,7 +85,7 @@ class Reports extends Component<IReportsProps, IReportsState> {
       },
       {
         title: "",
-        field: "",
+        field: "buttom",
         initialEditValue: "",
         render: (rowData: IReport) => {
           return <ReportsRowControl rowData={rowData} />;
@@ -145,8 +145,8 @@ class Reports extends Component<IReportsProps, IReportsState> {
           localization={{
             header: { actions: "" },
             toolbar: {
-              searchTooltip: "Найти договор ...",
-              searchPlaceholder: "Найти договор ...",
+              searchTooltip: "Найти отчет ...",
+              searchPlaceholder: "Найти отчет ...",
             },
             pagination: { labelRowsSelect: "строк" },
             body: { editRow: { deleteText: "Вы уверены ?" } },

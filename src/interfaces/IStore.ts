@@ -4,5 +4,4 @@ import { AnyAction, Reducer } from "redux";
 
 export default interface IStore {
   app: IApp;
-  routing: Reducer<RouterState, AnyAction>;
 }

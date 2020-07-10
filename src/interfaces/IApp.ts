@@ -7,6 +7,7 @@ import IContract from "./IContract";
 export default interface IApp {
   apikey: string;
   name: string;
+  path: string;
   loginState: ILoginState;
   files: IFile[];
   reportId: string;

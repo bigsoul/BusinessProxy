@@ -1,6 +1,7 @@
 export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";
 export const REPORT_ADD = "REPORT_ADD";
+export const REPORT_ADD_SIMPLY = "REPORT_ADD_SIMPLY";
 export const REPORT_UPDATE = "REPORT_UPDATE";
 export const REPORT_DELETE = "REPORT_DELETE";
 export const REPORT_CURRENT_SET = "REPORT_CURRENT_SET";
@@ -26,6 +27,12 @@ export interface ILogoutAction {
 export interface IReportAddAction {
   type: typeof REPORT_ADD;
   newData: any;
+}
+
+export interface IReportAddSimplyAction {
+  type: typeof REPORT_ADD_SIMPLY;
+  path: string;
+  contractId: string;
 }
 
 export interface IReportUpdateAction {
@@ -93,6 +100,7 @@ export type TAction =
   | ILoginAction
   | ILogoutAction
   | IReportAddAction
+  | IReportAddSimplyAction
   | IReportUpdateAction
   | IReportDeleteAction
   | IReportCurrentSetAction

@@ -3,7 +3,7 @@ import React, { Component } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { REPORT_CURRENT_SET } from "../../types/TAction";
+import { REPORT_CURRENT_SET, IReportAddSimplyAction, REPORT_ADD_SIMPLY } from "../../types/TAction";
 // types
 import { TContractFields } from "./../../interfaces/IContract";
 // interfaces
@@ -27,7 +27,14 @@ import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/s
 
 // difination styling plan
 
-type TStyleClasses = "paper" | "tableContainer" | "nameHeadTableCell" | "stateHeadTableCell" | "refreshContracts" | "buttonTableCell";
+type TStyleClasses =
+  | "paper"
+  | "tableContainer"
+  | "nameHeadTableCell"
+  | "stateHeadTableCell"
+  | "refreshContracts"
+  | "buttonTableCell"
+  | "buttonAddReport";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
   paper: { width: "100%", height: "85%" },
@@ -36,6 +43,7 @@ const sourceStyles: Record<TStyleClasses, {}> = {
   stateHeadTableCell: { minWidth: 100 },
   buttonTableCell: { float: "right" },
   refreshContracts: { float: "right" },
+  buttonAddReport: { float: "right", marginRight: "10px" },
 };
 
 let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
@@ -85,7 +93,12 @@ class Contracts extends Component<IContractsProps, IContractsState> {
   handleReportCurrentSetAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
     e.preventDefault();
     window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: id });
-    window.history.pushState(null, "", "/#/reports");
+    //window._history.push("/reports");
+  };
+
+  handleReportAddSimplyAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+    e.preventDefault();
+    window.store.dispatch<IReportAddSimplyAction>({ type: REPORT_ADD_SIMPLY, path: "ReportAddSimply", contractId: id });
   };
 
   render = (): JSX.Element => {
@@ -139,6 +152,15 @@ class Contracts extends Component<IContractsProps, IContractsState> {
                         onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleReportCurrentSetAction(e, row.id)}
                       >
                         {"Просмотреть отчеты"}
+                      </Button>
+                      <Button
+                        className={classes["buttonAddReport"]}
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleReportAddSimplyAction(e, row.id)}
+                      >
+                        {"Добавить отчет"}
                       </Button>
                     </TableCell>
                   </TableRow>

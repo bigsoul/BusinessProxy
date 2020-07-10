@@ -88,7 +88,9 @@ export function logout(): void {
   xhr.send(body);
 }
 
-export function fileUpload(files: FileList, rowData: IFile, contractId: string, isOriginal: boolean): void {
+export function fileUpload(files: FileList, rowData: IFile, contractId: string, isOriginal: boolean, collbeck?: any): void {
+  if (!collbeck) collbeck = (r: any) => {};
+
   const file = files[0];
 
   var reader = new FileReader();
@@ -149,8 +151,10 @@ export function fileUpload(files: FileList, rowData: IFile, contractId: string, 
           contractId: contractId,
           newData: response,
         });
+        collbeck(response);
       } else {
         console.log("Загрузка файла на сервер закончилась неудачей.");
+        collbeck(null);
       }
     };
   };
@@ -161,6 +165,7 @@ export function fileUpload(files: FileList, rowData: IFile, contractId: string, 
     if (e.target?.error?.code) code = e.target.error.code;
 
     console.error("Файл не может быть прочитан! код [" + code + "]");
+    collbeck(null);
   };
 
   reader.readAsArrayBuffer(file);
@@ -214,7 +219,9 @@ export function reportRefresh(contractId: string): void {
   xhr.send(body);
 }
 
-export function setReports(id: string, contractId: string, name: string, state: string): void {
+export function setReports(id: string, contractId: string, name: string, state: string, collbeck?: any): void {
+  if (!collbeck) collbeck = (r: any) => {};
+
   const _state = window.store.getState();
 
   let data = [
@@ -238,13 +245,16 @@ export function setReports(id: string, contractId: string, name: string, state: 
         type: REPORT_ADD,
         newData: response,
       });
+      collbeck(response);
     } else {
       console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+      collbeck(null);
     }
   };
 
   xhr.onerror = function () {
     console.log("Не удалось создать отчет на сервере:" + xhr.status);
+    collbeck(null);
   };
 
   xhr.send(body);
@@ -345,7 +355,9 @@ export function getFiles(contractId: string, reportId: string): void {
   xhr.send(body);
 }
 
-export function setFiles(id: string, contractId: string, reportId: string, name: string, type: number): void {
+export function setFiles(id: string, contractId: string, reportId: string, name: string, type: number, collbeck?: any): void {
+  if (!collbeck) collbeck = (r: any) => {};
+
   const state = window.store.getState();
 
   let data = [
@@ -370,13 +382,16 @@ export function setFiles(id: string, contractId: string, reportId: string, name:
         contractId: contractId,
         newData: response,
       });
+      collbeck(response);
     } else {
       console.log("Не удалось выполнить обновление, ошибка: " + xhr.status);
+      collbeck(null);
     }
   };
 
   xhr.onerror = function () {
     console.log("Не удалось создать файл на сервере:" + xhr.status);
+    collbeck(null);
   };
 
   xhr.send(body);
