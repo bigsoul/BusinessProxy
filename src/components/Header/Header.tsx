@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 
 // difination styling plan
 
@@ -47,7 +48,8 @@ export class Header extends Component<IHeaderProps> {
               <MenuIcon />
             </IconButton>
             <Typography className={classes.title} variant="h6" noWrap>
-              НЕОМЕТРИЯ
+              НЕОМЕТРИЯ <Link to={"/"}>/</Link> <Link to={"/contracts"}>contracts</Link> <Link to={"/reports"}>reports</Link>{" "}
+              <Link to={"/files"}>files</Link> <Link to={"/login"}>login</Link>
             </Typography>
             <div className={classes.grow} />
             {name === "" ? (

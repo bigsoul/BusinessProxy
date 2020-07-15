@@ -30,6 +30,7 @@ window._history = history;
 ReactDOM.render(
   <>
     {/*<React.StrictMode>*/}
+
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <ThemeProvider theme={theme}>
@@ -47,6 +48,7 @@ ReactDOM.render(
         </ThemeProvider>
       </ConnectedRouter>
     </Provider>
+
     {/*</React.StrictMode>*/}
   </>,
   document.getElementById("root")

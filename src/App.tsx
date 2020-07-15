@@ -33,7 +33,7 @@ class App extends Component<IAppProps> {
   render = () => {
     const { apikey, name, reports, loginState, contractId, files, reportId, contracts, path } = this.props;
 
-    return (
+    /*return (
       <>
         <Header apikey={apikey} name={name} />
         {apikey === "" ? (
@@ -49,19 +49,20 @@ class App extends Component<IAppProps> {
         )}
       </>
     );
-  };
+  };*/
 
-  /*return (
+    return (
       <>
         <Header apikey={apikey} name={name} />
         <Switch>
-          <Route path="/" component={() => <Login loginState={loginState} />} />
-          <Route path="/contracts/" component={() => <Contracts contracts={contracts} />} />
-          <Route path="/reports/" component={() => <Reports reports={reports} contractId={contractId} />} />
-          <Route path="/files/" component={() => <Files files={files} contractId={contractId} reportId={reportId} />} />
+          <Route exec path="/contracts" component={() => <Contracts contracts={contracts} />} />
+          <Route exec path="/reports" component={() => <Reports reports={reports} contractId={contractId} />} />
+          <Route exec path="/files" component={() => <Files files={files} contractId={contractId} reportId={reportId} />} />
+          <Route exec path="/login" component={() => <Login loginState={loginState} />} />
         </Switch>
       </>
-    );*/
+    );
+  };
 }
 
 const mapStateToProps = (state: IStore, ownProps: IAppProps): IAppProps => {

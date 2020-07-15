@@ -68,7 +68,6 @@ export class Login extends Component<ILoginProps> {
           <Button variant="contained" color="secondary" onClick={this.handleLoginOnClick}>
             Войти
           </Button>
-          {/*<Link to={"/reports"}>123</Link>*/}
         </Grid>
       </div>
     );
