@@ -214,7 +214,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
   };
 }
 
-const mapStateToProps = (state: IStore, ownProps: IFilesProps): IFilesProps => {
+/*const mapStateToProps = (state: IStore, ownProps: IFilesProps): IFilesProps => {
   const { app } = state;
   return {
     files: app.files,
@@ -222,6 +222,6 @@ const mapStateToProps = (state: IStore, ownProps: IFilesProps): IFilesProps => {
     contractId: app.contractId,
     classes: ownProps.classes,
   };
-};
+};*/
 
-export default withStyles(styles)(connect(mapStateToProps)(Files));
+export default withStyles(styles)(connect()(Files));

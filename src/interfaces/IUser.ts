@@ -1,5 +1,6 @@
 export default interface IUser {
-  loginState: number;
+  isLoading: boolean;
+  errorText: string;
   apikey: string;
   name: string;
 }

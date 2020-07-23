@@ -1,5 +1,5 @@
 // constants
-import { LOGIN, REPORT_ADD_SIMPLY } from "./../../types/TAction";
+import { LOGIN, REPORT_SIMPLY } from "./../../types/TAction";
 import { LOGOUT } from "./../../types/TAction";
 import { REPORT_ADD } from "./../../types/TAction";
 import { REPORT_UPDATE } from "./../../types/TAction";
@@ -10,7 +10,7 @@ import { FILE_CURRENT_SET } from "./../../types/TAction";
 import { FILE_ADD } from "./../../types/TAction";
 import { FILE_UPDATE } from "./../../types/TAction";
 import { FILE_DELETE } from "./../../types/TAction";
-import { UPDATE_CONTRACTS } from "./../../types/TAction";
+import { GET_CONTRACTS } from "./../../types/TAction";
 import { UPDATE_REPORTS } from "./../../types/TAction";
 import { UPDATE_FILES } from "./../../types/TAction";
 // types
@@ -25,42 +25,39 @@ import { contractRefresh, reportRefresh, getFiles } from "./../../classes/Reques
 
 export const appPreloadedState = (): IApp => {
   return {
-    apikey: "",
-    name: "",
-    loginState: { state: 0 },
-    path: "",
+    user: { apikey: "", name: "", isLoading: false, errorText: "" },
     files: [],
-    reportId: "",
     reports: [],
-    contractId: "",
     contracts: [],
   };
 };
 
 export const appReducer = (curState: IApp = appPreloadedState(), action: TAction): IApp => {
   switch (action.type) {
-    case LOGIN: {
+    /*case LOGIN: {
       const newState = {
         ...curState,
-        apikey: action.response.apikey,
-        name: action.response.name,
-        loginState: {
-          ...curState.loginState,
-          state: action.response.loginState.state,
+        user: {
+          apikey: action.response.apikey,
+          name: action.response.name,
+          loginState: action.response.loginState.state,
         },
       };
       setTimeout(contractRefresh, 0);
       return newState;
-    }
-    case LOGOUT: {
+    }*/
+    /*case LOGOUT: {
       const newState = {
         ...curState,
-        apikey: action.response.apikey,
-        name: action.response.name,
+        user: {
+          apikey: action.response.apikey,
+          name: action.response.name,
+          loginState: 0,
+        },
       };
       return newState;
-    }
-    case REPORT_ADD: {
+    }*/
+    /*case REPORT_ADD: {
       const newData = action.newData[0];
 
       const contract = getContractById(curState.contracts, newData.contractId);
@@ -122,15 +119,15 @@ export const appReducer = (curState: IApp = appPreloadedState(), action: TAction
         }
       });
       return reducerReportCurrentSet(newState, contract.id);
-    }
-    case REPORT_CURRENT_SET: {
+    }*/
+    /*case REPORT_CURRENT_SET: {
       const newState = reducerReportCurrentSet(curState, action.contractId);
 
       if (newState.reports.length === 0) setTimeout(reportRefresh, 0, newState.contractId);
 
       return newState;
-    }
-    case REPORT_CURRENT_DEL: {
+    }*/
+    /*case REPORT_CURRENT_DEL: {
       const newState = {
         ...curState,
         contractId: "",
@@ -225,16 +222,16 @@ export const appReducer = (curState: IApp = appPreloadedState(), action: TAction
         }
       });
       return newState;
-    }
-    case UPDATE_CONTRACTS: {
+    }*/
+    /*case UPDATE_CONTRACTS: {
       const newState = {
         ...curState,
         contracts: action.contracts,
       };
 
       return newState;
-    }
-    case UPDATE_REPORTS: {
+    }*/
+    /*case UPDATE_REPORTS: {
       const newState = {
         ...curState,
       };
@@ -263,7 +260,7 @@ export const appReducer = (curState: IApp = appPreloadedState(), action: TAction
         }
       });
       return newState;
-    }
+    }*/
     default:
       return curState;
   }

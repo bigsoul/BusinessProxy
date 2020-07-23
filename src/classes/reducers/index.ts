@@ -4,11 +4,19 @@ import { connectRouter } from "connected-react-router";
 import IApp from "../../interfaces/IApp";
 import { Reducer } from "react";
 import { TAction } from "../../types/TAction";
+import userReducer from "./userReducer";
+import routerReducer from "./routerReducer";
+import contractsReducer from "./contractsReducer";
+import reportsReducer from "./reports";
 
-const createRootReducer = (history: any, appReducer: Reducer<IApp, TAction>) =>
+const createRootReducer = () =>
   combineReducers({
-    app: appReducer,
-    router: connectRouter(history),
+    user: userReducer,
+    contracts: contractsReducer,
+    reports: combineReducers({
+      list: reportsReducer,
+    }),
+    router: routerReducer,
   });
 
 export default createRootReducer;

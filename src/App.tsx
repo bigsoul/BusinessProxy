@@ -4,9 +4,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 // interfaces
 import IStore from "./interfaces/IStore";
-import IFile from "./interfaces/IFile";
-import IReport from "./interfaces/IReport";
-import IContract from "./interfaces/IContract";
+import IUser from "./interfaces/IUser";
 // components
 import Files from "./components/Files/Files";
 import Login from "./components/Login/Login";
@@ -16,49 +14,33 @@ import Contracts from "./components/Contracts/Contracts";
 import ReportAddSimply from "./components/Reports/ReportsAddSimply/ReportAddSimply";
 
 import { Route, HashRouter, Switch, Redirect, Router, BrowserRouter, Link } from "react-router-dom";
+import IContract from "./interfaces/IContract";
+import reportsReducer from "./classes/reducers/reports";
+import IReport from "./interfaces/IReport";
+import { RouterState } from "connected-react-router";
+import { LocationState } from "history";
 
 interface IAppProps {
-  apikey: string;
-  name: string;
-  loginState: { state: number };
-  path: string;
-  files: IFile[];
-  reportId: string;
-  reports: IReport[];
-  contractId: string;
+  user: IUser;
   contracts: IContract[];
+  reports: IReport[];
+  router: RouterState<LocationState>;
 }
 
 class App extends Component<IAppProps> {
   render = () => {
-    const { apikey, name, reports, loginState, contractId, files, reportId, contracts, path } = this.props;
-
-    /*return (
-      <>
-        <Header apikey={apikey} name={name} />
-        {apikey === "" ? (
-          <Login loginState={loginState} />
-        ) : path === "ReportAddSimply" ? (
-          <ReportAddSimply contractId={contractId} />
-        ) : contractId !== "" && reportId === "" ? (
-          <Reports reports={reports} contractId={contractId} />
-        ) : reportId !== "" ? (
-          <Files files={files} contractId={contractId} reportId={reportId} />
-        ) : (
-          <Contracts contracts={contracts} />
-        )}
-      </>
-    );
-  };*/
+    const { user, contracts, reports, router } = this.props;
 
     return (
       <>
-        <Header apikey={apikey} name={name} />
+        <Header user={user} />
         <Switch>
-          <Route exec path="/contracts" component={() => <Contracts contracts={contracts} />} />
-          <Route exec path="/reports" component={() => <Reports reports={reports} contractId={contractId} />} />
-          <Route exec path="/files" component={() => <Files files={files} contractId={contractId} reportId={reportId} />} />
-          <Route exec path="/login" component={() => <Login loginState={loginState} />} />
+          <Route exec path="/contracts" component={() => <Contracts user={user} contracts={contracts} />} />
+          <Route exec path="/reports" component={() => <Reports user={user} reports={reports} router={router} />} />
+          {/*<Route exec path="/reports/wizard/:contractId" component={() => <ReportAddSimply user={user} />} />          
+          <Route exec path="/files/:reportId" component={() => <Files user={user} />} />
+          <Route exec path="/login" component={() => <Login user={user} />} />*/}
+          <Route exec path="/login" component={() => <Login />} />
         </Switch>
       </>
     );
@@ -66,17 +48,12 @@ class App extends Component<IAppProps> {
 }
 
 const mapStateToProps = (state: IStore, ownProps: IAppProps): IAppProps => {
-  const { app } = state;
+  const { user, contracts, reports, router } = state;
   return {
-    apikey: app.apikey,
-    name: app.name,
-    loginState: app.loginState,
-    path: app.path,
-    files: app.files,
-    reportId: app.reportId,
-    reports: app.reports,
-    contractId: app.contractId,
-    contracts: app.contracts,
+    user: user,
+    contracts: contracts.list,
+    reports: reports.list,
+    router: router,
   };
 };
 

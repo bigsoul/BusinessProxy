@@ -5,8 +5,8 @@ import {
   LOGOUT,
   FILE_UPDATE,
   IFileUpdateAction,
-  UPDATE_CONTRACTS,
-  IUpdateContractsAction,
+  GET_CONTRACTS,
+  IGetContractsAction,
   UPDATE_REPORTS,
   IUpdateReportsAction,
   REPORT_ADD,
@@ -29,10 +29,10 @@ var _login = "exchange";
 var _password = "exchange2016";
 var _url = "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/";
 
-function getXhr(method: string) {
+function getXhr(method: string, async: boolean = true) {
   let xhr = new XMLHttpRequest();
 
-  xhr.open("POST", _url + method, true, _login, _password);
+  xhr.open("POST", _url + method, async, _login, _password);
 
   xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
   xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
@@ -45,7 +45,7 @@ function getXhr(method: string) {
 }
 
 export function login(login: string, password: string): void {
-  let data = {
+  /*let data = {
     login,
     password,
   };
@@ -66,13 +66,13 @@ export function login(login: string, password: string): void {
     }
   };
 
-  xhr.send(body);
+  xhr.send(body);*/
 }
 
 export function logout(): void {
-  const state = window.store.getState();
+  /*const { user } = window.store.getState();
 
-  let data = { apikey: state.app.apikey };
+  let data = { apikey: user.apikey };
 
   let body = JSON.stringify(data);
 
@@ -85,7 +85,7 @@ export function logout(): void {
     }
   };
 
-  xhr.send(body);
+  xhr.send(body);*/
 }
 
 export function fileUpload(files: FileList, rowData: IFile, contractId: string, isOriginal: boolean, collbeck?: any): void {
@@ -176,28 +176,39 @@ export function fileDownload(rowData: IFile): void {}
 export function contractRefresh(): void {
   const state = window.store.getState();
 
-  let data = { apikey: state.app.apikey };
-
+  let data = { apikey: state.user.apikey };
   let body = JSON.stringify(data);
 
-  const xhr = getXhr("GetContracts");
+  const xhr = getXhr("GetContracts", false);
+  xhr.send(body);
 
   xhr.onload = function () {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.response);
-      window.store.dispatch<IUpdateContractsAction>({ type: UPDATE_CONTRACTS, contracts: response });
+      window.store.dispatch<IGetContractsAction>({ type: GET_CONTRACTS, apikey: "" }); //contracts: response });
     } else {
       console.log("Не удалось выполнить обновление, ошибка.");
     }
   };
 
-  xhr.send(body);
+  /*const xhr = getXhr("GetContracts");
+
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.response);
+      window.store.dispatch<IGetContractsAction>({ type: GET_CONTRACTS, contracts: response });
+    } else {
+      console.log("Не удалось выполнить обновление, ошибка.");
+    }
+  };
+
+  xhr.send(body);*/
 }
 
 export function reportRefresh(contractId: string): void {
-  const state = window.store.getState();
+  const { user } = window.store.getState();
 
-  let data = { apikey: state.app.apikey, contractId: contractId };
+  let data = { apikey: user.apikey, contractId: contractId };
 
   let body = JSON.stringify(data);
 

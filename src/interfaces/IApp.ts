@@ -1,17 +1,12 @@
 // interfaces
-import ILoginState from "./ILoginState";
+import IUser from "./IUser";
 import IFile from "./IFile";
 import IReport from "./IReport";
 import IContract from "./IContract";
 
 export default interface IApp {
-  apikey: string;
-  name: string;
-  path: string;
-  loginState: ILoginState;
+  user: IUser;
   files: IFile[];
-  reportId: string;
   reports: IReport[];
-  contractId: string;
   contracts: IContract[];
 }

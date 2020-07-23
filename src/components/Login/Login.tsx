@@ -4,9 +4,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 // interfaces
 import IStore from "../../interfaces/IStore";
-import ILoginState from "../../interfaces/ILoginState";
 // classes
-import { login } from "../../classes/Requests";
+import { login, contractRefresh } from "../../classes/Requests";
 // components-material-ui
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -14,6 +13,11 @@ import TextField from "@material-ui/core/TextField";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import IUser from "../../interfaces/IUser";
+import { Dispatch } from "redux";
+import { ILoginAction, LOGIN, ILogoutAction, TAction, LOGOUT } from "../../types/TAction";
+import Alert from "@material-ui/lab/Alert";
+import { Snackbar } from "@material-ui/core";
 
 // difination styling plan
 
@@ -30,58 +34,107 @@ let styles = (theme: Theme) =>
 // own interfaces
 
 interface ILoginProps extends WithStyles<typeof styles> {
-  loginState: ILoginState;
+  user?: IUser;
+  loginAction?: (userLogin: string, userPassword: string) => void;
+  logoutAction?: (apikey: string) => void;
 }
 
 export class Login extends Component<ILoginProps> {
-  handleLoginOnClick = (): void => {
+  handleLoginAction = (): void => {
+    const { loginAction } = this.props;
+
     const inputLoginNode = document.getElementById("input-login") as HTMLTextAreaElement;
     const inputPasswordNode = document.getElementById("input-password") as HTMLTextAreaElement;
 
-    login(inputLoginNode.value, inputPasswordNode.value);
-    //window._history.push("/contracts");
+    if (loginAction) {
+      loginAction(inputLoginNode.value, inputPasswordNode.value);
+    }
+  };
+
+  handleLogoutAction = (): void => {
+    const { logoutAction, user } = this.props;
+
+    if (!user) return;
+
+    if (logoutAction) logoutAction(user.apikey);
   };
 
   render = () => {
-    const { classes, loginState } = this.props;
+    const { classes, user } = this.props;
 
-    return (
-      <div className={classes.root}>
-        <Grid className={classes.grid} container spacing={0} direction="column" alignItems="center" justify="center">
-          {loginState.state === 2 ? (
-            <TextField error className={classes.rootLogin} id="input-login" label="Логин" />
-          ) : (
-            <TextField className={classes.rootLogin} id="input-login" label="Логин" />
-          )}
-          {loginState.state === 2 ? (
-            <TextField
-              error
-              className={classes.rootPassword}
-              id="input-password"
-              label="Пароль"
-              type="password"
-              helperText="Не верный логин или пароль."
-            />
-          ) : (
-            <TextField className={classes.rootPassword} id="input-password" label="Пароль" type="password" />
-          )}
-          <Button variant="contained" color="secondary" onClick={this.handleLoginOnClick}>
-            Войти
-          </Button>
-        </Grid>
-      </div>
-    );
+    if (!user) return;
+    if (user.apikey) {
+      return (
+        <div className={classes.root}>
+          <Grid className={classes.grid} container spacing={0} direction="column" alignItems="center" justify="center">
+            <Button variant="contained" color="secondary" onClick={this.handleLogoutAction}>
+              Выйти
+            </Button>
+            {user.errorText && (
+              <Snackbar open={!!user.errorText} autoHideDuration={6000}>
+                <Alert severity="error">{user.errorText}</Alert>
+              </Snackbar>
+            )}
+          </Grid>
+        </div>
+      );
+    } else {
+      return (
+        <div className={classes.root}>
+          <Grid className={classes.grid} container spacing={0} direction="column" alignItems="center" justify="center">
+            {user.errorText ? (
+              <TextField className={classes.rootLogin} error id="input-login" label="Логин" />
+            ) : (
+              <TextField className={classes.rootLogin} id="input-login" label="Логин" />
+            )}
+            {user.errorText ? (
+              <TextField className={classes.rootPassword} error id="input-password" label="Пароль" type="password" />
+            ) : (
+              <TextField className={classes.rootPassword} id="input-password" label="Пароль" type="password" />
+            )}
+            <Button variant="contained" color="secondary" onClick={this.handleLoginAction}>
+              Войти
+            </Button>
+            {user.errorText && (
+              <Snackbar open={!!user.errorText} autoHideDuration={6000}>
+                <Alert severity="error">{user.errorText}</Alert>
+              </Snackbar>
+            )}
+          </Grid>
+        </div>
+      );
+    }
   };
 }
 
 //<Link to={{ pathname: "/reports", search: "?sort=name", hash: "#the-hash", state: { fromDashboard: true } }}>123</Link>
 
 const mapStateToProps = (state: IStore, ownProps: ILoginProps): ILoginProps => {
-  const { app } = state;
+  const { user } = state;
   return {
-    loginState: app.loginState,
+    user: user,
+    loginAction: ownProps.loginAction,
+    logoutAction: ownProps.logoutAction,
     classes: ownProps.classes,
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(Login));
+const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
+  return {
+    loginAction: (userLogin: string, userPassword: string): void => {
+      dispatch<ILoginAction>({
+        type: LOGIN,
+        userLogin: userLogin,
+        userPassword: userPassword,
+      });
+    },
+    logoutAction: (apikey: string): void => {
+      dispatch<ILogoutAction>({
+        type: LOGOUT,
+        apikey: apikey,
+      });
+    },
+  };
+};
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Login));

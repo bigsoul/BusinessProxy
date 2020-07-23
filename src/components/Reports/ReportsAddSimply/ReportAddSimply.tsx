@@ -285,12 +285,12 @@ const ResponsiveDialog = (props: { contractId: string }) => {
   );
 };
 
-const mapStateToProps = (state: IStore, ownProps: IReportAddSimplyProps): IReportAddSimplyProps => {
+/*const mapStateToProps = (state: IStore, ownProps: IReportAddSimplyProps): IReportAddSimplyProps => {
   const { app } = state;
   return {
     contractId: app.contractId,
     classes: ownProps.classes,
   };
-};
+};*/
 
-export default withStyles(styles)(connect(mapStateToProps)(ReportAddSimply));
+export default withStyles(styles)(connect()(ReportAddSimply));

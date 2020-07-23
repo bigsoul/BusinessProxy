@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 // interfaces
 import IStore from "../../interfaces/IStore";
+import IUser from "../../interfaces/IUser";
 // classes
 import { logout } from "../../classes/Requests";
 // components-material-ui
@@ -16,6 +17,8 @@ import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import { ILogoutAction, LOGOUT } from "../../types/TAction";
+import { Dispatch } from "redux";
 
 // difination styling plan
 
@@ -32,13 +35,19 @@ let styles = (theme: Theme) =>
 // own interfaces
 
 interface IHeaderProps extends WithStyles<typeof styles> {
-  apikey: string;
-  name: string;
+  user: IUser;
+  logoutAction?: (apikey: string) => void;
 }
 
 export class Header extends Component<IHeaderProps> {
+  handleLogoutAction = (): void => {
+    const { logoutAction, user } = this.props;
+
+    if (logoutAction) logoutAction(user.apikey);
+  };
+
   render = () => {
-    const { classes, apikey, name } = this.props;
+    const { classes, user } = this.props;
 
     return (
       <div className={classes.grow}>
@@ -52,17 +61,17 @@ export class Header extends Component<IHeaderProps> {
               <Link to={"/files"}>files</Link> <Link to={"/login"}>login</Link>
             </Typography>
             <div className={classes.grow} />
-            {name === "" ? (
+            {user.name === "" ? (
               ""
             ) : (
               <Typography className={classes.typography} variant="h6" component="h2">
-                {name}
+                {user.name}
               </Typography>
             )}
-            {apikey === "" ? (
+            {user.apikey === "" ? (
               ""
             ) : (
-              <Button variant="contained" color="secondary" onClick={logout}>
+              <Button variant="contained" color="secondary" onClick={this.handleLogoutAction}>
                 Выйти
               </Button>
             )}
@@ -74,12 +83,23 @@ export class Header extends Component<IHeaderProps> {
 }
 
 const mapStateToProps = (state: IStore, ownProps: IHeaderProps): IHeaderProps => {
-  const { app } = state;
+  const { user } = state;
   return {
-    apikey: app.apikey,
-    name: app.name,
+    user: user,
+    logoutAction: ownProps.logoutAction,
     classes: ownProps.classes,
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(Header));
+const mapDispatchToProps = (dispatch: Dispatch<ILogoutAction>) => {
+  return {
+    logoutAction: (apikey: string): void => {
+      dispatch<ILogoutAction>({
+        type: LOGOUT,
+        apikey: apikey,
+      });
+    },
+  };
+};
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Header));

@@ -3,7 +3,7 @@ import React, { Component } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { REPORT_CURRENT_SET, IReportAddSimplyAction, REPORT_ADD_SIMPLY } from "../../types/TAction";
+import { REPORT_CURRENT_SET, IReportAddSimplyAction, REPORT_SIMPLY } from "../../types/TAction";
 // types
 import { TContractFields } from "./../../interfaces/IContract";
 // interfaces
@@ -24,6 +24,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TablePagination from "@material-ui/core/TablePagination";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
+import IUser from "../../interfaces/IUser";
 
 // difination styling plan
 
@@ -62,6 +63,7 @@ const columns: IContractsTableCellProps[] = [
 ];
 
 interface IContractsProps extends WithStyles<typeof styles> {
+  user: IUser;
   contracts: IContract[];
 }
 
@@ -76,12 +78,6 @@ class Contracts extends Component<IContractsProps, IContractsState> {
     rowsPerPage: 10,
   };
 
-  constructor(props: IContractsProps) {
-    super(props);
-
-    console.log("Contracts: constructor");
-  }
-
   handleChangePage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number): void => {
     this.setState({ page: newPage });
   };
@@ -93,19 +89,18 @@ class Contracts extends Component<IContractsProps, IContractsState> {
   handleReportCurrentSetAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
     e.preventDefault();
     window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: id });
-    //window._history.push("/reports");
+    window._history.push(`/reports?contractId=${id}`);
+    //window._history.push(`/reports`);
   };
 
   handleReportAddSimplyAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     e.preventDefault();
-    window.store.dispatch<IReportAddSimplyAction>({ type: REPORT_ADD_SIMPLY, path: "ReportAddSimply", contractId: id });
+    window.store.dispatch<IReportAddSimplyAction>({ type: REPORT_SIMPLY, path: "ReportAddSimply", contractId: id });
   };
 
   render = (): JSX.Element => {
     const { classes, contracts } = this.props;
     const { page, rowsPerPage } = this.state;
-
-    console.log("Contracts: render");
 
     return (
       <Paper className={classes["paper"]}>
@@ -132,7 +127,7 @@ class Contracts extends Component<IContractsProps, IContractsState> {
               </TableRow>
             </TableHead>
             <TableBody>
-              {contracts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: IContract) => {
+              {contracts?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: IContract) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.id} onClick={() => {}}>
                     {columns.map((column: IContractsTableCellProps) => {
@@ -172,7 +167,7 @@ class Contracts extends Component<IContractsProps, IContractsState> {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={contracts.length}
+          count={contracts ? contracts.length : 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={this.handleChangePage}
@@ -181,22 +176,15 @@ class Contracts extends Component<IContractsProps, IContractsState> {
       </Paper>
     );
   };
-
-  componentDidMount = (): void => {
-    console.log("Contracts: componentDidMount");
-  };
-
-  componentWillUnmount = (): void => {
-    console.log("Contracts: componentWillUnmount");
-  };
 }
 
 const mapStateToProps = (state: IStore, ownProps: IContractsProps): IContractsProps => {
-  const { app } = state;
+  const { user, contracts } = state;
   return {
-    contracts: app.contracts,
+    user: user,
+    contracts: contracts.list,
     classes: ownProps.classes,
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(Contracts));
+export default withStyles(styles)(connect()(Contracts));

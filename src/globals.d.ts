@@ -7,15 +7,20 @@ import { TAction } from "./types/TAction";
 // interfaces
 import IApp from "./interfaces/IApp";
 import BrowserHistory from "history";
+import IUser from "./interfaces/IUser";
+import IStore from "./interfaces/IStore";
 
 declare global {
   interface Window {
+    /*store: Store<CombinedState<IStore>, TAction> & {
+      dispatch: unknown;
+    };*/
     store: Store<
       CombinedState<{
-        app: IApp;
-        routing: Reducer<RouterState, AnyAction>;
+        user: IUser;
+        router: RouterState<PoorMansUnknown>;
       }>,
-      TAction
+      TAction | LocationChangeAction<any>
     > & {
       dispatch: unknown;
     };

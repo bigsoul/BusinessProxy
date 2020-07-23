@@ -33,6 +33,9 @@ import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/s
 import ReportsRowControl from "./ReportsRowControl/ReportsRowControl";
 // others
 import moment from "moment";
+import IUser from "../../interfaces/IUser";
+import { RouterState } from "connected-react-router";
+import { LocationState } from "history";
 
 // difination styling plan
 
@@ -55,8 +58,9 @@ interface IReportTable extends IReport {
 }
 
 interface IReportsProps extends WithStyles<typeof styles> {
+  user: IUser;
   reports: IReport[];
-  contractId: string;
+  router: RouterState<LocationState>;
 }
 
 interface IReportsState {
@@ -64,12 +68,6 @@ interface IReportsState {
 }
 
 class Reports extends Component<IReportsProps, IReportsState> {
-  constructor(props: IReportsProps) {
-    super(props);
-
-    console.log("Reports: constructor");
-  }
-
   state: IReportsState = {
     columns: [
       {
@@ -119,9 +117,13 @@ class Reports extends Component<IReportsProps, IReportsState> {
   };
 
   render = (): JSX.Element => {
-    const { contractId, reports, classes } = this.props;
+    const { router, reports, classes } = this.props;
     const { columns } = this.state;
     const { tableIcons } = this;
+
+    //console.log((router.location as any).query);
+
+    const contractId = (router.location as any).query["contractId"];
 
     return (
       <>
@@ -205,10 +207,11 @@ class Reports extends Component<IReportsProps, IReportsState> {
 }
 
 const mapStateToProps = (state: IStore, ownProps: IReportsProps): IReportsProps => {
-  const { app } = state;
+  const { user, reports, router } = state;
   return {
-    contractId: app.contractId,
-    reports: app.reports,
+    user: user,
+    reports: reports.list,
+    router: router,
     classes: ownProps.classes,
   };
 };
