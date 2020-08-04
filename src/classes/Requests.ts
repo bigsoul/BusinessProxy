@@ -1,14 +1,9 @@
 import {
-  ILoginAction,
-  ILogoutAction,
-  LOGIN,
-  LOGOUT,
   FILE_UPDATE,
   IFileUpdateAction,
   GET_CONTRACTS,
   IGetContractsAction,
-  UPDATE_REPORTS,
-  IUpdateReportsAction,
+  //UPDATE_REPORTS,
   REPORT_ADD,
   IReportAddAction,
   REPORT_DELETE,
@@ -184,7 +179,7 @@ export function contractRefresh(): void {
 
   xhr.onload = function () {
     if (xhr.status === 200) {
-      const response = JSON.parse(xhr.response);
+      //const response = JSON.parse(xhr.response);
       window.store.dispatch<IGetContractsAction>({ type: GET_CONTRACTS, apikey: "" }); //contracts: response });
     } else {
       console.log("Не удалось выполнить обновление, ошибка.");
@@ -205,7 +200,7 @@ export function contractRefresh(): void {
   xhr.send(body);*/
 }
 
-export function reportRefresh(contractId: string): void {
+/*export function reportRefresh(contractId: string): void {
   const { user } = window.store.getState();
 
   let data = { apikey: user.apikey, contractId: contractId };
@@ -228,7 +223,7 @@ export function reportRefresh(contractId: string): void {
   };
 
   xhr.send(body);
-}
+}*/
 
 export function setReports(id: string, contractId: string, name: string, state: string, collbeck?: any): void {
   if (!collbeck) collbeck = (r: any) => {};

@@ -3,15 +3,12 @@ import React, { Component } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { REPORT_CURRENT_SET, IReportAddSimplyAction, REPORT_SIMPLY } from "../../types/TAction";
+import { IReportAddSimplyAction, REPORT_SIMPLY, TAction, IGetContractsAction, GET_CONTRACTS } from "../../types/TAction";
 // types
 import { TContractFields } from "./../../interfaces/IContract";
 // interfaces
-import { IReportCurrentSetAction } from "../../types/TAction";
 import IStore from "../../interfaces/IStore";
 import IContract from "../../interfaces/IContract";
-// classes
-import { contractRefresh } from "../../classes/Requests";
 // components-material-ui
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -25,6 +22,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import IUser from "../../interfaces/IUser";
+import { Dispatch } from "redux";
 
 // difination styling plan
 
@@ -65,6 +63,7 @@ const columns: IContractsTableCellProps[] = [
 interface IContractsProps extends WithStyles<typeof styles> {
   user: IUser;
   contracts: IContract[];
+  getContractsAction?: (apikey: string) => void;
 }
 
 interface IContractsState {
@@ -86,15 +85,16 @@ class Contracts extends Component<IContractsProps, IContractsState> {
     this.setState({ page: 0, rowsPerPage: +e.target.value });
   };
 
-  handleReportCurrentSetAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
-    e.preventDefault();
-    window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: id });
-    window._history.push(`/reports?contractId=${id}`);
-    //window._history.push(`/reports`);
+  hendleGetContractsAction = (): void => {
+    const { getContractsAction, user } = this.props;
+    getContractsAction && getContractsAction(user.apikey);
   };
 
-  handleReportAddSimplyAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
-    e.preventDefault();
+  handleGetReportsAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
+    window._history.push(`/reports?contractId=${id}`);
+  };
+
+  handleReportAddSimplyAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
     window.store.dispatch<IReportAddSimplyAction>({ type: REPORT_SIMPLY, path: "ReportAddSimply", contractId: id });
   };
 
@@ -119,7 +119,7 @@ class Contracts extends Component<IContractsProps, IContractsState> {
                     variant="outlined"
                     size="small"
                     color="primary"
-                    onClick={() => contractRefresh()}
+                    onClick={() => this.hendleGetContractsAction()}
                   >
                     {"Обновить"}
                   </Button>
@@ -144,7 +144,7 @@ class Contracts extends Component<IContractsProps, IContractsState> {
                         variant="outlined"
                         size="small"
                         color="primary"
-                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleReportCurrentSetAction(e, row.id)}
+                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleGetReportsAction(e, row.id)}
                       >
                         {"Просмотреть отчеты"}
                       </Button>
@@ -183,8 +183,20 @@ const mapStateToProps = (state: IStore, ownProps: IContractsProps): IContractsPr
   return {
     user: user,
     contracts: contracts.list,
+    getContractsAction: ownProps.getContractsAction,
     classes: ownProps.classes,
   };
 };
 
-export default withStyles(styles)(connect()(Contracts));
+const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
+  return {
+    getContractsAction: (apikey: string): void => {
+      dispatch<IGetContractsAction>({
+        type: GET_CONTRACTS,
+        apikey: apikey,
+      });
+    },
+  };
+};
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Contracts));

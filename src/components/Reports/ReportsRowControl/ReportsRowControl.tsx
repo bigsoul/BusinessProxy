@@ -1,7 +1,7 @@
 // react
 import React, { Component } from "react";
 // constants
-import { FILE_CURRENT_SET, IFileCurrentSetAction } from "./../../../types/TAction";
+import { FILE_CURRENT_SET, IFileCurrentSetAction, IConfirmAction, CONFIRM } from "./../../../types/TAction";
 // interfaces
 import IReport from "../../../interfaces/IReport";
 // classes
@@ -10,14 +10,15 @@ import { conform } from "../../../classes/Requests";
 import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
+import IUser from "../../../interfaces/IUser";
 
 // difination styling plan
 
-type TStyleClasses = "b1" | "b2";
+type TStyleClasses = "viewFiles" | "confirm";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
-  b1: { float: "right" },
-  b2: { float: "right", marginRight: "10px" },
+  viewFiles: { float: "right" },
+  confirm: { float: "right", marginRight: "10px" },
 };
 
 let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
@@ -25,73 +26,41 @@ let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
 // own interfaces
 
 export interface IReportsRowControlProps extends WithStyles<typeof styles> {
-  rowData: IReport;
+  user: IUser;
+  reportId: string;
+  state: string;
 }
 
 export class ReportsRowControl extends Component<IReportsRowControlProps> {
-  handleReportOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, rowData: IReport) => {
-    e.stopPropagation();
-
-    window.store.dispatch<IFileCurrentSetAction>({
-      type: FILE_CURRENT_SET,
-      contractId: rowData.contractId,
-      reportId: rowData.id,
+  handleConfirm = () => {
+    const { reportId, user } = this.props;
+    window.store.dispatch<IConfirmAction>({
+      type: CONFIRM,
+      apikey: user.apikey,
+      reportId: reportId,
     });
   };
 
-  render = (): JSX.Element => {
-    const { rowData, classes } = this.props;
+  handleGetFilesAction = () => {
+    const { reportId } = this.props;
+    window._history.push(`/files?reportId=${reportId}`);
+  };
 
-    if (rowData && rowData.state === "Новый") {
-      return (
-        <div>
-          <Button className={classes.b1} variant="outlined" size="small" color="primary" onClick={(): void => conform(rowData.id, true)}>
-            {"Согласовать оригинал"}
-          </Button>
-          <Button className={classes.b2} variant="outlined" size="small" color="primary" onClick={(): void => conform(rowData.id, false)}>
-            {"Согласовать черновик"}
-          </Button>
-          <Button
-            className={classes.b2}
-            variant="outlined"
-            size="small"
-            color="primary"
-            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleReportOnClick(e, rowData)}
-          >
-            {"Изменить файлы"}
-          </Button>
-        </div>
-      );
-    } else if (rowData && rowData.state === "К регистрации") {
-      return (
-        <div>
-          <Button className={classes.b1} variant="outlined" size="small" color="primary" onClick={(): void => conform(rowData.id, true)}>
-            {"Согласовать оригинал"}
-          </Button>
-          <Button
-            className={classes.b2}
-            variant="outlined"
-            size="small"
-            color="primary"
-            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleReportOnClick(e, rowData)}
-          >
-            {"Изменить файлы"}
-          </Button>
-        </div>
-      );
-    } else if (rowData) {
-      return (
-        <Button
-          className={classes.b1}
-          variant="outlined"
-          size="small"
-          color="primary"
-          onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleReportOnClick(e, rowData)}
-        >
-          {"Просмотреть файлы"}
+  render = (): JSX.Element | null => {
+    const { state, classes } = this.props;
+
+    return (
+      <div>
+        <Button className={classes.viewFiles} variant="outlined" size="small" color="primary" onClick={this.handleGetFilesAction}>
+          {state === "Новый" ? "Просмотреть файлы" : "Изменить файлы"}
         </Button>
-      );
-    } else return <></>;
+        {state === "Новый" && (
+          <Button className={classes.confirm} variant="outlined" size="small" color="primary" onClick={this.handleConfirm}>
+            {"Согласовать"}
+          </Button>
+        )}
+      </div>
+    );
   };
 }
 

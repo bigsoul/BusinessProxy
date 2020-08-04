@@ -8,7 +8,7 @@ import { fileUpload, fileDownload } from "../../../classes/Requests";
 import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
-
+import { IFileUploadAction, FILE_UPLOAD } from "../../../types/TAction";
 // difination styling plan
 
 type TStyleClasses = "root" | "input" | "formControl" | "selectEmpty" | "ButtonLoadedDraft" | "ButtonLoadedOriginal";
@@ -26,63 +26,50 @@ let styles = (theme: Theme) =>
 // own interfaces
 
 interface IFilesRowControlButtonProps extends WithStyles<typeof styles> {
-  rowData: IFile;
-  contractId: string;
+  apikey: string;
+  id: string;
+  name: string;
+  loadedOriginal: boolean;
 }
 
 export class FilesRowControlButton extends Component<IFilesRowControlButtonProps> {
-  handleFileUploadOnChange = (rowData: IFile, contractId: string, isOriginal: boolean): void => {
-    const inputNode = document.getElementById("upload-" + rowData.id) as HTMLInputElement;
+  handleFileUploadAction = (): void => {
+    const { apikey, id, name } = this.props;
+
+    const inputNode = document.getElementById("upload-" + id) as HTMLInputElement;
 
     if (inputNode.files && inputNode.files.length > 0) {
-      fileUpload(inputNode.files, rowData, contractId, isOriginal);
-      inputNode.value = "";
+      const file = inputNode.files[0];
+
+      window.store.dispatch<IFileUploadAction>({
+        type: FILE_UPLOAD,
+        apikey: apikey,
+        id: id,
+        name: name,
+        file: file,
+      });
     }
+
+    inputNode.value = "";
   };
 
+  handleFileDownloadAction = (): void => {};
+
   render = (): JSX.Element => {
-    const { classes, rowData, contractId } = this.props;
+    const { classes, id, loadedOriginal } = this.props;
 
     return (
       <div>
-        {rowData.loadedOriginal ? (
-          <Button className={classes.ButtonLoadedOriginal} variant="outlined" size="small" onClick={(e) => fileDownload(rowData)}>
-            {"Скачать оригинал"}
+        {loadedOriginal ? (
+          <Button className={classes.ButtonLoadedOriginal} variant="outlined" size="small" onClick={this.handleFileDownloadAction}>
+            {"Скачать"}
           </Button>
         ) : (
           <div className={classes.root}>
-            <input
-              accept="*"
-              className={classes.input}
-              id={"upload-" + rowData.id}
-              multiple
-              type="file"
-              onChange={() => this.handleFileUploadOnChange(rowData, contractId, true)}
-            />
-            <label htmlFor={"upload-" + rowData.id}>
+            <input accept="*" className={classes.input} id={"upload-" + id} multiple type="file" onChange={this.handleFileUploadAction} />
+            <label htmlFor={"upload-" + id}>
               <Button variant="outlined" color="primary" component="span" size="small">
-                {"Загрузить оригинал"}
-              </Button>
-            </label>
-          </div>
-        )}
-        {rowData.loadedDraft ? (
-          <Button className={classes.ButtonLoadedDraft} variant="outlined" size="small" onClick={(e) => fileDownload(rowData)}>
-            {"Скачать черновик"}
-          </Button>
-        ) : (
-          <div className={classes.root}>
-            <input
-              accept="*"
-              className={classes.input}
-              id={"upload-" + rowData.id}
-              multiple
-              type="file"
-              onChange={() => this.handleFileUploadOnChange(rowData, contractId, false)}
-            />
-            <label htmlFor={"upload-" + rowData.id}>
-              <Button variant="outlined" color="primary" component="span" size="small">
-                {"Загрузить черновик"}
+                {"Загрузить"}
               </Button>
             </label>
           </div>

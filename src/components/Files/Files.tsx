@@ -3,9 +3,22 @@ import React, { Component, forwardRef } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { REPORT_CURRENT_DEL, REPORT_CURRENT_SET, IReportCurrentDelAction, IReportCurrentSetAction } from "./../../types/TAction";
+import {
+  REPORT_CURRENT_DEL,
+  REPORT_CURRENT_SET,
+  IReportCurrentDelAction,
+  IGetFilesAction,
+  GET_FILES,
+  TAction,
+  ISetFilesAction,
+  IUpdFilesAction,
+  IDelFilesAction,
+  SET_FILES,
+  UPD_FILES,
+  DEL_FILES,
+} from "./../../types/TAction";
 // interfaces
-import IStore from "../../interfaces/IStore";
+import IStore, { IFilesReducer } from "../../interfaces/IStore";
 import IFile from "../../interfaces/IFile";
 // classes
 import { getFiles, setFiles, updFiles, delFiles } from "../../classes/Requests";
@@ -32,15 +45,18 @@ import FilesRowControlSelect from "./FilesRowControlSelect/FilesRowControlSelect
 import FilesRowControlButton from "./FilesRowControlButton/FilesRowControlButton";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
+import IUser from "../../interfaces/IUser";
+import { RouterState } from "connected-react-router";
+import { LocationState } from "history";
+import { Dispatch } from "redux";
+import _ from "lodash";
 
 // difination styling plan
 
-type TStyleClasses = "beackOnClickContract" | "beackOnClickReport" | "getFiles";
+type TStyleClasses = "getFiles";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
-  beackOnClickContract: { marginTop: "10px", marginLeft: "10px" },
-  beackOnClickReport: { marginTop: "10px", marginLeft: "10px" },
-  getFiles: { marginTop: "10px", marginRight: "10px", float: "right" },
+  getFiles: { marginTop: "10px", marginRight: "10px" },
 };
 
 let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
@@ -52,9 +68,13 @@ interface IFilesTable extends IFile {
 }
 
 interface IFilesProps extends WithStyles<typeof styles> {
-  contractId: string;
-  reportId: string;
+  user: IUser;
   files: IFile[];
+  router: RouterState<LocationState>;
+  getFilesAction?: (apikey: string, reportId: string) => void;
+  setFilesAction?: (apikey: string, files: IFile[]) => void;
+  updFilesAction?: (apikey: string, files: IFile[]) => void;
+  delFilesAction?: (apikey: string, files: IFile[]) => void;
 }
 
 interface IFilesState {
@@ -62,12 +82,6 @@ interface IFilesState {
 }
 
 export class Files extends Component<IFilesProps, IFilesState> {
-  constructor(props: IFilesProps) {
-    super(props);
-
-    console.log("Files: constructor");
-  }
-
   state: IFilesState = {
     columns: [
       { title: "Name", field: "name", initialEditValue: "" },
@@ -76,7 +90,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
         field: "type",
         initialEditValue: "",
         render: (rowData: IFile) => {
-          return <FilesRowControlSelect rowData={rowData} contractId={this.props.contractId} />;
+          return <>Тут тип !</>; //<FilesRowControlSelect rowData={rowData} contractId={this.props.contractId} />;
         },
       },
       {
@@ -84,7 +98,14 @@ export class Files extends Component<IFilesProps, IFilesState> {
         field: "buttom",
         initialEditValue: "",
         render: (rowData: IFile) => {
-          return <FilesRowControlButton rowData={rowData} contractId={this.props.contractId} />;
+          return (
+            <FilesRowControlButton
+              apikey={this.props.user.apikey}
+              id={rowData.id}
+              name={rowData.name}
+              loadedOriginal={rowData.loadedOriginal}
+            />
+          );
         },
       },
     ],
@@ -110,48 +131,49 @@ export class Files extends Component<IFilesProps, IFilesState> {
     ViewColumn: forwardRef<SVGSVGElement, {}>((props, ref) => <ViewColumn {...props} ref={ref} />),
   };
 
-  handleBeackOnClickContract = (): void => {
-    window.store.dispatch<IReportCurrentDelAction>({ type: REPORT_CURRENT_DEL });
+  componentDidMount = () => {
+    this.handleGetReportsAction();
   };
 
-  handleBeackOnClickReport = (id: string, e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
-    e.preventDefault();
-    window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: id });
+  handleGetReportsAction = () => {
+    const { getFilesAction, user, router } = this.props;
+    const reportId = (router.location as any).query["reportId"];
+    getFilesAction && getFilesAction(user.apikey, reportId);
+  };
+
+  handleSetFilesAction = (files: IFile[]): void => {
+    const { setFilesAction, user, router } = this.props;
+    files.forEach((element) => {
+      element.reportId = (router.location as any).query["reportId"];
+    });
+    setFilesAction && setFilesAction(user.apikey, files);
+  };
+
+  handleUpdFilesAction = (files: IFile[]): void => {
+    const { updFilesAction, user } = this.props;
+    updFilesAction && updFilesAction(user.apikey, files);
+  };
+
+  handleDelFilesAction = (files: IFile[]): void => {
+    const { delFilesAction, user } = this.props;
+    delFilesAction && delFilesAction(user.apikey, files);
   };
 
   render = (): JSX.Element => {
-    const { classes, contractId, reportId, files } = this.props;
+    const { classes, files } = this.props;
     const { columns } = this.state;
     const { tableIcons } = this;
 
     return (
       <>
-        <Button
-          className={classes.beackOnClickContract}
-          variant="outlined"
-          color="secondary"
-          size="small"
-          onClick={this.handleBeackOnClickContract}
-        >
-          {"Назад к списку договоров"}
-        </Button>
-        <Button
-          className={classes.beackOnClickReport}
-          variant="outlined"
-          color="secondary"
-          size="small"
-          onClick={(e) => this.handleBeackOnClickReport(contractId, e)}
-        >
-          {"Назад к списку отчетов"}
-        </Button>
-        <Button className={classes.getFiles} variant="outlined" color="primary" size="small" onClick={() => getFiles(contractId, reportId)}>
+        <Button className={classes.getFiles} variant="outlined" color="primary" size="small" onClick={this.handleGetReportsAction}>
           {"Обновить"}
         </Button>
         <MaterialTable
           icons={tableIcons}
           title="Список файлов по отчету: "
           columns={columns}
-          data={files}
+          data={_.cloneDeep(files)}
           onRowClick={() => {}}
           localization={{
             header: { actions: "" },
@@ -165,47 +187,57 @@ export class Files extends Component<IFilesProps, IFilesState> {
           editable={{
             onRowAdd: (newData: IFile) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  resolve();
+                const files: IFile[] = [
+                  {
+                    id: newData.id || "",
+                    loadedDraft: newData.loadedDraft || false,
+                    loadedOriginal: newData.loadedOriginal || false,
+                    name: newData.name || "",
+                    reportId: newData.reportId || "",
+                    type: newData.type || 0,
+                  },
+                ];
 
-                  setFiles(newData.id, contractId, reportId, newData.name, newData.type);
-                }, 0);
+                this.handleSetFilesAction(files);
+                resolve();
               }),
             onRowUpdate: (newData: IFile, oldData: IFilesTable | undefined) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataUpdate = [...files];
+                const files: IFile[] = [
+                  {
+                    id: newData.id,
+                    loadedDraft: newData.loadedDraft,
+                    loadedOriginal: newData.loadedOriginal,
+                    name: newData.name,
+                    reportId: newData.reportId,
+                    type: newData.type,
+                  },
+                ];
 
-                  if (!oldData || !oldData.tableData) {
-                    resolve();
-                    return;
-                  }
-
-                  const index = oldData.tableData.id;
-                  dataUpdate[index] = newData;
-
-                  resolve();
-
-                  updFiles(newData.id, contractId, reportId, newData.name, newData.type);
-                }, 0);
+                this.handleUpdFilesAction(files);
+                resolve();
               }),
             onRowDelete: (oldData: IFilesTable) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataDelete = [...files];
-
-                  if (!oldData || !oldData.tableData) {
-                    resolve();
-                    return;
-                  }
-
-                  const index = oldData.tableData.id;
-                  const elem = dataDelete.splice(index, 1);
-
+                if (!oldData || !oldData.tableData) {
                   resolve();
+                  return;
+                }
 
-                  delFiles(elem[0].id, contractId, reportId);
-                }, 0);
+                const reports: IFile[] = [
+                  {
+                    id: oldData.id,
+                    loadedDraft: oldData.loadedDraft,
+                    loadedOriginal: oldData.loadedOriginal,
+                    name: oldData.name,
+                    reportId: oldData.reportId,
+                    type: oldData.type,
+                  },
+                ];
+
+                this.handleDelFilesAction(reports);
+
+                resolve();
               }),
           }}
         />
@@ -214,14 +246,51 @@ export class Files extends Component<IFilesProps, IFilesState> {
   };
 }
 
-/*const mapStateToProps = (state: IStore, ownProps: IFilesProps): IFilesProps => {
-  const { app } = state;
+const mapStateToProps = (state: IStore, ownProps: IFilesProps): IFilesProps => {
+  const { user, files, router } = state;
   return {
-    files: app.files,
-    reportId: app.reportId,
-    contractId: app.contractId,
+    user: user,
+    files: files.list,
+    router: router,
     classes: ownProps.classes,
+    getFilesAction: ownProps.getFilesAction,
+    setFilesAction: ownProps.setFilesAction,
+    updFilesAction: ownProps.updFilesAction,
+    delFilesAction: ownProps.delFilesAction,
   };
-};*/
+};
 
-export default withStyles(styles)(connect()(Files));
+const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
+  return {
+    getFilesAction: (apikey: string, reportId: string): void => {
+      dispatch<IGetFilesAction>({
+        type: GET_FILES,
+        apikey: apikey,
+        reportId: reportId,
+      });
+    },
+    setFilesAction: (apikey: string, files: IFile[]): void => {
+      dispatch<ISetFilesAction>({
+        type: SET_FILES,
+        apikey: apikey,
+        list: files,
+      });
+    },
+    updFilesAction: (apikey: string, files: IFile[]): void => {
+      dispatch<IUpdFilesAction>({
+        type: UPD_FILES,
+        apikey: apikey,
+        list: files,
+      });
+    },
+    delFilesAction: (apikey: string, files: IFile[]): void => {
+      dispatch<IDelFilesAction>({
+        type: DEL_FILES,
+        apikey: apikey,
+        list: files,
+      });
+    },
+  };
+};
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Files));

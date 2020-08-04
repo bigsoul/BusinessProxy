@@ -4,15 +4,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 // interfaces
 import IStore from "../../interfaces/IStore";
-// classes
-import { login, contractRefresh } from "../../classes/Requests";
 // components-material-ui
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 import IUser from "../../interfaces/IUser";
 import { Dispatch } from "redux";
 import { ILoginAction, LOGIN, ILogoutAction, TAction, LOGOUT } from "../../types/TAction";

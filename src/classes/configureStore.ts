@@ -1,10 +1,6 @@
-import { createBrowserHistory } from "history";
-import { applyMiddleware, compose, createStore } from "redux";
+import { applyMiddleware, createStore } from "redux";
 import { routerMiddleware } from "connected-react-router";
 import createRootReducer from "./reducers";
-import IApp from "../interfaces/IApp";
-import { Reducer } from "react";
-import { TAction } from "../types/TAction";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import createSagaMiddleware from "redux-saga";
@@ -19,7 +15,7 @@ const configureStore = () => {
   const store = createStore(
     createRootReducer(),
     {},
-    composeWithDevTools(applyMiddleware(thunk, logger, sagaMiddleware, routerMiddleware(history)))
+    composeWithDevTools(applyMiddleware(thunk, sagaMiddleware, routerMiddleware(history)))
   );
 
   sagaMiddleware.run(watchLogin);

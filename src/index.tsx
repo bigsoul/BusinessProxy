@@ -17,17 +17,15 @@ import "typeface-roboto";
 
 import { ConnectedRouter } from "connected-react-router";
 
-import { appReducer, appPreloadedState } from "./classes/reducers/appReducer";
 import { history } from "./classes/reducers/routerReducer";
 import configureStore from "./classes/configureStore";
-import IStore from "./interfaces/IStore";
 
 const store = configureStore();
 
 window.store = store;
 window._history = history;
 
-const { contracts, reports, router } = store.getState();
+const { contracts, reports, files, router } = store.getState();
 
 ReactDOM.render(
   <>
@@ -40,6 +38,7 @@ ReactDOM.render(
             user={{ apikey: "", name: "", isLoading: false, errorText: "" }}
             contracts={contracts.list}
             reports={reports.list}
+            files={files.list}
             router={router}
           />
         </ThemeProvider>
@@ -50,25 +49,3 @@ ReactDOM.render(
   </>,
   document.getElementById("root")
 );
-
-/*ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <ThemeProvider theme={theme}>
-          <App
-            apikey={""}
-            name={""}
-            loginState={{ state: 0 }}
-            files={[]}
-            reportId={""}
-            reports={[]}
-            contractId={""}
-            contracts={store.getState().app.contracts}
-          />
-        </ThemeProvider>
-      </ConnectedRouter>
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById("root")
-);*/

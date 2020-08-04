@@ -3,12 +3,24 @@ import React, { Component, forwardRef } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { REPORT_CURRENT_DEL, IReportCurrentDelAction } from "./../../types/TAction";
+import {
+  REPORT_CURRENT_DEL,
+  IReportCurrentDelAction,
+  IGetReportsAction,
+  GET_REPORTS,
+  TAction,
+  ISetReportsAction,
+  SET_REPORTS,
+  IUpdReportsAction,
+  UPD_REPORTS,
+  DEL_REPORTS,
+  IDelReportsAction,
+} from "./../../types/TAction";
 // interfaces
 import IStore from "../../interfaces/IStore";
 import IReport from "../../interfaces/IReport";
 // classes
-import { reportRefresh, setReports, delReports, updReports } from "../../classes/Requests";
+import { setReports, delReports, updReports } from "../../classes/Requests";
 // components-material-ui
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
@@ -32,18 +44,19 @@ import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/s
 // components
 import ReportsRowControl from "./ReportsRowControl/ReportsRowControl";
 // others
+import _ from "lodash";
 import moment from "moment";
 import IUser from "../../interfaces/IUser";
 import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
+import { Dispatch } from "redux";
 
 // difination styling plan
 
-type TStyleClasses = "backInConracts" | "refreshReports" | "nameHeadTableCell" | "stateHeadTableCell" | "buttonTableCell";
+type TStyleClasses = "refreshReports" | "nameHeadTableCell" | "stateHeadTableCell" | "buttonTableCell";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
-  backInConracts: { marginTop: "10px", marginLeft: "10px" },
-  refreshReports: { marginTop: "10px", marginRight: "10px", float: "right" },
+  refreshReports: { marginTop: "10px", marginRight: "10px" },
   nameHeadTableCell: { minWidth: 170 },
   stateHeadTableCell: { minWidth: 100 },
   buttonTableCell: { float: "right" },
@@ -61,6 +74,10 @@ interface IReportsProps extends WithStyles<typeof styles> {
   user: IUser;
   reports: IReport[];
   router: RouterState<LocationState>;
+  getReportsAction?: (apikey: string, contractId: string) => void;
+  setReportsAction?: (apikey: string, reports: IReport[]) => void;
+  updReportsAction?: (apikey: string, reports: IReport[]) => void;
+  delReportsAction?: (apikey: string, reports: IReport[]) => void;
 }
 
 interface IReportsState {
@@ -86,7 +103,8 @@ class Reports extends Component<IReportsProps, IReportsState> {
         field: "buttom",
         initialEditValue: "",
         render: (rowData: IReport) => {
-          return <ReportsRowControl rowData={rowData} />;
+          const { user } = this.props;
+          return <ReportsRowControl user={user} reportId={rowData.id} state={rowData.state} />;
         },
       },
     ],
@@ -112,8 +130,29 @@ class Reports extends Component<IReportsProps, IReportsState> {
     ViewColumn: forwardRef<SVGSVGElement, {}>((props, ref) => <ViewColumn {...props} ref={ref} />),
   };
 
-  handleBeackOnClick = (): void => {
-    window.store.dispatch<IReportCurrentDelAction>({ type: REPORT_CURRENT_DEL });
+  componentDidMount = () => {
+    this.handleGetReportsAction();
+  };
+
+  handleGetReportsAction = (): void => {
+    const { getReportsAction, user, router } = this.props;
+    const contractId = (router.location as any).query["contractId"];
+    getReportsAction && getReportsAction(user.apikey, contractId);
+  };
+
+  handleSetReportsAction = (reports: IReport[]): void => {
+    const { setReportsAction, user } = this.props;
+    setReportsAction && setReportsAction(user.apikey, reports);
+  };
+
+  handleUpdReportsAction = (reports: IReport[]): void => {
+    const { updReportsAction, user } = this.props;
+    updReportsAction && updReportsAction(user.apikey, reports);
+  };
+
+  handleDelReportsAction = (reports: IReport[]): void => {
+    const { delReportsAction, user } = this.props;
+    delReportsAction && delReportsAction(user.apikey, reports);
   };
 
   render = (): JSX.Element => {
@@ -121,29 +160,18 @@ class Reports extends Component<IReportsProps, IReportsState> {
     const { columns } = this.state;
     const { tableIcons } = this;
 
-    //console.log((router.location as any).query);
-
     const contractId = (router.location as any).query["contractId"];
 
     return (
       <>
-        <Button className={classes.backInConracts} variant="outlined" color="secondary" size="small" onClick={this.handleBeackOnClick}>
-          {"Назад к списку договоров"}
-        </Button>
-        <Button
-          className={classes.refreshReports}
-          variant="outlined"
-          color="primary"
-          size="small"
-          onClick={(): void => reportRefresh(contractId)}
-        >
+        <Button className={classes.refreshReports} variant="outlined" color="primary" size="small" onClick={this.handleGetReportsAction}>
           {"Обновить"}
         </Button>
         <MaterialTable
           icons={tableIcons}
           title="Список отчетов по договору: "
           columns={columns}
-          data={reports}
+          data={_.cloneDeep(reports)}
           localization={{
             header: { actions: "" },
             toolbar: {
@@ -157,47 +185,52 @@ class Reports extends Component<IReportsProps, IReportsState> {
           editable={{
             onRowAdd: (newData: IReport) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  resolve();
-
-                  setReports(newData.id, contractId, newData.name, newData.state);
-                }, 0);
+                const reports: IReport[] = [
+                  {
+                    id: newData.id || "",
+                    name: newData.name,
+                    state: newData.state,
+                    files: [],
+                    contractId: contractId,
+                  },
+                ];
+                this.handleSetReportsAction(reports);
+                resolve();
               }),
             onRowUpdate: (newData: IReport, oldData: IReportTable | undefined) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataUpdate = [...reports];
-
-                  if (!oldData || !oldData.tableData) {
-                    resolve();
-                    return;
-                  }
-
-                  const index = oldData.tableData.id;
-                  dataUpdate[index] = newData;
-
-                  resolve();
-
-                  updReports(newData.id, contractId, newData);
-                }, 0);
+                const reports: IReport[] = [
+                  {
+                    id: newData.id,
+                    name: newData.name,
+                    state: newData.state,
+                    files: [],
+                    contractId: contractId,
+                  },
+                ];
+                this.handleUpdReportsAction(reports);
+                resolve();
               }),
             onRowDelete: (oldData: IReportTable | undefined) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataDelete = [...reports];
-
-                  if (!oldData || !oldData.tableData) {
-                    resolve();
-                    return;
-                  }
-
-                  const index = oldData.tableData.id;
-                  const elem = dataDelete.splice(index, 1);
-
+                if (!oldData || !oldData.tableData) {
                   resolve();
+                  return;
+                }
 
-                  delReports(elem[0].id, elem[0].contractId);
-                }, 0);
+                const reports: IReport[] = [
+                  {
+                    id: oldData.id,
+                    name: oldData.name,
+                    state: oldData.state,
+                    files: [],
+                    contractId: contractId,
+                  },
+                ];
+
+                this.handleDelReportsAction(reports);
+
+                resolve();
               }),
           }}
         />
@@ -213,7 +246,44 @@ const mapStateToProps = (state: IStore, ownProps: IReportsProps): IReportsProps 
     reports: reports.list,
     router: router,
     classes: ownProps.classes,
+    getReportsAction: ownProps.getReportsAction,
+    setReportsAction: ownProps.setReportsAction,
+    updReportsAction: ownProps.updReportsAction,
+    delReportsAction: ownProps.delReportsAction,
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(Reports));
+const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
+  return {
+    getReportsAction: (apikey: string, contractId: string): void => {
+      dispatch<IGetReportsAction>({
+        type: GET_REPORTS,
+        apikey: apikey,
+        contractId: contractId,
+      });
+    },
+    setReportsAction: (apikey: string, reports: IReport[]): void => {
+      dispatch<ISetReportsAction>({
+        type: SET_REPORTS,
+        apikey: apikey,
+        list: reports,
+      });
+    },
+    updReportsAction: (apikey: string, reports: IReport[]): void => {
+      dispatch<IUpdReportsAction>({
+        type: UPD_REPORTS,
+        apikey: apikey,
+        list: reports,
+      });
+    },
+    delReportsAction: (apikey: string, reports: IReport[]): void => {
+      dispatch<IDelReportsAction>({
+        type: DEL_REPORTS,
+        apikey: apikey,
+        list: reports,
+      });
+    },
+  };
+};
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Reports));

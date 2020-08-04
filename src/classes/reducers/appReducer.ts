@@ -4,14 +4,13 @@ import { LOGOUT } from "./../../types/TAction";
 import { REPORT_ADD } from "./../../types/TAction";
 import { REPORT_UPDATE } from "./../../types/TAction";
 import { REPORT_DELETE } from "./../../types/TAction";
-import { REPORT_CURRENT_SET } from "./../../types/TAction";
+import { GET_REPORTS } from "./../../types/TAction";
 import { REPORT_CURRENT_DEL } from "./../../types/TAction";
 import { FILE_CURRENT_SET } from "./../../types/TAction";
 import { FILE_ADD } from "./../../types/TAction";
 import { FILE_UPDATE } from "./../../types/TAction";
 import { FILE_DELETE } from "./../../types/TAction";
 import { GET_CONTRACTS } from "./../../types/TAction";
-import { UPDATE_REPORTS } from "./../../types/TAction";
 import { UPDATE_FILES } from "./../../types/TAction";
 // types
 import { TAction } from "./../../types/TAction";
@@ -21,7 +20,7 @@ import IContract from "./../../interfaces/IContract";
 import IReport from "./../../interfaces/IReport";
 import IFile from "./../../interfaces/IFile";
 // classes
-import { contractRefresh, reportRefresh, getFiles } from "./../../classes/Requests";
+import { contractRefresh, getFiles } from "./../../classes/Requests";
 
 export const appPreloadedState = (): IApp => {
   return {

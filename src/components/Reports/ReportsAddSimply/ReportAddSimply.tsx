@@ -21,7 +21,6 @@ import {
   IReportAddSimplyAction,
   REPORT_ADD,
   IReportAddAction,
-  IReportCurrentSetAction,
   REPORT_CURRENT_SET,
 } from "../../../types/TAction";
 import IStore from "../../../interfaces/IStore";
@@ -263,7 +262,7 @@ const ResponsiveDialog = (props: { contractId: string }) => {
 
   const handleClose = () => {
     setOpen(false);
-    window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: props.contractId });
+    //window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: props.contractId });
   };
 
   return (

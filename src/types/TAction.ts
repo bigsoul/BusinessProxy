@@ -1,4 +1,6 @@
 import IContract from "../interfaces/IContract";
+import IReport from "../interfaces/IReport";
+import IFile from "../interfaces/IFile";
 
 export const LOGIN = "LOGIN";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
@@ -12,9 +14,51 @@ export const GET_CONTRACTS = "GET_CONTRACTS";
 export const GET_CONTRACTS_SUCCESS = "GET_CONTRACTS_SUCCESS";
 export const GET_CONTRACTS_FAILED = "GET_CONTRACTS_FAILED";
 
-export const UPDATE_REPORTS = "UPDATE_REPORTS";
-export const UPDATE_REPORTS_SUCCESS = "UPDATE_REPORTS_SUCCESS";
-export const UPDATE_REPORTS_FAILED = "UPDATE_REPORTS_FAILED";
+export const GET_REPORTS = "GET_REPORTS";
+export const GET_REPORTS_SUCCESS = "GET_REPORTS_SUCCESS";
+export const GET_REPORTS_FAILED = "GET_REPORTS_FAILED";
+
+export const SET_REPORTS = "SET_REPORTS";
+export const SET_REPORTS_SUCCESS = "SET_REPORTS_SUCCESS";
+export const SET_REPORTS_FAILED = "SET_REPORTS_FAILED";
+
+export const UPD_REPORTS = "UPD_REPORTS";
+export const UPD_REPORTS_SUCCESS = "UPD_REPORTS_SUCCESS";
+export const UPD_REPORTS_FAILED = "UPD_REPORTS_FAILED";
+
+export const DEL_REPORTS = "DEL_REPORTS";
+export const DEL_REPORTS_SUCCESS = "DEL_REPORTS_SUCCESS";
+export const DEL_REPORTS_FAILED = "DEL_REPORTS_FAILED";
+
+export const CONFIRM = "CONFIRM";
+export const CONFIRM_SUCCESS = "CONFIRM_SUCCESS";
+export const CONFIRM_FAILED = "CONFIRM_FAILED";
+
+export const GET_FILES = "GET_FILES";
+export const GET_FILES_SUCCESS = "GET_FILES_SUCCESS";
+export const GET_FILES_FAILED = "GET_FILES_FAILED";
+
+export const SET_FILES = "SET_FILES";
+export const SET_FILES_SUCCESS = "SET_FILES_SUCCESS";
+export const SET_FILES_FAILED = "SET_FILES_FAILED";
+
+export const UPD_FILES = "UPD_FILES";
+export const UPD_FILES_SUCCESS = "UPD_FILES_SUCCESS";
+export const UPD_FILES_FAILED = "UPD_FILES_FAILED";
+
+export const DEL_FILES = "DEL_FILES";
+export const DEL_FILES_SUCCESS = "DEL_FILES_SUCCESS";
+export const DEL_FILES_FAILED = "DEL_FILES_FAILED";
+
+export const FILE_UPLOAD = "FILE_UPLOAD";
+export const FILE_UPLOAD_SUCCESS = "FILE_UPLOAD_SUCCESS";
+export const FILE_UPLOAD_FAILED = "FILE_UPLOAD_FAILED";
+
+export const FILE_DOWNLOAD = "FILE_DOWNLOAD";
+export const FILE_DOWNLOAD_SUCCESS = "FILE_DOWNLOAD_SUCCESS";
+export const FILE_DOWNLOAD_FAILED = "FILE_DOWNLOAD_FAILED";
+
+// -------------------------------------------------------------
 
 export const REPORT_ADD = "REPORT_ADD";
 export const REPORT_ADD_SUCCESS = "REPORT_ADD_SUCCESS";
@@ -52,6 +96,10 @@ export const REPORT_CURRENT_SET = "REPORT_CURRENT_SET";
 export const REPORT_CURRENT_DEL = "REPORT_CURRENT_DEL";
 export const FILE_CURRENT_SET = "FILE_CURRENT_SET";
 
+export const UPDATE_REPORTS = "UPDATE_REPORTS";
+
+// LOGIN
+
 export interface ILoginAction {
   type: typeof LOGIN;
   userLogin: string;
@@ -69,6 +117,8 @@ export interface ILoginFailedAction {
   errorText: string;
 }
 
+// LOGOUT
+
 export interface ILogoutAction {
   type: typeof LOGOUT;
   apikey: string;
@@ -82,6 +132,232 @@ export interface ILogoutFailedAction {
   type: typeof LOGOUT_FAILED;
   errorText: string;
 }
+
+// GET_CONTRACTS
+
+export interface IGetContractsAction {
+  type: typeof GET_CONTRACTS;
+  apikey: string;
+}
+
+export interface IGetContractsSuccessAction {
+  type: typeof GET_CONTRACTS_SUCCESS;
+  contracts: IContract[];
+}
+
+export interface IGetContractsFailedAction {
+  type: typeof GET_CONTRACTS_FAILED;
+  errorText: string;
+}
+
+// GET_REPORTS
+
+export interface IGetReportsAction {
+  type: typeof GET_REPORTS;
+  apikey: string;
+  contractId: string;
+}
+
+export interface IGetReportsSuccessAction {
+  type: typeof GET_REPORTS_SUCCESS;
+  reports: IReport[];
+}
+
+export interface IGetReportsFailedAction {
+  type: typeof GET_REPORTS_FAILED;
+  errorText: string;
+}
+
+// SET_REPORTS
+
+export interface ISetReportsAction {
+  type: typeof SET_REPORTS;
+  apikey: string;
+  list: IReport[];
+}
+
+export interface ISetReportsSuccessAction {
+  type: typeof SET_REPORTS_SUCCESS;
+  list: IReport[];
+}
+
+export interface ISetReportsFailedAction {
+  type: typeof SET_REPORTS_FAILED;
+  errorText: string;
+}
+
+// UPD_REPORTS
+
+export interface IUpdReportsAction {
+  type: typeof UPD_REPORTS;
+  apikey: string;
+  list: IReport[];
+}
+
+export interface IUpdReportsSuccessAction {
+  type: typeof UPD_REPORTS_SUCCESS;
+  list: IReport[];
+}
+
+export interface IUpdReportsFailedAction {
+  type: typeof UPD_REPORTS_FAILED;
+  errorText: string;
+}
+
+// DEL_REPORTS
+
+export interface IDelReportsAction {
+  type: typeof DEL_REPORTS;
+  apikey: string;
+  list: IReport[];
+}
+
+export interface IDelReportsSuccessAction {
+  type: typeof DEL_REPORTS_SUCCESS;
+  list: [
+    {
+      id: string;
+      contractId: string;
+      success: boolean;
+    }
+  ];
+}
+
+export interface IDelReportsFailedAction {
+  type: typeof DEL_REPORTS_FAILED;
+  errorText: string;
+}
+
+// CONFIRM
+
+export interface IConfirmAction {
+  type: typeof CONFIRM;
+  apikey: string;
+  reportId: string;
+}
+
+export interface IConfirmSuccessAction {
+  type: typeof CONFIRM_SUCCESS;
+  list: IReport[];
+}
+
+export interface IConfirmFailedAction {
+  type: typeof CONFIRM_FAILED;
+  errorText: string;
+}
+
+// GET_FILES
+
+export interface IGetFilesAction {
+  type: typeof GET_FILES;
+  apikey: string;
+  reportId: string;
+}
+
+export interface IGetFilesSuccessAction {
+  type: typeof GET_FILES_SUCCESS;
+  files: IFile[];
+}
+
+export interface IGetFilesFailedAction {
+  type: typeof GET_FILES_FAILED;
+  errorText: string;
+}
+
+// SET_FILES
+
+export interface ISetFilesAction {
+  type: typeof SET_FILES;
+  apikey: string;
+  list: IFile[];
+}
+
+export interface ISetFilesSuccessAction {
+  type: typeof SET_FILES_SUCCESS;
+  list: IFile[];
+}
+
+export interface ISetFilesFailedAction {
+  type: typeof SET_FILES_FAILED;
+  errorText: string;
+}
+
+// UPD_FILES
+
+export interface IUpdFilesAction {
+  type: typeof UPD_FILES;
+  apikey: string;
+  list: IFile[];
+}
+
+export interface IUpdFilesSuccessAction {
+  type: typeof UPD_FILES_SUCCESS;
+  list: IFile[];
+}
+
+export interface IUpdFilesFailedAction {
+  type: typeof UPD_FILES_FAILED;
+  errorText: string;
+}
+
+// DEL_FILES
+
+export interface IDelFilesAction {
+  type: typeof DEL_FILES;
+  apikey: string;
+  list: IFile[];
+}
+
+export interface IDelFilesSuccessAction {
+  type: typeof DEL_FILES_SUCCESS;
+  list: [
+    {
+      id: string;
+      reportId: string;
+      success: boolean;
+    }
+  ];
+}
+
+export interface IDelFilesFailedAction {
+  type: typeof DEL_FILES_FAILED;
+  errorText: string;
+}
+
+// FILE_UPLOAD
+
+export interface IFileUploadAction {
+  type: typeof FILE_UPLOAD;
+  apikey: string;
+  id: string;
+  name: string;
+  file: File;
+}
+
+export interface IFileUploadSuccessAction {
+  type: typeof FILE_UPLOAD_SUCCESS;
+}
+
+export interface IFileUploadFailedAction {
+  type: typeof FILE_UPLOAD_FAILED;
+  errorText: string;
+}
+
+// FILE_DOWNLOAD
+
+export interface IFileDownloadAction {
+  type: typeof FILE_DOWNLOAD;
+}
+
+export interface IFileDownloadSuccessAction {
+  type: typeof FILE_DOWNLOAD_SUCCESS;
+}
+
+export interface IFileDownloadFailedAction {
+  type: typeof FILE_DOWNLOAD_FAILED;
+}
+
+//
 
 export interface IReportAddAction {
   type: typeof REPORT_ADD;
@@ -102,11 +378,6 @@ export interface IReportUpdateAction {
 export interface IReportDeleteAction {
   type: typeof REPORT_DELETE;
   dataDelete: any;
-}
-
-export interface IReportCurrentSetAction {
-  type: typeof REPORT_CURRENT_SET;
-  contractId: string;
 }
 
 export interface IReportCurrentDelAction {
@@ -137,21 +408,6 @@ export interface IFileDeleteAction {
   dataDelete: any;
 }
 
-export interface IGetContractsAction {
-  type: typeof GET_CONTRACTS;
-  apikey: string;
-}
-
-export interface IGetContractsSuccessAction {
-  type: typeof GET_CONTRACTS_SUCCESS;
-  contracts: IContract[];
-}
-
-export interface IGetContractsFailedAction {
-  type: typeof GET_CONTRACTS_FAILED;
-  errorText: string;
-}
-
 export interface IUpdateReportsAction {
   type: typeof UPDATE_REPORTS;
   contractId: string;
@@ -176,7 +432,40 @@ export type TAction =
   | IReportAddSimplyAction
   | IReportUpdateAction
   | IReportDeleteAction
-  | IReportCurrentSetAction
+  | IGetReportsAction
+  | IGetReportsSuccessAction
+  | IGetReportsFailedAction
+  | ISetReportsAction
+  | ISetReportsSuccessAction
+  | ISetReportsFailedAction
+  | IUpdReportsAction
+  | IUpdReportsSuccessAction
+  | IUpdReportsFailedAction
+  | IDelReportsAction
+  | IDelReportsSuccessAction
+  | IDelReportsFailedAction
+  | IConfirmAction
+  | IConfirmSuccessAction
+  | IConfirmFailedAction
+  | IGetReportsFailedAction
+  | IGetFilesAction
+  | IGetFilesSuccessAction
+  | IGetFilesFailedAction
+  | ISetFilesAction
+  | ISetFilesSuccessAction
+  | ISetFilesFailedAction
+  | IUpdFilesAction
+  | IUpdFilesSuccessAction
+  | IUpdFilesFailedAction
+  | IDelFilesAction
+  | IDelFilesSuccessAction
+  | IDelFilesFailedAction
+  | IFileUploadAction
+  | IFileUploadSuccessAction
+  | IFileUploadFailedAction
+  | IFileDownloadAction
+  | IFileDownloadSuccessAction
+  | IFileDownloadFailedAction
   | IReportCurrentDelAction
   | IFileCurrentSetAction
   | IFileAddAction

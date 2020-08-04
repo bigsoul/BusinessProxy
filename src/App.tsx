@@ -6,41 +6,49 @@ import { connect } from "react-redux";
 import IStore from "./interfaces/IStore";
 import IUser from "./interfaces/IUser";
 // components
-import Files from "./components/Files/Files";
 import Login from "./components/Login/Login";
 import Header from "./components/Header/Header";
 import Reports from "./components/Reports/Reports";
 import Contracts from "./components/Contracts/Contracts";
-import ReportAddSimply from "./components/Reports/ReportsAddSimply/ReportAddSimply";
 
-import { Route, HashRouter, Switch, Redirect, Router, BrowserRouter, Link } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import IContract from "./interfaces/IContract";
-import reportsReducer from "./classes/reducers/reports";
 import IReport from "./interfaces/IReport";
 import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
+import Files from "./components/Files/Files";
+import IFile from "./interfaces/IFile";
 
 interface IAppProps {
   user: IUser;
   contracts: IContract[];
   reports: IReport[];
+  files: IFile[];
   router: RouterState<LocationState>;
 }
 
 class App extends Component<IAppProps> {
   render = () => {
-    const { user, contracts, reports, router } = this.props;
+    const { user, contracts, reports, files, router } = this.props;
 
     return (
       <>
         <Header user={user} />
         <Switch>
-          <Route exec path="/contracts" component={() => <Contracts user={user} contracts={contracts} />} />
-          <Route exec path="/reports" component={() => <Reports user={user} reports={reports} router={router} />} />
+          <Route exec path="/contracts">
+            <Contracts user={user} contracts={contracts} />
+          </Route>
+          <Route exec path="/reports">
+            <Reports user={user} reports={reports} router={router} />
+          </Route>
+          <Route exec path="/files">
+            <Files user={user} files={files} router={router} />
+          </Route>
           {/*<Route exec path="/reports/wizard/:contractId" component={() => <ReportAddSimply user={user} />} />          
-          <Route exec path="/files/:reportId" component={() => <Files user={user} />} />
           <Route exec path="/login" component={() => <Login user={user} />} />*/}
-          <Route exec path="/login" component={() => <Login />} />
+          <Route exec path="/login">
+            <Login />
+          </Route>
         </Switch>
       </>
     );
@@ -48,11 +56,12 @@ class App extends Component<IAppProps> {
 }
 
 const mapStateToProps = (state: IStore, ownProps: IAppProps): IAppProps => {
-  const { user, contracts, reports, router } = state;
+  const { user, contracts, reports, files, router } = state;
   return {
     user: user,
     contracts: contracts.list,
     reports: reports.list,
+    files: files.list,
     router: router,
   };
 };

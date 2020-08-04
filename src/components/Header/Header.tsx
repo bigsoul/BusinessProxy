@@ -5,8 +5,6 @@ import { connect } from "react-redux";
 // interfaces
 import IStore from "../../interfaces/IStore";
 import IUser from "../../interfaces/IUser";
-// classes
-import { logout } from "../../classes/Requests";
 // components-material-ui
 import MenuIcon from "@material-ui/icons/Menu";
 import AppBar from "@material-ui/core/AppBar";
