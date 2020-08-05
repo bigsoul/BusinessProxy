@@ -90,7 +90,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
         field: "type",
         initialEditValue: "",
         render: (rowData: IFile) => {
-          return <>Тут тип !</>; //<FilesRowControlSelect rowData={rowData} contractId={this.props.contractId} />;
+          return <FilesRowControlSelect apikey={this.props.user.apikey} rowData={rowData} />;
         },
       },
       {

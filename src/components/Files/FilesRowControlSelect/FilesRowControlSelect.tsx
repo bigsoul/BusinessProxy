@@ -10,6 +10,7 @@ import Select from "@material-ui/core/Select";
 import { updFiles } from "../../../classes/Requests";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
+import { UPD_FILES, IUpdFilesAction } from "../../../types/TAction";
 
 // difination styling plan
 
@@ -25,8 +26,8 @@ let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
 // own interfaces
 
 interface IFilesRowControlSelectProps extends WithStyles<typeof styles> {
+  apikey: string;
   rowData: IFile;
-  contractId: string;
 }
 
 export class FilesRowControlSelect extends Component<IFilesRowControlSelectProps> {
@@ -36,8 +37,17 @@ export class FilesRowControlSelect extends Component<IFilesRowControlSelectProps
       value: unknown;
     }>
   ) => {
-    const { rowData, contractId } = this.props;
-    updFiles(rowData.id, contractId, rowData.reportId, rowData.name, event.target.value as number);
+    const { apikey, rowData } = this.props;
+
+    const row = { ...rowData };
+    row.type = event.target.value as number;
+    delete (row as any).tableData;
+
+    window.store.dispatch<IUpdFilesAction>({
+      type: UPD_FILES,
+      apikey: apikey,
+      list: [row],
+    });
   };
 
   render = (): JSX.Element => {
