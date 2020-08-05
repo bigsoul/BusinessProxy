@@ -18,6 +18,7 @@ import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
 import Files from "./components/Files/Files";
 import IFile from "./interfaces/IFile";
+import WizardReports from "./components/Reports/WizardReports/WizardReports";
 
 interface IAppProps {
   user: IUser;
@@ -38,14 +39,15 @@ class App extends Component<IAppProps> {
           <Route exec path="/contracts">
             <Contracts user={user} contracts={contracts} />
           </Route>
+          <Route exec path="/reports/wizard">
+            <WizardReports user={user} router={router} />
+          </Route>
           <Route exec path="/reports">
             <Reports user={user} reports={reports} router={router} />
           </Route>
           <Route exec path="/files">
             <Files user={user} files={files} router={router} />
           </Route>
-          {/*<Route exec path="/reports/wizard/:contractId" component={() => <ReportAddSimply user={user} />} />          
-          <Route exec path="/login" component={() => <Login user={user} />} />*/}
           <Route exec path="/login">
             <Login />
           </Route>
@@ -60,7 +62,7 @@ const mapStateToProps = (state: IStore, ownProps: IAppProps): IAppProps => {
   return {
     user: user,
     contracts: contracts.list,
-    reports: reports.list,
+    reports: reports.table.list,
     files: files.list,
     router: router,
   };

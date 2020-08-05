@@ -243,7 +243,7 @@ const mapStateToProps = (state: IStore, ownProps: IReportsProps): IReportsProps 
   const { user, reports, router } = state;
   return {
     user: user,
-    reports: reports.list,
+    reports: reports.table.list,
     router: router,
     classes: ownProps.classes,
     getReportsAction: ownProps.getReportsAction,

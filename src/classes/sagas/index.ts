@@ -116,6 +116,8 @@ import axios from "axios";
 import { resolve } from "dns";
 import { reject } from "lodash";
 
+// net
+
 function axiosAsync(method: string, requestData: TRequest) {
   const serviceUrl = "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/";
   const serviceLogin = "exchange";
@@ -128,6 +130,8 @@ function axiosAsync(method: string, requestData: TRequest) {
     },
   });
 }
+
+// IO
 
 function fileReaderAsync(action: IFileUploadAction) {
   return new Promise<ArrayBufferLike>((resolve, reject) => {
@@ -196,6 +200,8 @@ function fileReaderAsync(action: IFileUploadAction) {
   });
 }
 
+// auth
+
 function* workerLogin(action: ILoginAction) {
   try {
     const requestData: ILoginRequest = {
@@ -236,6 +242,8 @@ function* workerLogout(action: ILogoutAction) {
   }
 }
 
+// contracts
+
 function* workerGetContracts(action: IGetContractsAction) {
   try {
     const requestData: IGetContractsRequest = {
@@ -255,6 +263,8 @@ function* workerGetContracts(action: IGetContractsAction) {
     yield put<IGetContractsFailedAction>({ type: GET_CONTRACTS_FAILED, errorText: err.toString() });
   }
 }
+
+// reports
 
 function* workerGetReports(action: IGetReportsAction) {
   try {
@@ -320,6 +330,8 @@ function* workerDelReports(action: IDelReportsAction) {
   }
 }
 
+// confirm
+
 function* workerConfirm(action: IConfirmAction) {
   try {
     const requestData: IConfirmRequest = {
@@ -335,6 +347,8 @@ function* workerConfirm(action: IConfirmAction) {
     yield put<IConfirmFailedAction>({ type: CONFIRM_FAILED, errorText: err.toString() });
   }
 }
+
+// files
 
 function* workerGetFiles(action: IGetFilesAction) {
   try {
@@ -411,6 +425,8 @@ function* workerFileUpload(action: IFileUploadAction) {
     yield put<IFileUploadFailedAction>({ type: FILE_UPLOAD_FAILED, errorText: err.toString() });
   }
 }
+
+// wizard
 
 export function* watchLogin() {
   yield takeEvery(LOGIN, workerLogin);

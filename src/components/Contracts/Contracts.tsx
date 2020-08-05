@@ -94,8 +94,9 @@ class Contracts extends Component<IContractsProps, IContractsState> {
     window._history.push(`/reports?contractId=${id}`);
   };
 
-  handleReportAddSimplyAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
-    window.store.dispatch<IReportAddSimplyAction>({ type: REPORT_SIMPLY, path: "ReportAddSimply", contractId: id });
+  handleWizardReportsAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
+    window._history.push(`/reports/wizard?contractId=${id}`);
+    //window.store.dispatch<IReportAddSimplyAction>({ type: REPORT_SIMPLY, path: "ReportAddSimply", contractId: id });
   };
 
   render = (): JSX.Element => {
@@ -153,7 +154,7 @@ class Contracts extends Component<IContractsProps, IContractsState> {
                         variant="outlined"
                         size="small"
                         color="primary"
-                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleReportAddSimplyAction(e, row.id)}
+                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleWizardReportsAction(e, row.id)}
                       >
                         {"Добавить отчет"}
                       </Button>

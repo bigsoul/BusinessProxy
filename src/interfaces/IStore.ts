@@ -8,7 +8,10 @@ import IFile from "./IFile";
 export default interface IStore {
   user: IUser;
   contracts: IContractsReducer;
-  reports: IReportsReducer;
+  reports: {
+    table: IReportsReducer;
+    wizard: IWizardReducer;
+  };
   files: IFilesReducer;
   router: RouterState<LocationState>;
 }
@@ -29,4 +32,16 @@ export interface IFilesReducer {
   isLoading: boolean;
   errorText: string;
   list: IFile[];
+}
+
+export interface IWizardReducer {
+  isLoading: boolean;
+  errorText: string;
+  contractId: string;
+  files: [
+    {
+      fileType: number;
+      file: File | null;
+    }
+  ];
 }

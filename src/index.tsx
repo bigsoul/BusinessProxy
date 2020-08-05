@@ -37,7 +37,7 @@ ReactDOM.render(
           <App
             user={{ apikey: "", name: "", isLoading: false, errorText: "" }}
             contracts={contracts.list}
-            reports={reports.list}
+            reports={reports.table.list}
             files={files.list}
             router={router}
           />

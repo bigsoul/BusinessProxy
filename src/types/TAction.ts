@@ -2,6 +2,8 @@ import IContract from "../interfaces/IContract";
 import IReport from "../interfaces/IReport";
 import IFile from "../interfaces/IFile";
 
+// auth
+
 export const LOGIN = "LOGIN";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILED = "LOGIN_FAILED";
@@ -10,9 +12,13 @@ export const LOGOUT = "LOGOUT";
 export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const LOGOUT_FAILED = "LOGOUT_FAILED";
 
+// contracts
+
 export const GET_CONTRACTS = "GET_CONTRACTS";
 export const GET_CONTRACTS_SUCCESS = "GET_CONTRACTS_SUCCESS";
 export const GET_CONTRACTS_FAILED = "GET_CONTRACTS_FAILED";
+
+// reports
 
 export const GET_REPORTS = "GET_REPORTS";
 export const GET_REPORTS_SUCCESS = "GET_REPORTS_SUCCESS";
@@ -30,9 +36,13 @@ export const DEL_REPORTS = "DEL_REPORTS";
 export const DEL_REPORTS_SUCCESS = "DEL_REPORTS_SUCCESS";
 export const DEL_REPORTS_FAILED = "DEL_REPORTS_FAILED";
 
+// confirm
+
 export const CONFIRM = "CONFIRM";
 export const CONFIRM_SUCCESS = "CONFIRM_SUCCESS";
 export const CONFIRM_FAILED = "CONFIRM_FAILED";
+
+// files
 
 export const GET_FILES = "GET_FILES";
 export const GET_FILES_SUCCESS = "GET_FILES_SUCCESS";
@@ -58,7 +68,19 @@ export const FILE_DOWNLOAD = "FILE_DOWNLOAD";
 export const FILE_DOWNLOAD_SUCCESS = "FILE_DOWNLOAD_SUCCESS";
 export const FILE_DOWNLOAD_FAILED = "FILE_DOWNLOAD_FAILED";
 
+// wizard
+
+export const WIZARD_SETUP_CONTRACT_ID = "WIZARD_SETUP_CONTRACT_ID";
+export const WIZARD_SETUP_FILE = "WIZARD_SETUP_FILE";
+
+export const WIZARD_CONFIRM = "WIZARD_CONFIRM";
+export const WIZARD_CONFIRM_SUCCESS = "WIZARD_CONFIRM_SUCCESS";
+export const WIZARD_CONFIRM_FAILED = "WIZARD_CONFIRM_FAILED";
+
 // -------------------------------------------------------------
+
+export const WIZARD_SETUP_FILE_SUCCESS = "WIZARD_SETUP_FILE_SUCCESS";
+export const WIZARD_SETUP_FILE_FAILED = "WIZARD_SETUP_FILE_FAILED";
 
 export const REPORT_ADD = "REPORT_ADD";
 export const REPORT_ADD_SUCCESS = "REPORT_ADD_SUCCESS";
@@ -358,7 +380,44 @@ export interface IFileDownloadFailedAction {
   type: typeof FILE_DOWNLOAD_FAILED;
 }
 
+// WIZARD_SETUP_CONTRACT_ID
+
+export interface IWizardSetupContractIdAction {
+  type: typeof WIZARD_SETUP_CONTRACT_ID;
+  contractId: string;
+}
+
+// WIZARD_SETUP_FILE
+
+export interface IWizardSetupFileAction {
+  type: typeof WIZARD_SETUP_FILE;
+  fileType: number;
+  file: File | null;
+}
+
+// WIZARD_CONFIRM
+
+export interface IWizardConfirmAction {
+  type: typeof WIZARD_CONFIRM;
+}
+
+export interface IWizardConfirmSuccessAction {
+  type: typeof WIZARD_CONFIRM_SUCCESS;
+}
+
+export interface IWizardConfirmFailedAction {
+  type: typeof WIZARD_CONFIRM_FAILED;
+}
+
 //
+
+export interface IWizardSetupFileSuccessAction {
+  type: typeof WIZARD_SETUP_FILE_SUCCESS;
+}
+
+export interface IWizardSetupFileFailedAction {
+  type: typeof WIZARD_SETUP_FILE_FAILED;
+}
 
 export interface IReportAddAction {
   type: typeof REPORT_ADD;
@@ -467,6 +526,11 @@ export type TAction =
   | IFileDownloadAction
   | IFileDownloadSuccessAction
   | IFileDownloadFailedAction
+  | IWizardSetupContractIdAction
+  | IWizardSetupFileAction
+  | IWizardConfirmAction
+  | IWizardConfirmSuccessAction
+  | IWizardConfirmFailedAction
   | IReportCurrentDelAction
   | IFileCurrentSetAction
   | IFileAddAction
@@ -476,4 +540,6 @@ export type TAction =
   | IGetContractsSuccessAction
   | IGetContractsFailedAction
   | IUpdateReportsAction
-  | IUpdateFilesAction;
+  | IUpdateFilesAction
+  | IWizardSetupFileSuccessAction
+  | IWizardSetupFileFailedAction;

@@ -104,8 +104,6 @@ export class Login extends Component<ILoginProps> {
   };
 }
 
-//<Link to={{ pathname: "/reports", search: "?sort=name", hash: "#the-hash", state: { fromDashboard: true } }}>123</Link>
-
 const mapStateToProps = (state: IStore, ownProps: ILoginProps): ILoginProps => {
   const { user } = state;
   return {

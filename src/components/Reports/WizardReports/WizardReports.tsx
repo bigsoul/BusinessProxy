@@ -22,6 +22,9 @@ import {
   REPORT_ADD,
   IReportAddAction,
   REPORT_CURRENT_SET,
+  WIZARD_SETUP_FILE,
+  IWizardSetupFileAction,
+  TAction,
 } from "../../../types/TAction";
 import IStore from "../../../interfaces/IStore";
 import { connect } from "react-redux";
@@ -31,6 +34,11 @@ import { setReports, fileUpload, setFiles, conform } from "../../../classes/Requ
 import moment from "moment";
 import MuiAlert from "@material-ui/lab/Alert";
 import IFile from "../../../interfaces/IFile";
+import IUser from "../../../interfaces/IUser";
+import { RouterState } from "connected-react-router";
+import { LocationState } from "history";
+import { routerActions } from "react-router-redux";
+import { Dispatch } from "redux";
 
 // difination styling plan
 
@@ -48,11 +56,20 @@ let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
 
 // own interfaces
 
-interface IReportAddSimplyProps extends WithStyles<typeof styles> {
-  contractId: string;
+interface IWizardReportsProps extends WithStyles<typeof styles> {
+  user: IUser;
+  router: RouterState<LocationState>;
+  contractId?: string;
+  files?: [
+    {
+      fileType: number;
+      file: File | null;
+    }
+  ];
+  wizardSetupFileAction?: (fileType: number, id: string, file: File | null) => void;
 }
 
-class ReportAddSimply extends Component<IReportAddSimplyProps> {
+class WizardReports extends Component<IWizardReportsProps> {
   file10: FileList | null = null;
   file20: FileList | null = null;
   file30: FileList | null = null;
@@ -61,16 +78,13 @@ class ReportAddSimply extends Component<IReportAddSimplyProps> {
   file20Id: string = "";
   file30Id: string = "";
 
+  contractId: string = "";
   reportId: string = "";
 
   state = {
     openAlertError: false,
     textAlertError: "",
     reportCreated: false,
-  };
-
-  handleBeackOnClick = () => {
-    window.store.dispatch<IReportCurrentDelAction>({ type: REPORT_CURRENT_DEL });
   };
 
   hendleCloseAlertError = () => {
@@ -91,16 +105,16 @@ class ReportAddSimply extends Component<IReportAddSimplyProps> {
       return;
     }
 
-    setReports("", this.props.contractId, "Отчет от " + moment().format().substr(0, 10), "Новый", this.collbeckReportCreated);
+    setReports("", this.contractId, "Отчет от " + moment().format().substr(0, 10), "Новый", this.collbeckReportCreated);
   };
 
   collbeckReportCreated = (response: any) => {
     if (response) {
       this.reportId = response[0].id;
 
-      setFiles("", this.props.contractId, this.reportId, this.file10 ? this.file10[0].name : "", 10, this.collbeckFileCreated10);
-      setFiles("", this.props.contractId, this.reportId, this.file20 ? this.file20[0].name : "", 20, this.collbeckFileCreated20);
-      setFiles("", this.props.contractId, this.reportId, this.file30 ? this.file30[0].name : "", 30, this.collbeckFileCreated30);
+      setFiles("", this.contractId, this.reportId, this.file10 ? this.file10[0].name : "", 10, this.collbeckFileCreated10);
+      setFiles("", this.contractId, this.reportId, this.file20 ? this.file20[0].name : "", 20, this.collbeckFileCreated20);
+      setFiles("", this.contractId, this.reportId, this.file30 ? this.file30[0].name : "", 30, this.collbeckFileCreated30);
     } else {
       this.setState({ openAlertError: true, textAlertError: "Ошибка создания отчета на сервере. Попробуйте обновить страницу." });
     }
@@ -108,21 +122,21 @@ class ReportAddSimply extends Component<IReportAddSimplyProps> {
 
   collbeckFileCreated10 = (response: IFile[]) => {
     if (this.file10 && this.file10[0]) {
-      fileUpload(this.file10, response[0], this.props.contractId, true, this.collbeckFileUploaded);
+      fileUpload(this.file10, response[0], this.contractId, true, this.collbeckFileUploaded);
       this.file10Id = response[0].id;
     }
   };
 
   collbeckFileCreated20 = (response: IFile[]) => {
     if (this.file20 && this.file20[0]) {
-      fileUpload(this.file20, response[0], this.props.contractId, true, this.collbeckFileUploaded);
+      fileUpload(this.file20, response[0], this.contractId, true, this.collbeckFileUploaded);
       this.file20Id = response[0].id;
     }
   };
 
   collbeckFileCreated30 = (response: IFile[]) => {
     if (this.file30 && this.file30[0]) {
-      fileUpload(this.file30, response[0], this.props.contractId, true, this.collbeckFileUploaded);
+      fileUpload(this.file30, response[0], this.contractId, true, this.collbeckFileUploaded);
       this.file30Id = response[0].id;
     }
   };
@@ -174,15 +188,7 @@ class ReportAddSimply extends Component<IReportAddSimplyProps> {
     const { classes } = this.props;
 
     if (this.state.reportCreated) {
-      //return "Отчет создан и отправлен на согласование.";
-      return (
-        <>
-          <Button className={classes.backInConracts} variant="outlined" color="secondary" size="small" onClick={this.handleBeackOnClick}>
-            {"Назад к списку договоров"}
-          </Button>{" "}
-          <ResponsiveDialog contractId={this.props.contractId} />
-        </>
-      );
+      return <ResponsiveDialog contractId={this.contractId} />;
     } else {
       return (
         <>
@@ -193,9 +199,6 @@ class ReportAddSimply extends Component<IReportAddSimplyProps> {
             </MuiAlert>
           </Snackbar>
           {/** Обратная связь - */}
-          <Button className={classes.backInConracts} variant="outlined" color="secondary" size="small" onClick={this.handleBeackOnClick}>
-            {"Назад к списку договоров"}
-          </Button>
           <Grid className={classes.grid} container spacing={0} direction="column" alignItems="center" justify="center">
             <div className={classes.root}>
               <input
@@ -284,12 +287,28 @@ const ResponsiveDialog = (props: { contractId: string }) => {
   );
 };
 
-/*const mapStateToProps = (state: IStore, ownProps: IReportAddSimplyProps): IReportAddSimplyProps => {
-  const { app } = state;
+const mapStateToProps = (state: IStore, ownProps: IWizardReportsProps): IWizardReportsProps => {
+  const { user, router, reports } = state;
   return {
-    contractId: app.contractId,
+    user: user,
+    router: router,
+    contractId: reports.wizard.contractId,
+    files: reports.wizard.files,
     classes: ownProps.classes,
+    wizardSetupFileAction: ownProps.wizardSetupFileAction,
   };
-};*/
+};
 
-export default withStyles(styles)(connect()(ReportAddSimply));
+const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
+  return {
+    wizardSetupFileAction: (fileType: number, file: File | null): void => {
+      dispatch<IWizardSetupFileAction>({
+        type: WIZARD_SETUP_FILE,
+        fileType: fileType,
+        file: file,
+      });
+    },
+  };
+};
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(WizardReports));
