@@ -121,8 +121,6 @@ function axiosAsync(method: string, requestData: TRequest) {
   const serviceLogin = "exchange";
   const servicePassword = "exchange2016";
 
-  //sleep(5000);
-
   return axios.post<TResponse>(serviceUrl + method, requestData, {
     auth: {
       username: serviceLogin,
@@ -136,46 +134,50 @@ function fileReaderAsync(action: IFileUploadAction) {
     const reader = new FileReader();
 
     reader.onload = function (event) {
-      let data = {
-        apikey: action.apikey,
-        id: action.id,
-        name: action.name,
-      };
+      try {
+        let data = {
+          apikey: action.apikey,
+          id: action.id,
+          name: action.name,
+        };
 
-      let bodyJSON = JSON.stringify(data);
+        let bodyJSON = JSON.stringify(data);
 
-      const fileBuffer = event.target?.result;
+        const fileBuffer = event.target?.result;
 
-      if (!event.target || !fileBuffer || typeof fileBuffer === "string") {
-        throw new Error("File download error on client side.");
+        if (!event.target || !fileBuffer || typeof fileBuffer === "string") {
+          throw new Error("File download error on client side.");
+        }
+
+        const dataUint8 = new TextEncoder().encode(bodyJSON);
+        const fileUint8 = new Uint8Array(fileBuffer);
+
+        const segmentSize = 4;
+
+        let sendLength = segmentSize + dataUint8.byteLength + fileBuffer.byteLength;
+
+        const balance = sendLength % segmentSize;
+        let balanseDiff = 0;
+
+        if (balance > 0) {
+          balanseDiff = segmentSize - balance;
+          sendLength += balanseDiff;
+        }
+
+        const sendBuffer = new ArrayBuffer(sendLength);
+
+        const sendUint32 = new Uint32Array(sendBuffer);
+        const sendUint8 = new Uint8Array(sendBuffer);
+
+        sendUint32[0] = dataUint8.byteLength + segmentSize + balanseDiff;
+
+        sendUint8.set(dataUint8, segmentSize);
+        sendUint8.set(fileUint8, dataUint8.length + segmentSize + balanseDiff);
+
+        resolve(sendUint8.buffer);
+      } catch (err) {
+        reject(new Error("File download error: " + err.toString()));
       }
-
-      const dataUint8 = new TextEncoder().encode(bodyJSON);
-      const fileUint8 = new Uint8Array(fileBuffer);
-
-      const segmentSize = 4;
-
-      let sendLength = segmentSize + dataUint8.byteLength + fileBuffer.byteLength;
-
-      const balance = sendLength % segmentSize;
-      let balanseDiff = 0;
-
-      if (balance > 0) {
-        balanseDiff = segmentSize - balance;
-        sendLength += balanseDiff;
-      }
-
-      const sendBuffer = new ArrayBuffer(sendLength);
-
-      const sendUint32 = new Uint32Array(sendBuffer);
-      const sendUint8 = new Uint8Array(sendBuffer);
-
-      sendUint32[0] = dataUint8.byteLength + segmentSize + balanseDiff;
-
-      sendUint8.set(dataUint8, segmentSize);
-      sendUint8.set(fileUint8, dataUint8.length + segmentSize + balanseDiff);
-
-      resolve(sendUint8.buffer);
     };
 
     reader.onerror = function (event) {
@@ -184,9 +186,9 @@ function fileReaderAsync(action: IFileUploadAction) {
 
         if (event.target?.error?.code) code = event.target.error.code;
 
-        reject("File download error code: [" + code + "]");
+        reject(new Error("File download error code: [" + code + "]"));
       } catch (err) {
-        reject("File download error: " + err.toString());
+        reject(new Error("File download error: " + err.toString()));
       }
     };
 
@@ -400,12 +402,10 @@ function* workerDelFiles(action: IDelFilesAction) {
 
 function* workerFileUpload(action: IFileUploadAction) {
   try {
-    //fileReaderAsync.bind(this);
-
     const requestData: IFileUploadRequest = yield call(fileReaderAsync, action);
+    const responseData: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestData)).data;
 
-    yield call(axiosAsync, "FileUpload", requestData);
-    yield put<IFileUploadSuccessAction>({ type: FILE_UPLOAD_SUCCESS });
+    yield put<IFileUploadSuccessAction>({ type: FILE_UPLOAD_SUCCESS, file: responseData.file });
   } catch (err) {
     console.error(err.toString());
     yield put<IFileUploadFailedAction>({ type: FILE_UPLOAD_FAILED, errorText: err.toString() });
@@ -426,9 +426,4 @@ export function* watchLogin() {
   yield takeEvery(UPD_FILES, workerUpdFiles);
   yield takeEvery(DEL_FILES, workerDelFiles);
   yield takeEvery(FILE_UPLOAD, workerFileUpload);
-}
-
-function sleep(ms: any) {
-  ms += new Date().getTime();
-  while (new Date() < ms) {}
 }

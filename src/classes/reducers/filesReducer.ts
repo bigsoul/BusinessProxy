@@ -13,6 +13,9 @@ import {
   DEL_FILES,
   DEL_FILES_SUCCESS,
   DEL_FILES_FAILED,
+  FILE_UPLOAD,
+  FILE_UPLOAD_SUCCESS,
+  FILE_UPLOAD_FAILED,
 } from "../../types/TAction";
 
 const preloadedState: IFilesReducer = {
@@ -135,6 +138,37 @@ const contractsReducer = (curState: IFilesReducer = preloadedState, action: TAct
         ...curState,
         isLoading: false,
         errorText: "",
+      };
+      return newState;
+    }
+    case FILE_UPLOAD: {
+      const newState: IFilesReducer = {
+        ...curState,
+        isLoading: true,
+        errorText: "",
+      };
+      return newState;
+    }
+    case FILE_UPLOAD_SUCCESS: {
+      const newState: IFilesReducer = {
+        ...curState,
+        isLoading: false,
+        errorText: "",
+        list: [...curState.list],
+      };
+
+      const cltIndex = newState.list.findIndex((cltElement) => {
+        return cltElement.id === action.file.id;
+      });
+      newState.list[cltIndex] = { ...action.file };
+
+      return newState;
+    }
+    case FILE_UPLOAD_FAILED: {
+      const newState: IFilesReducer = {
+        ...curState,
+        isLoading: false,
+        errorText: action.errorText,
       };
       return newState;
     }

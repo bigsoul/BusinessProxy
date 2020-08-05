@@ -78,7 +78,7 @@ export interface IDelFilesResponse {
 
 export interface IFileUploadResponse {
   errorText: string;
-  success: boolean;
+  file: IFile;
 }
 
 export type TResponse =

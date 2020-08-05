@@ -336,6 +336,7 @@ export interface IFileUploadAction {
 
 export interface IFileUploadSuccessAction {
   type: typeof FILE_UPLOAD_SUCCESS;
+  file: IFile;
 }
 
 export interface IFileUploadFailedAction {
