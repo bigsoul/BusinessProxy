@@ -25,6 +25,12 @@ import {
   WIZARD_SETUP_FILE,
   IWizardSetupFileAction,
   TAction,
+  IWizardConfirmAction,
+  WIZARD_CONFIRM,
+  WIZARD_SETUP_CONTRACT_ID,
+  IWizardSetupContractIdAction,
+  IWizardClearErrorAction,
+  WIZARD_CLEAR_ERROR,
 } from "../../../types/TAction";
 import IStore from "../../../interfaces/IStore";
 import { connect } from "react-redux";
@@ -60,13 +66,15 @@ interface IWizardReportsProps extends WithStyles<typeof styles> {
   user: IUser;
   router: RouterState<LocationState>;
   contractId?: string;
-  files?: [
-    {
-      fileType: number;
-      file: File | null;
-    }
-  ];
-  wizardSetupFileAction?: (fileType: number, id: string, file: File | null) => void;
+  file10?: File | null;
+  file20?: File | null;
+  file30?: File | null;
+  errorText?: string;
+  saccess?: boolean;
+  wizardSetupContractIdAction?: (contractId: string) => void;
+  wizardSetupFileAction?: (fileType: number, file: File | null) => void;
+  wizardConfirmAction?: (apikey: string, contractId: string, file10: File | null, file20: File | null, file30: File | null) => void;
+  wizardClearErrorAction?: () => void;
 }
 
 class WizardReports extends Component<IWizardReportsProps> {
@@ -85,6 +93,12 @@ class WizardReports extends Component<IWizardReportsProps> {
     openAlertError: false,
     textAlertError: "",
     reportCreated: false,
+  };
+
+  componentDidMount = () => {
+    const { wizardSetupContractIdAction, router } = this.props;
+    const contractId = (router.location as any).query["contractId"];
+    wizardSetupContractIdAction && wizardSetupContractIdAction(contractId);
   };
 
   hendleCloseAlertError = () => {
@@ -157,45 +171,44 @@ class WizardReports extends Component<IWizardReportsProps> {
     }
   };
 
-  handleFileUploadOnChange = (fileType: number) => {
+  handleWizardSetupFileAction = (fileType: number) => {
     const inputNode = document.getElementById("upload-" + fileType) as HTMLInputElement;
+    const { wizardSetupFileAction } = this.props;
 
-    if (inputNode.files && inputNode.files.length > 0) {
-      switch (fileType) {
-        case 10: {
-          this.file10 = { ...inputNode.files };
-          break;
-        }
-        case 20: {
-          this.file20 = { ...inputNode.files };
-          break;
-        }
-        case 30: {
-          this.file30 = { ...inputNode.files };
-          break;
-        }
-        default:
-          console.log("Попытка загрузить неизвестный тип файла.");
-      }
+    wizardSetupFileAction && wizardSetupFileAction(fileType, inputNode.files && inputNode.files[0]);
 
-      inputNode.value = "";
+    inputNode.value = "";
+  };
 
-      this.setState({});
-    }
+  handleWizardConfirmAction = () => {
+    const { wizardConfirmAction, user, contractId, file10, file20, file30 } = this.props;
+    wizardConfirmAction &&
+      wizardConfirmAction(
+        user.apikey,
+        contractId ? contractId : "",
+        file10 ? file10 : null,
+        file20 ? file20 : null,
+        file30 ? file30 : null
+      );
+  };
+
+  handleWizardClearErrorAction = () => {
+    const { wizardClearErrorAction } = this.props;
+    wizardClearErrorAction && wizardClearErrorAction();
   };
 
   render = () => {
-    const { classes } = this.props;
+    const { classes, file10, file20, file30, errorText, contractId, saccess } = this.props;
 
-    if (this.state.reportCreated) {
-      return <ResponsiveDialog contractId={this.contractId} />;
+    if (saccess) {
+      return <ResponsiveDialog contractId={contractId ? contractId : ""} />;
     } else {
       return (
         <>
           {/** Обратная связь + */}
-          <Snackbar open={this.state.openAlertError} autoHideDuration={3000} onClose={this.hendleCloseAlertError}>
-            <MuiAlert elevation={6} variant="filled" severity="error" onClose={this.hendleCloseAlertError}>
-              {this.state.textAlertError}
+          <Snackbar open={!!errorText} autoHideDuration={3000} onClose={this.handleWizardClearErrorAction}>
+            <MuiAlert elevation={6} variant="filled" severity="error" onClose={this.handleWizardClearErrorAction}>
+              {errorText}
             </MuiAlert>
           </Snackbar>
           {/** Обратная связь - */}
@@ -207,12 +220,12 @@ class WizardReports extends Component<IWizardReportsProps> {
                 id={"upload-10"}
                 multiple
                 type="file"
-                onChange={() => this.handleFileUploadOnChange(10)}
+                onChange={() => this.handleWizardSetupFileAction(10)}
               />
               <label htmlFor={"upload-10"}>
                 <Button variant="outlined" color="primary" component="span" size="small">
                   {"Загрузить оригинал КС2 "}
-                  {this.file10 === null ? "" : <CheckIcon style={{ color: green[500] }} />}
+                  {!file10 ? "" : <CheckIcon style={{ color: green[500] }} />}
                 </Button>
               </label>
             </div>
@@ -223,12 +236,12 @@ class WizardReports extends Component<IWizardReportsProps> {
                 id={"upload-20"}
                 multiple
                 type="file"
-                onChange={() => this.handleFileUploadOnChange(20)}
+                onChange={() => this.handleWizardSetupFileAction(20)}
               />
               <label htmlFor={"upload-20"}>
                 <Button variant="outlined" color="primary" component="span" size="small">
                   {"Загрузить оригинал КС3 "}
-                  {this.file20 === null ? "" : <CheckIcon style={{ color: green[500] }} />}
+                  {!file20 ? "" : <CheckIcon style={{ color: green[500] }} />}
                 </Button>
               </label>
             </div>
@@ -239,16 +252,22 @@ class WizardReports extends Component<IWizardReportsProps> {
                 id={"upload-30"}
                 multiple
                 type="file"
-                onChange={() => this.handleFileUploadOnChange(30)}
+                onChange={() => this.handleWizardSetupFileAction(30)}
               />
               <label htmlFor={"upload-30"}>
                 <Button variant="outlined" color="primary" component="span" size="small">
                   {"Загрузить исп. документацию "}
-                  {this.file30 === null ? "" : <CheckIcon style={{ color: green[500] }} />}
+                  {!file30 ? "" : <CheckIcon style={{ color: green[500] }} />}
                 </Button>
               </label>
             </div>
-            <Button className={classes.sendAndConfirm} variant="outlined" color="secondary" size="small" onClick={this.hendleSendReport}>
+            <Button
+              className={classes.sendAndConfirm}
+              variant="outlined"
+              color="secondary"
+              size="small"
+              onClick={this.handleWizardConfirmAction}
+            >
               {"Отправить и согласовать"}
             </Button>
           </Grid>
@@ -265,7 +284,7 @@ const ResponsiveDialog = (props: { contractId: string }) => {
 
   const handleClose = () => {
     setOpen(false);
-    //window.store.dispatch<IReportCurrentSetAction>({ type: REPORT_CURRENT_SET, contractId: props.contractId });
+    window._history.push(`/reports?contractId=${props.contractId}`);
   };
 
   return (
@@ -293,19 +312,47 @@ const mapStateToProps = (state: IStore, ownProps: IWizardReportsProps): IWizardR
     user: user,
     router: router,
     contractId: reports.wizard.contractId,
-    files: reports.wizard.files,
+    file10: reports.wizard.file10,
+    file20: reports.wizard.file20,
+    file30: reports.wizard.file30,
+    errorText: reports.wizard.errorText,
     classes: ownProps.classes,
+    saccess: reports.wizard.saccess,
+    wizardSetupContractIdAction: ownProps.wizardSetupContractIdAction,
     wizardSetupFileAction: ownProps.wizardSetupFileAction,
+    wizardConfirmAction: ownProps.wizardConfirmAction,
+    wizardClearErrorAction: ownProps.wizardClearErrorAction,
   };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
   return {
+    wizardSetupContractIdAction: (contractId: string): void => {
+      dispatch<IWizardSetupContractIdAction>({
+        type: WIZARD_SETUP_CONTRACT_ID,
+        contractId: contractId,
+      });
+    },
     wizardSetupFileAction: (fileType: number, file: File | null): void => {
       dispatch<IWizardSetupFileAction>({
         type: WIZARD_SETUP_FILE,
         fileType: fileType,
         file: file,
+      });
+    },
+    wizardConfirmAction: (apikey: string, contractId: string, file10: File | null, file20: File | null, file30: File | null): void => {
+      dispatch<IWizardConfirmAction>({
+        type: WIZARD_CONFIRM,
+        contractId: contractId,
+        apikey: apikey,
+        file10: file10,
+        file20: file20,
+        file30: file30,
+      });
+    },
+    wizardClearErrorAction: (): void => {
+      dispatch<IWizardClearErrorAction>({
+        type: WIZARD_CLEAR_ERROR,
       });
     },
   };

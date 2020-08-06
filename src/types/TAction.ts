@@ -73,6 +73,8 @@ export const FILE_DOWNLOAD_FAILED = "FILE_DOWNLOAD_FAILED";
 export const WIZARD_SETUP_CONTRACT_ID = "WIZARD_SETUP_CONTRACT_ID";
 export const WIZARD_SETUP_FILE = "WIZARD_SETUP_FILE";
 
+export const WIZARD_CLEAR_ERROR = "WIZARD_CLEAR_ERROR";
+
 export const WIZARD_CONFIRM = "WIZARD_CONFIRM";
 export const WIZARD_CONFIRM_SUCCESS = "WIZARD_CONFIRM_SUCCESS";
 export const WIZARD_CONFIRM_FAILED = "WIZARD_CONFIRM_FAILED";
@@ -399,6 +401,11 @@ export interface IWizardSetupFileAction {
 
 export interface IWizardConfirmAction {
   type: typeof WIZARD_CONFIRM;
+  apikey: string;
+  contractId: string;
+  file10: File | null;
+  file20: File | null;
+  file30: File | null;
 }
 
 export interface IWizardConfirmSuccessAction {
@@ -407,6 +414,13 @@ export interface IWizardConfirmSuccessAction {
 
 export interface IWizardConfirmFailedAction {
   type: typeof WIZARD_CONFIRM_FAILED;
+  errorText: string;
+}
+
+// WIZARD_CLEAR_ERROR
+
+export interface IWizardClearErrorAction {
+  type: typeof WIZARD_CLEAR_ERROR;
 }
 
 //
@@ -531,6 +545,7 @@ export type TAction =
   | IWizardConfirmAction
   | IWizardConfirmSuccessAction
   | IWizardConfirmFailedAction
+  | IWizardClearErrorAction
   | IReportCurrentDelAction
   | IFileCurrentSetAction
   | IFileAddAction

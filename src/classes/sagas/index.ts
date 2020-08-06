@@ -79,6 +79,12 @@ import {
   FILE_UPLOAD_FAILED,
   IFileUploadFailedAction,
   IFileUploadAction,
+  IWizardConfirmAction,
+  WIZARD_CONFIRM,
+  IWizardConfirmSuccessAction,
+  IWizardConfirmFailedAction,
+  WIZARD_CONFIRM_SUCCESS,
+  WIZARD_CONFIRM_FAILED,
 } from "./../../types/TAction";
 import {
   ILoginRequest,
@@ -115,6 +121,7 @@ import {
 import axios from "axios";
 import { resolve } from "dns";
 import { reject } from "lodash";
+import moment from "moment";
 
 // net
 
@@ -428,6 +435,81 @@ function* workerFileUpload(action: IFileUploadAction) {
 
 // wizard
 
+function* workerWizardConfirm(action: IWizardConfirmAction) {
+  try {
+    if (!action.file10) throw Error("Не выбран файл КС2");
+    if (!action.file20) throw Error("Не выбран файл КС3");
+    if (!action.file30) throw Error("Не выбран файл исп. документации");
+
+    const requestReports: ISetReportsRequest = {
+      apikey: action.apikey,
+      list: [
+        {
+          id: "",
+          name: "Отчет от " + moment().format().substr(0, 10),
+          state: "Новый",
+          files: [],
+          contractId: action.contractId,
+        },
+      ],
+    };
+
+    const responseReports: ISetReportsResponse = (yield call(axiosAsync, "SetReports", requestReports)).data;
+
+    if (responseReports.errorText) throw Error(responseReports.errorText);
+
+    const requestFiles: ISetFilesRequest = {
+      apikey: action.apikey,
+      list: [
+        { id: "", name: action.file10.name, type: 10, loadedDraft: false, loadedOriginal: false, reportId: responseReports.list[0].id },
+        { id: "", name: action.file20.name, type: 20, loadedDraft: false, loadedOriginal: false, reportId: responseReports.list[0].id },
+        { id: "", name: action.file30.name, type: 30, loadedDraft: false, loadedOriginal: false, reportId: responseReports.list[0].id },
+      ],
+    };
+
+    const responseFiles: ISetFilesResponse = (yield call(axiosAsync, "SetFiles", requestFiles)).data;
+
+    if (responseFiles.errorText) throw Error(responseFiles.errorText);
+
+    const file10Action: IFileUploadAction = {
+      type: FILE_UPLOAD,
+      apikey: action.apikey,
+      id: responseFiles.list[0].id,
+      name: action.file10.name,
+      file: action.file10,
+    };
+
+    const requestFile10: IFileUploadRequest = yield call(fileReaderAsync, file10Action);
+    const responseFile10: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile10)).data;
+
+    const file20Action: IFileUploadAction = {
+      type: FILE_UPLOAD,
+      apikey: action.apikey,
+      id: responseFiles.list[1].id,
+      name: action.file10.name,
+      file: action.file10,
+    };
+
+    const requestFile20: IFileUploadRequest = yield call(fileReaderAsync, file20Action);
+    const responseFile20: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile20)).data;
+
+    const file30Action: IFileUploadAction = {
+      type: FILE_UPLOAD,
+      apikey: action.apikey,
+      id: responseFiles.list[2].id,
+      name: action.file10.name,
+      file: action.file10,
+    };
+
+    const requestFile30: IFileUploadRequest = yield call(fileReaderAsync, file30Action);
+    const responseFile30: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile30)).data;
+
+    yield put<IWizardConfirmSuccessAction>({ type: WIZARD_CONFIRM_SUCCESS });
+  } catch (err) {
+    yield put<IWizardConfirmFailedAction>({ type: WIZARD_CONFIRM_FAILED, errorText: err.toString() });
+  }
+}
+
 export function* watchLogin() {
   yield takeEvery(LOGIN, workerLogin);
   yield takeEvery(LOGOUT, workerLogout);
@@ -442,4 +524,5 @@ export function* watchLogin() {
   yield takeEvery(UPD_FILES, workerUpdFiles);
   yield takeEvery(DEL_FILES, workerDelFiles);
   yield takeEvery(FILE_UPLOAD, workerFileUpload);
+  yield takeEvery(WIZARD_CONFIRM, workerWizardConfirm);
 }

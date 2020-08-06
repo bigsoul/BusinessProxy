@@ -38,10 +38,8 @@ export interface IWizardReducer {
   isLoading: boolean;
   errorText: string;
   contractId: string;
-  files: [
-    {
-      fileType: number;
-      file: File | null;
-    }
-  ];
+  file10: File | null;
+  file20: File | null;
+  file30: File | null;
+  saccess: boolean;
 }
