@@ -31,7 +31,6 @@ import { connect } from "react-redux";
 import CheckIcon from "@material-ui/icons/Check";
 import { green } from "@material-ui/core/colors";
 import MuiAlert from "@material-ui/lab/Alert";
-import IFile from "../../../interfaces/IFile";
 import IUser from "../../../interfaces/IUser";
 import { RouterState } from "connected-react-router";
 import { LocationState } from "history";

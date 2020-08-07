@@ -15,7 +15,6 @@ import {
   CONFIRM,
   CONFIRM_SUCCESS,
   CONFIRM_FAILED,
-  IConfirmAction,
   IConfirmSuccessAction,
   IUpdReportsSuccessAction,
 } from "../../../types/TAction";

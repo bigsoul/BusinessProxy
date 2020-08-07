@@ -437,6 +437,7 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
     if (!action.file10) throw Error("Не выбран файл КС2");
     if (!action.file20) throw Error("Не выбран файл КС3");
     if (!action.file30) throw Error("Не выбран файл исп. документации");
+    if (!action.contractId) throw Error("Internal error: contract id is empty.");
 
     const requestReports: ISetReportsRequest = {
       apikey: action.apikey,
@@ -477,7 +478,8 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
     };
 
     const requestFile10: IFileUploadRequest = yield call(fileReaderAsync, file10Action);
-    const responseFile10: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile10)).data;
+    yield call(axiosAsync, "FileUpload", requestFile10);
+    //const responseFile10: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile10)).data;
 
     const file20Action: IFileUploadAction = {
       type: FILE_UPLOAD,
@@ -488,7 +490,8 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
     };
 
     const requestFile20: IFileUploadRequest = yield call(fileReaderAsync, file20Action);
-    const responseFile20: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile20)).data;
+    yield call(axiosAsync, "FileUpload", requestFile20);
+    //const responseFile20: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile20)).data;
 
     const file30Action: IFileUploadAction = {
       type: FILE_UPLOAD,
@@ -499,7 +502,15 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
     };
 
     const requestFile30: IFileUploadRequest = yield call(fileReaderAsync, file30Action);
-    const responseFile30: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile30)).data;
+    yield call(axiosAsync, "FileUpload", requestFile30);
+    //const responseFile30: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile30)).data;
+
+    const requestData: IConfirmRequest = {
+      apikey: action.apikey,
+      reportsId: [responseReports.list[0].id],
+    };
+
+    yield call(axiosAsync, "Conform", requestData);
 
     yield put<IWizardConfirmSuccessAction>({ type: WIZARD_CONFIRM_SUCCESS });
   } catch (err) {
