@@ -6,8 +6,6 @@ import IFile from "../../../interfaces/IFile";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-// classes
-import { updFiles } from "../../../classes/Requests";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { UPD_FILES, IUpdFilesAction } from "../../../types/TAction";

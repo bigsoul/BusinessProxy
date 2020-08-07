@@ -74,7 +74,6 @@ import {
   DEL_FILES,
   FILE_UPLOAD,
   IFileUploadSuccessAction,
-  FILE_UPDATE_SUCCESS,
   FILE_UPLOAD_SUCCESS,
   FILE_UPLOAD_FAILED,
   IFileUploadFailedAction,
@@ -119,8 +118,6 @@ import {
   IFileUploadResponse,
 } from "./../../interfaces/IResponse";
 import axios from "axios";
-import { resolve } from "dns";
-import { reject } from "lodash";
 import moment from "moment";
 
 // net

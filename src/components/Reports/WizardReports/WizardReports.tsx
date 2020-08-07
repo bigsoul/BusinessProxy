@@ -16,12 +16,6 @@ import {
   DialogActions,
 } from "@material-ui/core";
 import {
-  IReportCurrentDelAction,
-  REPORT_CURRENT_DEL,
-  IReportAddSimplyAction,
-  REPORT_ADD,
-  IReportAddAction,
-  REPORT_CURRENT_SET,
   WIZARD_SETUP_FILE,
   IWizardSetupFileAction,
   TAction,
@@ -36,14 +30,11 @@ import IStore from "../../../interfaces/IStore";
 import { connect } from "react-redux";
 import CheckIcon from "@material-ui/icons/Check";
 import { green } from "@material-ui/core/colors";
-import { setReports, fileUpload, setFiles, conform } from "../../../classes/Requests";
-import moment from "moment";
 import MuiAlert from "@material-ui/lab/Alert";
 import IFile from "../../../interfaces/IFile";
 import IUser from "../../../interfaces/IUser";
 import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
-import { routerActions } from "react-router-redux";
 import { Dispatch } from "redux";
 
 // difination styling plan
@@ -99,76 +90,6 @@ class WizardReports extends Component<IWizardReportsProps> {
     const { wizardSetupContractIdAction, router } = this.props;
     const contractId = (router.location as any).query["contractId"];
     wizardSetupContractIdAction && wizardSetupContractIdAction(contractId);
-  };
-
-  hendleCloseAlertError = () => {
-    this.setState({ openAlertError: false });
-  };
-
-  hendleSendReport = () => {
-    if (!this.file10 || (this.file10 && this.file10.length === 0)) {
-      this.setState({ openAlertError: true, textAlertError: "Ошибка. Не выбран файл отчета КС2." });
-      return;
-    }
-    if (!this.file20 || (this.file20 && this.file20.length === 0)) {
-      this.setState({ openAlertError: true, textAlertError: "Ошибка. Не выбран файл отчета КС3." });
-      return;
-    }
-    if (!this.file30 || (this.file30 && this.file30.length === 0)) {
-      this.setState({ openAlertError: true, textAlertError: "Ошибка. Не выбран файл отчета исп. документации." });
-      return;
-    }
-
-    setReports("", this.contractId, "Отчет от " + moment().format().substr(0, 10), "Новый", this.collbeckReportCreated);
-  };
-
-  collbeckReportCreated = (response: any) => {
-    if (response) {
-      this.reportId = response[0].id;
-
-      setFiles("", this.contractId, this.reportId, this.file10 ? this.file10[0].name : "", 10, this.collbeckFileCreated10);
-      setFiles("", this.contractId, this.reportId, this.file20 ? this.file20[0].name : "", 20, this.collbeckFileCreated20);
-      setFiles("", this.contractId, this.reportId, this.file30 ? this.file30[0].name : "", 30, this.collbeckFileCreated30);
-    } else {
-      this.setState({ openAlertError: true, textAlertError: "Ошибка создания отчета на сервере. Попробуйте обновить страницу." });
-    }
-  };
-
-  collbeckFileCreated10 = (response: IFile[]) => {
-    if (this.file10 && this.file10[0]) {
-      fileUpload(this.file10, response[0], this.contractId, true, this.collbeckFileUploaded);
-      this.file10Id = response[0].id;
-    }
-  };
-
-  collbeckFileCreated20 = (response: IFile[]) => {
-    if (this.file20 && this.file20[0]) {
-      fileUpload(this.file20, response[0], this.contractId, true, this.collbeckFileUploaded);
-      this.file20Id = response[0].id;
-    }
-  };
-
-  collbeckFileCreated30 = (response: IFile[]) => {
-    if (this.file30 && this.file30[0]) {
-      fileUpload(this.file30, response[0], this.contractId, true, this.collbeckFileUploaded);
-      this.file30Id = response[0].id;
-    }
-  };
-
-  collbeckFileUploaded = (response: IFile[]) => {
-    if (this.file10Id !== "" && this.file20Id !== "" && this.file30Id !== "") {
-      this.file10 = null;
-      this.file20 = null;
-      this.file30 = null;
-
-      this.file10Id = "";
-      this.file20Id = "";
-      this.file30Id = "";
-
-      conform(this.reportId, true);
-
-      this.setState({ reportCreated: true });
-    }
   };
 
   handleWizardSetupFileAction = (fileType: number) => {

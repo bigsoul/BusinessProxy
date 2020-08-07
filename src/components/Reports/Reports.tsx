@@ -4,8 +4,6 @@ import React, { Component, forwardRef } from "react";
 import { connect } from "react-redux";
 // constants
 import {
-  REPORT_CURRENT_DEL,
-  IReportCurrentDelAction,
   IGetReportsAction,
   GET_REPORTS,
   TAction,
@@ -19,8 +17,6 @@ import {
 // interfaces
 import IStore from "../../interfaces/IStore";
 import IReport from "../../interfaces/IReport";
-// classes
-import { setReports, delReports, updReports } from "../../classes/Requests";
 // components-material-ui
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";

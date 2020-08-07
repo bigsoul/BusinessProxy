@@ -1,11 +1,7 @@
 // react
 import React, { Component } from "react";
 // constants
-import { FILE_CURRENT_SET, IFileCurrentSetAction, IConfirmAction, CONFIRM } from "./../../../types/TAction";
-// interfaces
-import IReport from "../../../interfaces/IReport";
-// classes
-import { conform } from "../../../classes/Requests";
+import { IConfirmAction, CONFIRM } from "./../../../types/TAction";
 // components-material-ui
 import Button from "@material-ui/core/Button";
 // classes-material-ui

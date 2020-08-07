@@ -4,9 +4,6 @@ import React, { Component, forwardRef } from "react";
 import { connect } from "react-redux";
 // constants
 import {
-  REPORT_CURRENT_DEL,
-  REPORT_CURRENT_SET,
-  IReportCurrentDelAction,
   IGetFilesAction,
   GET_FILES,
   TAction,
@@ -18,10 +15,8 @@ import {
   DEL_FILES,
 } from "./../../types/TAction";
 // interfaces
-import IStore, { IFilesReducer } from "../../interfaces/IStore";
+import IStore from "../../interfaces/IStore";
 import IFile from "../../interfaces/IFile";
-// classes
-import { getFiles, setFiles, updFiles, delFiles } from "../../classes/Requests";
 // components-material-ui
 import Button from "@material-ui/core/Button";
 import AddBox from "@material-ui/icons/AddBox";

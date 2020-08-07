@@ -79,49 +79,6 @@ export const WIZARD_CONFIRM = "WIZARD_CONFIRM";
 export const WIZARD_CONFIRM_SUCCESS = "WIZARD_CONFIRM_SUCCESS";
 export const WIZARD_CONFIRM_FAILED = "WIZARD_CONFIRM_FAILED";
 
-// -------------------------------------------------------------
-
-export const WIZARD_SETUP_FILE_SUCCESS = "WIZARD_SETUP_FILE_SUCCESS";
-export const WIZARD_SETUP_FILE_FAILED = "WIZARD_SETUP_FILE_FAILED";
-
-export const REPORT_ADD = "REPORT_ADD";
-export const REPORT_ADD_SUCCESS = "REPORT_ADD_SUCCESS";
-export const REPORT_ADD_FAILED = "REPORT_ADD_FAILED";
-
-export const REPORT_UPDATE = "REPORT_UPDATE";
-export const REPORT_UPDATE_SUCCESS = "REPORT_UPDATE_SUCCESS";
-export const REPORT_UPDATE_FAILED = "REPORT_UPDATE_FAILED";
-
-export const REPORT_DELETE = "REPORT_DELETE";
-export const REPORT_DELETE_SUCCESS = "REPORT_DELETE_SUCCESS";
-export const REPORT_DELETE_FAILED = "REPORT_DELETE_FAILED";
-
-export const REPORT_SIMPLY = "REPORT_SIMPLY";
-export const REPORT_SIMPLY_SUCCESS = "REPORT_SIMPLY_SUCCESS";
-export const REPORT_SIMPLY_FAILED = "REPORT_SIMPLY_FAILED";
-
-export const UPDATE_FILES = "UPDATE_FILES";
-export const UPDATE_FILES_SUCCESS = "UPDATE_FILES_SUCCESS";
-export const UPDATE_FILES_FAILED = "UPDATE_FILES_FAILED";
-
-export const FILE_ADD = "FILE_ADD";
-export const FILE_ADD_SUCCESS = "FILE_ADD_SUCCESS";
-export const FILE_ADD_FAILED = "FILE_ADD_FAILED";
-
-export const FILE_UPDATE = "FILE_UPDATE";
-export const FILE_UPDATE_SUCCESS = "FILE_UPDATE_SUCCESS";
-export const FILE_UPDATE_FAILED = "FILE_UPDATE_FAILED";
-
-export const FILE_DELETE = "FILE_DELETE";
-export const FILE_DELETE_SUCCESS = "FILE_DELETE_SUCCESS";
-export const FILE_DELETE_FAILED = "FILE_DELETE_FAILED";
-
-export const REPORT_CURRENT_SET = "REPORT_CURRENT_SET";
-export const REPORT_CURRENT_DEL = "REPORT_CURRENT_DEL";
-export const FILE_CURRENT_SET = "FILE_CURRENT_SET";
-
-export const UPDATE_REPORTS = "UPDATE_REPORTS";
-
 // LOGIN
 
 export interface ILoginAction {
@@ -423,78 +380,6 @@ export interface IWizardClearErrorAction {
   type: typeof WIZARD_CLEAR_ERROR;
 }
 
-//
-
-export interface IWizardSetupFileSuccessAction {
-  type: typeof WIZARD_SETUP_FILE_SUCCESS;
-}
-
-export interface IWizardSetupFileFailedAction {
-  type: typeof WIZARD_SETUP_FILE_FAILED;
-}
-
-export interface IReportAddAction {
-  type: typeof REPORT_ADD;
-  newData: any;
-}
-
-export interface IReportAddSimplyAction {
-  type: typeof REPORT_SIMPLY;
-  path: string;
-  contractId: string;
-}
-
-export interface IReportUpdateAction {
-  type: typeof REPORT_UPDATE;
-  newData: any;
-}
-
-export interface IReportDeleteAction {
-  type: typeof REPORT_DELETE;
-  dataDelete: any;
-}
-
-export interface IReportCurrentDelAction {
-  type: typeof REPORT_CURRENT_DEL;
-}
-
-export interface IFileCurrentSetAction {
-  type: typeof FILE_CURRENT_SET;
-  contractId: string;
-  reportId: string;
-}
-
-export interface IFileAddAction {
-  type: typeof FILE_ADD;
-  contractId: string;
-  newData: any;
-}
-
-export interface IFileUpdateAction {
-  type: typeof FILE_UPDATE;
-  contractId: string;
-  newData: any;
-}
-
-export interface IFileDeleteAction {
-  type: typeof FILE_DELETE;
-  contractId: string;
-  dataDelete: any;
-}
-
-export interface IUpdateReportsAction {
-  type: typeof UPDATE_REPORTS;
-  contractId: string;
-  reports: any;
-}
-
-export interface IUpdateFilesAction {
-  type: typeof UPDATE_FILES;
-  contractId: string;
-  reportId: string;
-  files: any;
-}
-
 export type TAction =
   | ILoginAction
   | ILoginSuccessAction
@@ -502,10 +387,6 @@ export type TAction =
   | ILogoutAction
   | ILogoutSuccessAction
   | ILogoutFailedAction
-  | IReportAddAction
-  | IReportAddSimplyAction
-  | IReportUpdateAction
-  | IReportDeleteAction
   | IGetReportsAction
   | IGetReportsSuccessAction
   | IGetReportsFailedAction
@@ -546,15 +427,6 @@ export type TAction =
   | IWizardConfirmSuccessAction
   | IWizardConfirmFailedAction
   | IWizardClearErrorAction
-  | IReportCurrentDelAction
-  | IFileCurrentSetAction
-  | IFileAddAction
-  | IFileUpdateAction
-  | IFileDeleteAction
   | IGetContractsAction
   | IGetContractsSuccessAction
-  | IGetContractsFailedAction
-  | IUpdateReportsAction
-  | IUpdateFilesAction
-  | IWizardSetupFileSuccessAction
-  | IWizardSetupFileFailedAction;
+  | IGetContractsFailedAction;

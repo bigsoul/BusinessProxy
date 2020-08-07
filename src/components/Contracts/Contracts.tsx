@@ -3,7 +3,7 @@ import React, { Component } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { IReportAddSimplyAction, REPORT_SIMPLY, TAction, IGetContractsAction, GET_CONTRACTS } from "../../types/TAction";
+import { TAction, IGetContractsAction, GET_CONTRACTS } from "../../types/TAction";
 // types
 import { TContractFields } from "./../../interfaces/IContract";
 // interfaces

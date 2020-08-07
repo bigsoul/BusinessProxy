@@ -1,9 +1,5 @@
 // react
 import React, { Component } from "react";
-// interfaces
-import IFile from "../../../interfaces/IFile";
-// classes
-import { fileUpload, fileDownload } from "../../../classes/Requests";
 // components-material-ui
 import Button from "@material-ui/core/Button";
 // classes-material-ui
