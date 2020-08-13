@@ -68,23 +68,6 @@ interface IWizardReportsProps extends WithStyles<typeof styles> {
 }
 
 class WizardReports extends Component<IWizardReportsProps> {
-  file10: FileList | null = null;
-  file20: FileList | null = null;
-  file30: FileList | null = null;
-
-  file10Id: string = "";
-  file20Id: string = "";
-  file30Id: string = "";
-
-  contractId: string = "";
-  reportId: string = "";
-
-  state = {
-    openAlertError: false,
-    textAlertError: "",
-    reportCreated: false,
-  };
-
   componentDidMount = () => {
     const { wizardSetupContractIdAction, router } = this.props;
     const contractId = (router.location as any).query["contractId"];

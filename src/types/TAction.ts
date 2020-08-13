@@ -36,6 +36,8 @@ export const DEL_REPORTS = "DEL_REPORTS";
 export const DEL_REPORTS_SUCCESS = "DEL_REPORTS_SUCCESS";
 export const DEL_REPORTS_FAILED = "DEL_REPORTS_FAILED";
 
+export const REPORTS_CLEAR_ERROR = "REPORTS_CLEAR_ERROR";
+
 // confirm
 
 export const CONFIRM = "CONFIRM";
@@ -207,6 +209,12 @@ export interface IDelReportsSuccessAction {
 export interface IDelReportsFailedAction {
   type: typeof DEL_REPORTS_FAILED;
   errorText: string;
+}
+
+// REPORTS_CLEAR_ERROR
+
+export interface IReportsClearErrorAction {
+  type: typeof REPORTS_CLEAR_ERROR;
 }
 
 // CONFIRM
@@ -429,4 +437,5 @@ export type TAction =
   | IWizardClearErrorAction
   | IGetContractsAction
   | IGetContractsSuccessAction
-  | IGetContractsFailedAction;
+  | IGetContractsFailedAction
+  | IReportsClearErrorAction;

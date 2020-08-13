@@ -13,6 +13,8 @@ import {
   UPD_REPORTS,
   DEL_REPORTS,
   IDelReportsAction,
+  IReportsClearErrorAction,
+  REPORTS_CLEAR_ERROR,
 } from "./../../types/TAction";
 // interfaces
 import IStore from "../../interfaces/IStore";
@@ -35,6 +37,7 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import Button from "@material-ui/core/Button";
 import MaterialTable, { Column } from "material-table";
+import MuiAlert from "@material-ui/lab/Alert";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 // components
@@ -46,6 +49,7 @@ import IUser from "../../interfaces/IUser";
 import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
 import { Dispatch } from "redux";
+import { Snackbar } from "@material-ui/core";
 
 // difination styling plan
 
@@ -70,10 +74,12 @@ interface IReportsProps extends WithStyles<typeof styles> {
   user: IUser;
   reports: IReport[];
   router: RouterState<LocationState>;
+  errorText?: string;
   getReportsAction?: (apikey: string, contractId: string) => void;
   setReportsAction?: (apikey: string, reports: IReport[]) => void;
   updReportsAction?: (apikey: string, reports: IReport[]) => void;
   delReportsAction?: (apikey: string, reports: IReport[]) => void;
+  reportsClearErrorAction?: () => void;
 }
 
 interface IReportsState {
@@ -151,8 +157,13 @@ class Reports extends Component<IReportsProps, IReportsState> {
     delReportsAction && delReportsAction(user.apikey, reports);
   };
 
+  hendleReportsClearErrorAction = (): void => {
+    const { reportsClearErrorAction } = this.props;
+    reportsClearErrorAction && reportsClearErrorAction();
+  };
+
   render = (): JSX.Element => {
-    const { router, reports, classes } = this.props;
+    const { router, reports, classes, errorText } = this.props;
     const { columns } = this.state;
     const { tableIcons } = this;
 
@@ -167,7 +178,7 @@ class Reports extends Component<IReportsProps, IReportsState> {
           icons={tableIcons}
           title="Список отчетов по договору: "
           columns={columns}
-          data={_.cloneDeep(reports)}
+          data={reports}
           localization={{
             header: { actions: "" },
             toolbar: {
@@ -204,7 +215,9 @@ class Reports extends Component<IReportsProps, IReportsState> {
                     contractId: contractId,
                   },
                 ];
+
                 this.handleUpdReportsAction(reports);
+
                 resolve();
               }),
             onRowDelete: (oldData: IReportTable | undefined) =>
@@ -230,6 +243,13 @@ class Reports extends Component<IReportsProps, IReportsState> {
               }),
           }}
         />
+        {/** Обратная связь + */}
+        <Snackbar open={!!errorText} autoHideDuration={3000} onClose={this.hendleReportsClearErrorAction}>
+          <MuiAlert elevation={6} variant="filled" severity="error" onClose={this.hendleReportsClearErrorAction}>
+            {errorText}
+          </MuiAlert>
+        </Snackbar>
+        {/** Обратная связь - */}
       </>
     );
   };
@@ -241,11 +261,13 @@ const mapStateToProps = (state: IStore, ownProps: IReportsProps): IReportsProps 
     user: user,
     reports: reports.table.list,
     router: router,
+    errorText: reports.table.errorText,
     classes: ownProps.classes,
     getReportsAction: ownProps.getReportsAction,
     setReportsAction: ownProps.setReportsAction,
     updReportsAction: ownProps.updReportsAction,
     delReportsAction: ownProps.delReportsAction,
+    reportsClearErrorAction: ownProps.reportsClearErrorAction,
   };
 };
 
@@ -277,6 +299,11 @@ const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
         type: DEL_REPORTS,
         apikey: apikey,
         list: reports,
+      });
+    },
+    reportsClearErrorAction: (): void => {
+      dispatch<IReportsClearErrorAction>({
+        type: REPORTS_CLEAR_ERROR,
       });
     },
   };

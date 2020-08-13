@@ -168,7 +168,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
           icons={tableIcons}
           title="Список файлов по отчету: "
           columns={columns}
-          data={_.cloneDeep(files)}
+          data={files}
           onRowClick={() => {}}
           localization={{
             header: { actions: "" },

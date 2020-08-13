@@ -1,18 +1,32 @@
-/*import axios from "axios";
+console.log("start ...");
 
-const serviceUrl = "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/";
-const serviceLogin = "exchange";
-const servicePassword = "exchange2016";
-
-const requestData = {};
-
-const result = axios.post(serviceUrl + "FileUpload", requestData, {
-  auth: {
-    username: serviceLogin,
-    password: servicePassword,
+const err0 = {
+  response: {
+    data: {
+      errorText: "",
+    },
   },
-});
+};
 
-console.log(result);*/
+const err1 = {
+  response: {
+    data: {
+      errorText: "test",
+    },
+  },
+};
 
-console.log("result");
+const err2 = {
+  response: {
+    data: {},
+  },
+};
+
+const err3 = {
+  response: {},
+};
+
+const text = err2?.response?.data?.errorText;
+
+console.log("result: " + text);
+console.log("result type: " + typeof text);

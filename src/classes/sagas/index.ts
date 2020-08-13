@@ -313,8 +313,10 @@ function* workerUpdReports(action: IUpdReportsAction) {
 
     yield put<IUpdReportsSuccessAction>({ type: UPD_REPORTS_SUCCESS, list: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IUpdReportsFailedAction>({ type: UPD_REPORTS_FAILED, errorText: err.toString() });
+    const serverError = err?.response?.data?.errorText;
+    const userError = serverError ? serverError : err.message;
+    console.error(userError);
+    yield put<IUpdReportsFailedAction>({ type: UPD_REPORTS_FAILED, errorText: userError });
   }
 }
 

@@ -17,6 +17,7 @@ import {
   CONFIRM_FAILED,
   IConfirmSuccessAction,
   IUpdReportsSuccessAction,
+  REPORTS_CLEAR_ERROR,
 } from "../../../types/TAction";
 import { IReportsReducer } from "../../../interfaces/IStore";
 
@@ -103,7 +104,7 @@ const reportsReducer = (curState: IReportsReducer = preloadedState, action: TAct
       const newState: IReportsReducer = {
         ...curState,
         isLoading: false,
-        errorText: "",
+        errorText: action.errorText,
       };
       return newState;
     }
@@ -161,6 +162,14 @@ const reportsReducer = (curState: IReportsReducer = preloadedState, action: TAct
         ...curState,
         isLoading: false,
         errorText: action.errorText,
+      };
+      return newState;
+    }
+    case REPORTS_CLEAR_ERROR: {
+      const newState: IReportsReducer = {
+        ...curState,
+        isLoading: false,
+        errorText: "",
       };
       return newState;
     }
