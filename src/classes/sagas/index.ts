@@ -485,8 +485,8 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
       type: FILE_UPLOAD,
       apikey: action.apikey,
       id: responseFiles.list[1].id,
-      name: action.file10.name,
-      file: action.file10,
+      name: action.file20.name,
+      file: action.file20,
     };
 
     const requestFile20: IFileUploadRequest = yield call(fileReaderAsync, file20Action);
@@ -497,8 +497,8 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
       type: FILE_UPLOAD,
       apikey: action.apikey,
       id: responseFiles.list[2].id,
-      name: action.file10.name,
-      file: action.file10,
+      name: action.file30.name,
+      file: action.file30,
     };
 
     const requestFile30: IFileUploadRequest = yield call(fileReaderAsync, file30Action);
