@@ -46,7 +46,6 @@ import IUser from "../../interfaces/IUser";
 import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
 import { Dispatch } from "redux";
-import _ from "lodash";
 import { Snackbar } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 

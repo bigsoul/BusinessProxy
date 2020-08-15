@@ -119,7 +119,6 @@ import {
 } from "./../../interfaces/IResponse";
 import axios from "axios";
 import moment from "moment";
-import { result } from "lodash";
 
 // net
 

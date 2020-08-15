@@ -43,7 +43,6 @@ import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/s
 // components
 import ReportsRowControl from "./ReportsRowControl/ReportsRowControl";
 // others
-import _ from "lodash";
 import moment from "moment";
 import IUser from "../../interfaces/IUser";
 import { RouterState } from "connected-react-router";
