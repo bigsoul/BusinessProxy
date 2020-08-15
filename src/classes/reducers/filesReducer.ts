@@ -16,6 +16,7 @@ import {
   FILE_UPLOAD,
   FILE_UPLOAD_SUCCESS,
   FILE_UPLOAD_FAILED,
+  FILES_CLEAR_ERROR,
 } from "../../types/TAction";
 
 const preloadedState: IFilesReducer = {
@@ -137,7 +138,7 @@ const contractsReducer = (curState: IFilesReducer = preloadedState, action: TAct
       const newState: IFilesReducer = {
         ...curState,
         isLoading: false,
-        errorText: "",
+        errorText: action.errorText,
       };
       return newState;
     }
@@ -169,6 +170,14 @@ const contractsReducer = (curState: IFilesReducer = preloadedState, action: TAct
         ...curState,
         isLoading: false,
         errorText: action.errorText,
+      };
+      return newState;
+    }
+    case FILES_CLEAR_ERROR: {
+      const newState: IFilesReducer = {
+        ...curState,
+        isLoading: false,
+        errorText: "",
       };
       return newState;
     }

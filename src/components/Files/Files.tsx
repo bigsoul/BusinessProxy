@@ -13,6 +13,8 @@ import {
   SET_FILES,
   UPD_FILES,
   DEL_FILES,
+  IFilesClearErrorAction,
+  FILES_CLEAR_ERROR,
 } from "./../../types/TAction";
 // interfaces
 import IStore from "../../interfaces/IStore";
@@ -45,6 +47,8 @@ import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
 import { Dispatch } from "redux";
 import _ from "lodash";
+import { Snackbar } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 
 // difination styling plan
 
@@ -66,10 +70,12 @@ interface IFilesProps extends WithStyles<typeof styles> {
   user: IUser;
   files: IFile[];
   router: RouterState<LocationState>;
+  errorText?: string;
   getFilesAction?: (apikey: string, reportId: string) => void;
   setFilesAction?: (apikey: string, files: IFile[]) => void;
   updFilesAction?: (apikey: string, files: IFile[]) => void;
   delFilesAction?: (apikey: string, files: IFile[]) => void;
+  filesClearErrorAction?: () => void;
 }
 
 interface IFilesState {
@@ -132,7 +138,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
 
   handleGetReportsAction = () => {
     const { getFilesAction, user, router } = this.props;
-    const reportId = (router.location as any).query["reportId"];
+    const reportId = (router.location as any).query["reportId"] || "";
     getFilesAction && getFilesAction(user.apikey, reportId);
   };
 
@@ -154,8 +160,13 @@ export class Files extends Component<IFilesProps, IFilesState> {
     delFilesAction && delFilesAction(user.apikey, files);
   };
 
+  handleFilesClearErrorAction = (): void => {
+    const { filesClearErrorAction } = this.props;
+    filesClearErrorAction && filesClearErrorAction();
+  };
+
   render = (): JSX.Element => {
-    const { classes, files } = this.props;
+    const { classes, files, errorText } = this.props;
     const { columns } = this.state;
     const { tableIcons } = this;
 
@@ -236,6 +247,13 @@ export class Files extends Component<IFilesProps, IFilesState> {
               }),
           }}
         />
+        {/** Обратная связь + */}
+        <Snackbar open={!!errorText} autoHideDuration={3000} onClose={this.handleFilesClearErrorAction}>
+          <MuiAlert elevation={6} variant="filled" severity="error" onClose={this.handleFilesClearErrorAction}>
+            {errorText}
+          </MuiAlert>
+        </Snackbar>
+        {/** Обратная связь - */}
       </>
     );
   };
@@ -247,11 +265,13 @@ const mapStateToProps = (state: IStore, ownProps: IFilesProps): IFilesProps => {
     user: user,
     files: files.list,
     router: router,
+    errorText: files.errorText,
     classes: ownProps.classes,
     getFilesAction: ownProps.getFilesAction,
     setFilesAction: ownProps.setFilesAction,
     updFilesAction: ownProps.updFilesAction,
     delFilesAction: ownProps.delFilesAction,
+    filesClearErrorAction: ownProps.filesClearErrorAction,
   };
 };
 
@@ -283,6 +303,11 @@ const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
         type: DEL_FILES,
         apikey: apikey,
         list: files,
+      });
+    },
+    filesClearErrorAction: (): void => {
+      dispatch<IFilesClearErrorAction>({
+        type: FILES_CLEAR_ERROR,
       });
     },
   };

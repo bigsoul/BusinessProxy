@@ -78,7 +78,7 @@ const reportsReducer = (curState: IReportsReducer = preloadedState, action: TAct
       const newState: IReportsReducer = {
         ...curState,
         isLoading: false,
-        errorText: "",
+        errorText: action.errorText,
       };
       return newState;
     }

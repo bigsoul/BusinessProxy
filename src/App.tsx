@@ -51,6 +51,9 @@ class App extends Component<IAppProps> {
           <Route exec path="/login">
             <Login />
           </Route>
+          <Route exec path="/">
+            {user.apikey ? <Contracts user={user} contracts={contracts} /> : <Login />}
+          </Route>
         </Switch>
       </>
     );

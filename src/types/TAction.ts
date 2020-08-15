@@ -4,6 +4,8 @@ import IFile from "../interfaces/IFile";
 
 // auth
 
+export const INIT = "@@INIT";
+
 export const LOGIN = "LOGIN";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILED = "LOGIN_FAILED";
@@ -11,6 +13,8 @@ export const LOGIN_FAILED = "LOGIN_FAILED";
 export const LOGOUT = "LOGOUT";
 export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const LOGOUT_FAILED = "LOGOUT_FAILED";
+
+export const USER_CLEAR_ERROR = "USER_CLEAR_ERROR";
 
 // contracts
 
@@ -70,6 +74,8 @@ export const FILE_DOWNLOAD = "FILE_DOWNLOAD";
 export const FILE_DOWNLOAD_SUCCESS = "FILE_DOWNLOAD_SUCCESS";
 export const FILE_DOWNLOAD_FAILED = "FILE_DOWNLOAD_FAILED";
 
+export const FILES_CLEAR_ERROR = "FILES_CLEAR_ERROR";
+
 // wizard
 
 export const WIZARD_SETUP_CONTRACT_ID = "WIZARD_SETUP_CONTRACT_ID";
@@ -80,6 +86,12 @@ export const WIZARD_CLEAR_ERROR = "WIZARD_CLEAR_ERROR";
 export const WIZARD_CONFIRM = "WIZARD_CONFIRM";
 export const WIZARD_CONFIRM_SUCCESS = "WIZARD_CONFIRM_SUCCESS";
 export const WIZARD_CONFIRM_FAILED = "WIZARD_CONFIRM_FAILED";
+
+// INIT
+
+export interface IInit {
+  type: typeof INIT;
+}
 
 // LOGIN
 
@@ -114,6 +126,12 @@ export interface ILogoutSuccessAction {
 export interface ILogoutFailedAction {
   type: typeof LOGOUT_FAILED;
   errorText: string;
+}
+
+// USER_CLEAR_ERROR
+
+export interface IUserClearErrorAction {
+  type: typeof USER_CLEAR_ERROR;
 }
 
 // GET_CONTRACTS
@@ -313,6 +331,12 @@ export interface IDelFilesFailedAction {
   errorText: string;
 }
 
+// FILES_CLEAR_ERROR
+
+export interface IFilesClearErrorAction {
+  type: typeof FILES_CLEAR_ERROR;
+}
+
 // FILE_UPLOAD
 
 export interface IFileUploadAction {
@@ -389,12 +413,14 @@ export interface IWizardClearErrorAction {
 }
 
 export type TAction =
+  | IInit
   | ILoginAction
   | ILoginSuccessAction
   | ILoginFailedAction
   | ILogoutAction
   | ILogoutSuccessAction
   | ILogoutFailedAction
+  | IUserClearErrorAction
   | IGetReportsAction
   | IGetReportsSuccessAction
   | IGetReportsFailedAction
@@ -423,6 +449,7 @@ export type TAction =
   | IDelFilesAction
   | IDelFilesSuccessAction
   | IDelFilesFailedAction
+  | IFilesClearErrorAction
   | IFileUploadAction
   | IFileUploadSuccessAction
   | IFileUploadFailedAction

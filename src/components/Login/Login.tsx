@@ -12,9 +12,10 @@ import TextField from "@material-ui/core/TextField";
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import IUser from "../../interfaces/IUser";
 import { Dispatch } from "redux";
-import { ILoginAction, LOGIN, ILogoutAction, TAction, LOGOUT } from "../../types/TAction";
+import { ILoginAction, LOGIN, ILogoutAction, TAction, LOGOUT, USER_CLEAR_ERROR, IUserClearErrorAction } from "../../types/TAction";
 import Alert from "@material-ui/lab/Alert";
 import { Snackbar } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 
 // difination styling plan
 
@@ -34,6 +35,7 @@ interface ILoginProps extends WithStyles<typeof styles> {
   user?: IUser;
   loginAction?: (userLogin: string, userPassword: string) => void;
   logoutAction?: (apikey: string) => void;
+  userClearErrorAction?: () => void;
 }
 
 export class Login extends Component<ILoginProps> {
@@ -54,6 +56,11 @@ export class Login extends Component<ILoginProps> {
     if (!user) return;
 
     if (logoutAction) logoutAction(user.apikey);
+  };
+
+  handleUserClearErrorAction = (): void => {
+    const { userClearErrorAction } = this.props;
+    userClearErrorAction && userClearErrorAction();
   };
 
   render = () => {
@@ -92,11 +99,13 @@ export class Login extends Component<ILoginProps> {
             <Button variant="contained" color="secondary" onClick={this.handleLoginAction}>
               Войти
             </Button>
-            {user.errorText && (
-              <Snackbar open={!!user.errorText} autoHideDuration={6000}>
-                <Alert severity="error">{user.errorText}</Alert>
-              </Snackbar>
-            )}
+            {/** Обратная связь + */}
+            <Snackbar open={!!user.errorText} autoHideDuration={6000} onClose={this.handleUserClearErrorAction}>
+              <MuiAlert elevation={6} variant="filled" severity="error" onClose={this.handleUserClearErrorAction}>
+                {user.errorText}
+              </MuiAlert>
+            </Snackbar>
+            {/** Обратная связь - */}
           </Grid>
         </div>
       );
@@ -110,6 +119,7 @@ const mapStateToProps = (state: IStore, ownProps: ILoginProps): ILoginProps => {
     user: user,
     loginAction: ownProps.loginAction,
     logoutAction: ownProps.logoutAction,
+    userClearErrorAction: ownProps.userClearErrorAction,
     classes: ownProps.classes,
   };
 };
@@ -127,6 +137,11 @@ const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
       dispatch<ILogoutAction>({
         type: LOGOUT,
         apikey: apikey,
+      });
+    },
+    userClearErrorAction: (): void => {
+      dispatch<IUserClearErrorAction>({
+        type: USER_CLEAR_ERROR,
       });
     },
   };

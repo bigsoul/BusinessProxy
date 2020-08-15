@@ -77,6 +77,10 @@ class Contracts extends Component<IContractsProps, IContractsState> {
     rowsPerPage: 10,
   };
 
+  componentDidMount = (): void => {
+    this.hendleGetContractsAction();
+  };
+
   handleChangePage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number): void => {
     this.setState({ page: newPage });
   };

@@ -119,6 +119,7 @@ import {
 } from "./../../interfaces/IResponse";
 import axios from "axios";
 import moment from "moment";
+import { result } from "lodash";
 
 // net
 
@@ -204,6 +205,17 @@ function fileReaderAsync(action: IFileUploadAction) {
   });
 }
 
+//
+
+function getUserError(err: any): string {
+  const serverError = err?.response?.data?.errorText;
+  const userError = serverError ? serverError : err.message;
+
+  console.error(userError);
+
+  return userError;
+}
+
 // auth
 
 function* workerLogin(action: ILoginAction) {
@@ -214,15 +226,13 @@ function* workerLogin(action: ILoginAction) {
     };
 
     const responseData: ILoginResponse = (yield call(axiosAsync, "LoginIn", requestData)).data;
-    if (!responseData.apikey) {
-      throw new Error("Неверный логин или пароль.");
-    }
+
+    localStorage.setItem("apikey", responseData.apikey);
+
     yield put<ILoginSuccessAction>({ type: LOGIN_SUCCESS, apikey: responseData.apikey, name: responseData.name });
     window._history.push("/contracts");
-    yield put<IGetContractsAction>({ type: GET_CONTRACTS, apikey: responseData.apikey });
   } catch (err) {
-    console.error(err.toString());
-    yield put<ILoginFailedAction>({ type: LOGIN_FAILED, errorText: err.toString() });
+    yield put<ILoginFailedAction>({ type: LOGIN_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -235,14 +245,15 @@ function* workerLogout(action: ILogoutAction) {
     const responseData: ILogoutResponse = (yield call(axiosAsync, "LoginOut", requestData)).data;
 
     if (!responseData.apikey) {
+      localStorage.clear();
+
       yield put<ILogoutSuccessAction>({ type: LOGOUT_SUCCESS });
       window._history.push("/login");
     } else {
       throw new Error("Ошибка. Сервер сообщил о неудачной попытке выхода из системы.");
     }
   } catch (err) {
-    console.error(err.toString());
-    yield put<ILogoutFailedAction>({ type: LOGOUT_FAILED, errorText: err.toString() });
+    yield put<ILogoutFailedAction>({ type: LOGOUT_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -263,8 +274,7 @@ function* workerGetContracts(action: IGetContractsAction) {
 
     yield put<IGetContractsSuccessAction>({ type: GET_CONTRACTS_SUCCESS, contracts: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IGetContractsFailedAction>({ type: GET_CONTRACTS_FAILED, errorText: err.toString() });
+    yield put<IGetContractsFailedAction>({ type: GET_CONTRACTS_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -281,8 +291,7 @@ function* workerGetReports(action: IGetReportsAction) {
 
     yield put<IGetReportsSuccessAction>({ type: GET_REPORTS_SUCCESS, reports: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IGetReportsFailedAction>({ type: GET_REPORTS_FAILED, errorText: err.toString() });
+    yield put<IGetReportsFailedAction>({ type: GET_REPORTS_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -297,8 +306,7 @@ function* workerSetReports(action: ISetReportsAction) {
 
     yield put<ISetReportsSuccessAction>({ type: SET_REPORTS_SUCCESS, list: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<ISetReportsFailedAction>({ type: SET_REPORTS_FAILED, errorText: err.toString() });
+    yield put<ISetReportsFailedAction>({ type: SET_REPORTS_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -313,10 +321,7 @@ function* workerUpdReports(action: IUpdReportsAction) {
 
     yield put<IUpdReportsSuccessAction>({ type: UPD_REPORTS_SUCCESS, list: responseData.list });
   } catch (err) {
-    const serverError = err?.response?.data?.errorText;
-    const userError = serverError ? serverError : err.message;
-    console.error(userError);
-    yield put<IUpdReportsFailedAction>({ type: UPD_REPORTS_FAILED, errorText: userError });
+    yield put<IUpdReportsFailedAction>({ type: UPD_REPORTS_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -331,8 +336,7 @@ function* workerDelReports(action: IDelReportsAction) {
 
     yield put<IDelReportsSuccessAction>({ type: DEL_REPORTS_SUCCESS, list: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IDelReportsFailedAction>({ type: DEL_REPORTS_FAILED, errorText: err.toString() });
+    yield put<IDelReportsFailedAction>({ type: DEL_REPORTS_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -349,8 +353,7 @@ function* workerConfirm(action: IConfirmAction) {
 
     yield put<IConfirmSuccessAction>({ type: CONFIRM_SUCCESS, list: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IConfirmFailedAction>({ type: CONFIRM_FAILED, errorText: err.toString() });
+    yield put<IConfirmFailedAction>({ type: CONFIRM_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -367,8 +370,7 @@ function* workerGetFiles(action: IGetFilesAction) {
 
     yield put<IGetFilesSuccessAction>({ type: GET_FILES_SUCCESS, files: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IGetFilesFailedAction>({ type: GET_FILES_FAILED, errorText: err.toString() });
+    yield put<IGetFilesFailedAction>({ type: GET_FILES_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -383,8 +385,7 @@ function* workerSetFiles(action: ISetFilesAction) {
 
     yield put<ISetFilesSuccessAction>({ type: SET_FILES_SUCCESS, list: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<ISetFilesFailedAction>({ type: SET_FILES_FAILED, errorText: err.toString() });
+    yield put<ISetFilesFailedAction>({ type: SET_FILES_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -399,8 +400,7 @@ function* workerUpdFiles(action: IUpdFilesAction) {
 
     yield put<IUpdFilesSuccessAction>({ type: UPD_FILES_SUCCESS, list: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IUpdFilesFailedAction>({ type: UPD_FILES_FAILED, errorText: err.toString() });
+    yield put<IUpdFilesFailedAction>({ type: UPD_FILES_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -415,8 +415,7 @@ function* workerDelFiles(action: IDelFilesAction) {
 
     yield put<IDelFilesSuccessAction>({ type: DEL_FILES_SUCCESS, list: responseData.list });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IDelFilesFailedAction>({ type: DEL_FILES_FAILED, errorText: err.toString() });
+    yield put<IDelFilesFailedAction>({ type: DEL_FILES_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -427,8 +426,7 @@ function* workerFileUpload(action: IFileUploadAction) {
 
     yield put<IFileUploadSuccessAction>({ type: FILE_UPLOAD_SUCCESS, file: responseData.file });
   } catch (err) {
-    console.error(err.toString());
-    yield put<IFileUploadFailedAction>({ type: FILE_UPLOAD_FAILED, errorText: err.toString() });
+    yield put<IFileUploadFailedAction>({ type: FILE_UPLOAD_FAILED, errorText: getUserError(err) });
   }
 }
 
@@ -516,7 +514,7 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
 
     yield put<IWizardConfirmSuccessAction>({ type: WIZARD_CONFIRM_SUCCESS });
   } catch (err) {
-    yield put<IWizardConfirmFailedAction>({ type: WIZARD_CONFIRM_FAILED, errorText: err.toString() });
+    yield put<IWizardConfirmFailedAction>({ type: WIZARD_CONFIRM_FAILED, errorText: getUserError(err) });
   }
 }
 

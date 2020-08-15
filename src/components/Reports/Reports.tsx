@@ -138,7 +138,7 @@ class Reports extends Component<IReportsProps, IReportsState> {
 
   handleGetReportsAction = (): void => {
     const { getReportsAction, user, router } = this.props;
-    const contractId = (router.location as any).query["contractId"];
+    const contractId = (router.location as any).query["contractId"] || "";
     getReportsAction && getReportsAction(user.apikey, contractId);
   };
 

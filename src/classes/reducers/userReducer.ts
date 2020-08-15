@@ -1,4 +1,14 @@
-import { TAction, LOGIN, LOGOUT, LOGIN_SUCCESS, LOGIN_FAILED, LOGOUT_SUCCESS, LOGOUT_FAILED } from "./../../types/TAction";
+import {
+  TAction,
+  LOGIN,
+  LOGOUT,
+  LOGIN_SUCCESS,
+  LOGIN_FAILED,
+  LOGOUT_SUCCESS,
+  LOGOUT_FAILED,
+  USER_CLEAR_ERROR,
+  INIT,
+} from "./../../types/TAction";
 import IUser from "../../interfaces/IUser";
 
 const preloadedState: IUser = {
@@ -10,6 +20,17 @@ const preloadedState: IUser = {
 
 const userReducer = (curState: IUser = preloadedState, action: TAction): IUser => {
   switch (action.type) {
+    case INIT: {
+      const apikey = localStorage.getItem("apikey");
+
+      if (!apikey) return curState;
+
+      const newState: IUser = {
+        ...curState,
+        apikey: apikey,
+      };
+      return newState;
+    }
     case LOGIN: {
       const newState: IUser = {
         ...curState,
@@ -23,6 +44,7 @@ const userReducer = (curState: IUser = preloadedState, action: TAction): IUser =
         ...curState,
         isLoading: false,
         apikey: action.apikey,
+        name: action.name,
       };
       return newState;
     }
@@ -56,6 +78,14 @@ const userReducer = (curState: IUser = preloadedState, action: TAction): IUser =
         ...curState,
         isLoading: false,
         errorText: action.errorText,
+      };
+      return newState;
+    }
+    case USER_CLEAR_ERROR: {
+      const newState: IUser = {
+        ...curState,
+        isLoading: false,
+        errorText: "",
       };
       return newState;
     }

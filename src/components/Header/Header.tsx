@@ -55,8 +55,7 @@ export class Header extends Component<IHeaderProps> {
               <MenuIcon />
             </IconButton>
             <Typography className={classes.title} variant="h6" noWrap>
-              НЕОМЕТРИЯ <Link to={"/"}>/</Link> <Link to={"/contracts"}>contracts</Link> <Link to={"/reports"}>reports</Link>{" "}
-              <Link to={"/files"}>files</Link> <Link to={"/login"}>login</Link>
+              НЕОМЕТРИЯ
             </Typography>
             <div className={classes.grow} />
             {user.name === "" ? (
