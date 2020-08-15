@@ -1,92 +1,65 @@
 // react
-import React, { Component } from "react";
+import React, { Component, forwardRef } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { TAction, IGetContractsAction, GET_CONTRACTS } from "../../types/TAction";
-// types
-import { TContractFields } from "./../../interfaces/IContract";
+import { TAction, IGetContractsAction, GET_CONTRACTS, IContractsClearErrorAction, CONTRACTS_CLEAR_ERROR } from "../../types/TAction";
 // interfaces
 import IStore from "../../interfaces/IStore";
 import IContract from "../../interfaces/IContract";
 // components-material-ui
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
 import Button from "@material-ui/core/Button";
-import TableRow from "@material-ui/core/TableRow";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell, { TableCellProps } from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableContainer from "@material-ui/core/TableContainer";
-import TablePagination from "@material-ui/core/TablePagination";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import IUser from "../../interfaces/IUser";
 import { Dispatch } from "redux";
+import { Snackbar } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
+import AddBox from "@material-ui/icons/AddBox";
+import ArrowDownward from "@material-ui/icons/ArrowDownward";
+import Check from "@material-ui/icons/Check";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
+import ChevronRight from "@material-ui/icons/ChevronRight";
+import Clear from "@material-ui/icons/Clear";
+import DeleteOutline from "@material-ui/icons/DeleteOutline";
+import Edit from "@material-ui/icons/Edit";
+import FilterList from "@material-ui/icons/FilterList";
+import FirstPage from "@material-ui/icons/FirstPage";
+import LastPage from "@material-ui/icons/LastPage";
+import Remove from "@material-ui/icons/Remove";
+import SaveAlt from "@material-ui/icons/SaveAlt";
+import Search from "@material-ui/icons/Search";
+import ViewColumn from "@material-ui/icons/ViewColumn";
+import MaterialTable, { Column } from "material-table";
+import ContractsRowControlButton from "./ContractsRowControlButton/ContractsRowControlButton";
 
 // difination styling plan
 
-type TStyleClasses =
-  | "paper"
-  | "tableContainer"
-  | "nameHeadTableCell"
-  | "stateHeadTableCell"
-  | "refreshContracts"
-  | "buttonTableCell"
-  | "buttonAddReport";
+type TStyleClasses = "refreshContracts";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
-  paper: { width: "100%", height: "85%" },
-  tableContainer: { maxHeight: "100%" },
-  nameHeadTableCell: { minWidth: 170 },
-  stateHeadTableCell: { minWidth: 100 },
-  buttonTableCell: { float: "right" },
   refreshContracts: { float: "right" },
-  buttonAddReport: { float: "right", marginRight: "10px" },
 };
 
 let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
 
 // own interfaces
 
-interface IContractsTableCellProps extends TableCellProps {
-  id: TContractFields;
-  styleClass: TStyleClasses;
-  label: string;
-}
-
-const columns: IContractsTableCellProps[] = [
-  { id: "name", styleClass: "nameHeadTableCell", label: "Наименование", align: "left" },
-  { id: "state", styleClass: "stateHeadTableCell", label: "Состояние", align: "left" },
-];
-
 interface IContractsProps extends WithStyles<typeof styles> {
   user: IUser;
   contracts: IContract[];
+  errorText?: string;
   getContractsAction?: (apikey: string) => void;
+  contractsClearErrorAction?: () => void;
 }
 
 interface IContractsState {
-  page: number;
-  rowsPerPage: number;
+  columns: Column<IContract>[];
 }
 
 class Contracts extends Component<IContractsProps, IContractsState> {
-  state: IContractsState = {
-    page: 0,
-    rowsPerPage: 10,
-  };
-
   componentDidMount = (): void => {
     this.hendleGetContractsAction();
-  };
-
-  handleChangePage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number): void => {
-    this.setState({ page: newPage });
-  };
-
-  handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    this.setState({ page: 0, rowsPerPage: +e.target.value });
   };
 
   hendleGetContractsAction = (): void => {
@@ -94,91 +67,99 @@ class Contracts extends Component<IContractsProps, IContractsState> {
     getContractsAction && getContractsAction(user.apikey);
   };
 
-  handleGetReportsAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
-    window._history.push(`/reports?contractId=${id}`);
+  hendleContractsClearErrorAction = (): void => {
+    const { contractsClearErrorAction } = this.props;
+    contractsClearErrorAction && contractsClearErrorAction();
   };
 
-  handleWizardReportsAction = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string): void => {
-    window._history.push(`/reports/wizard?contractId=${id}`);
-    //window.store.dispatch<IReportAddSimplyAction>({ type: REPORT_SIMPLY, path: "ReportAddSimply", contractId: id });
+  tableIcons = {
+    Add: forwardRef<SVGSVGElement, {}>((props, ref) => <AddBox {...props} ref={ref} />),
+    Check: forwardRef<SVGSVGElement, {}>((props, ref) => <Check {...props} ref={ref} />),
+    Clear: forwardRef<SVGSVGElement, {}>((props, ref) => <Clear {...props} ref={ref} />),
+    Delete: forwardRef<SVGSVGElement, {}>((props, ref) => <DeleteOutline {...props} ref={ref} />),
+    DetailPanel: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronRight {...props} ref={ref} />),
+    Edit: forwardRef<SVGSVGElement, {}>((props, ref) => <Edit {...props} ref={ref} />),
+    Export: forwardRef<SVGSVGElement, {}>((props, ref) => <SaveAlt {...props} ref={ref} />),
+    Filter: forwardRef<SVGSVGElement, {}>((props, ref) => <FilterList {...props} ref={ref} />),
+    FirstPage: forwardRef<SVGSVGElement, {}>((props, ref) => <FirstPage {...props} ref={ref} />),
+    LastPage: forwardRef<SVGSVGElement, {}>((props, ref) => <LastPage {...props} ref={ref} />),
+    NextPage: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronRight {...props} ref={ref} />),
+    PreviousPage: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronLeft {...props} ref={ref} />),
+    ResetSearch: forwardRef<SVGSVGElement, {}>((props, ref) => <Clear {...props} ref={ref} />),
+    Search: forwardRef<SVGSVGElement, {}>((props, ref) => <Search {...props} ref={ref} />),
+    SortArrow: forwardRef<SVGSVGElement, {}>((props, ref) => <ArrowDownward {...props} ref={ref} />),
+    ThirdStateCheck: forwardRef<SVGSVGElement, {}>((props, ref) => <Remove {...props} ref={ref} />),
+    ViewColumn: forwardRef<SVGSVGElement, {}>((props, ref) => <ViewColumn {...props} ref={ref} />),
+  };
+
+  state: IContractsState = {
+    columns: [
+      {
+        title: "Наименование",
+        field: "name",
+        initialEditValue: "",
+      },
+      {
+        title: "Состояние",
+        field: "state",
+        initialEditValue: "",
+        editable: "never",
+      },
+      {
+        title: (
+          <Button
+            className={this.props.classes["refreshContracts"]}
+            variant="outlined"
+            size="small"
+            color="primary"
+            onClick={this.hendleGetContractsAction}
+          >
+            {"Обновить"}
+          </Button>
+        ),
+        field: "buttom",
+        initialEditValue: "",
+        sorting: false,
+        render: (rowData: IContract) => {
+          const { user } = this.props;
+          return <ContractsRowControlButton apikey={user.apikey} contractId={rowData.id} />;
+        },
+      },
+    ],
   };
 
   render = (): JSX.Element => {
-    const { classes, contracts } = this.props;
-    const { page, rowsPerPage } = this.state;
+    const { contracts, errorText } = this.props;
+    const { columns } = this.state;
+    const { tableIcons } = this;
 
     return (
-      <Paper className={classes["paper"]}>
-        <TableContainer className={classes["tableContainer"]}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column: IContractsTableCellProps) => (
-                  <TableCell key={column.id} className={classes[column.styleClass]} align={column.align}>
-                    {column.label}
-                  </TableCell>
-                ))}
-                <TableCell key={"-1"}>
-                  <Button
-                    className={classes["refreshContracts"]}
-                    variant="outlined"
-                    size="small"
-                    color="primary"
-                    onClick={() => this.hendleGetContractsAction()}
-                  >
-                    {"Обновить"}
-                  </Button>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {contracts?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: IContract) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id} onClick={() => {}}>
-                    {columns.map((column: IContractsTableCellProps) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {value}
-                        </TableCell>
-                      );
-                    })}
-                    <TableCell key={"-1"}>
-                      <Button
-                        className={classes["buttonTableCell"]}
-                        variant="outlined"
-                        size="small"
-                        color="primary"
-                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleGetReportsAction(e, row.id)}
-                      >
-                        {"Просмотреть отчеты"}
-                      </Button>
-                      <Button
-                        className={classes["buttonAddReport"]}
-                        variant="outlined"
-                        size="small"
-                        color="primary"
-                        onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => this.handleWizardReportsAction(e, row.id)}
-                      >
-                        {"Добавить отчет"}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={contracts ? contracts.length : 0}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+      <>
+        <MaterialTable
+          icons={tableIcons}
+          title="Список договоров: "
+          columns={columns}
+          data={contracts}
+          localization={{
+            header: { actions: "" },
+            toolbar: {
+              searchTooltip: "Найти договор ...",
+              searchPlaceholder: "Найти договор ...",
+            },
+            pagination: { labelRowsSelect: "строк" },
+            body: { editRow: { deleteText: "Вы уверены ?" } },
+          }}
+          onRowClick={() => {}}
+          editable={{}}
         />
-      </Paper>
+        {/** Обратная связь + */}
+        <Snackbar open={!!errorText} autoHideDuration={3000} onClose={this.hendleContractsClearErrorAction}>
+          <MuiAlert elevation={6} variant="filled" severity="error" onClose={this.hendleContractsClearErrorAction}>
+            {errorText}
+          </MuiAlert>
+        </Snackbar>
+        {/** Обратная связь - */}
+      </>
     );
   };
 }
@@ -188,8 +169,10 @@ const mapStateToProps = (state: IStore, ownProps: IContractsProps): IContractsPr
   return {
     user: user,
     contracts: contracts.list,
-    getContractsAction: ownProps.getContractsAction,
+    errorText: contracts.errorText,
     classes: ownProps.classes,
+    getContractsAction: ownProps.getContractsAction,
+    contractsClearErrorAction: ownProps.contractsClearErrorAction,
   };
 };
 
@@ -199,6 +182,11 @@ const mapDispatchToProps = (dispatch: Dispatch<TAction>) => {
       dispatch<IGetContractsAction>({
         type: GET_CONTRACTS,
         apikey: apikey,
+      });
+    },
+    contractsClearErrorAction: (): void => {
+      dispatch<IContractsClearErrorAction>({
+        type: CONTRACTS_CLEAR_ERROR,
       });
     },
   };

@@ -1,4 +1,4 @@
-import { TAction, GET_CONTRACTS, GET_CONTRACTS_SUCCESS, GET_CONTRACTS_FAILED } from "./../../types/TAction";
+import { TAction, GET_CONTRACTS, GET_CONTRACTS_SUCCESS, GET_CONTRACTS_FAILED, CONTRACTS_CLEAR_ERROR } from "./../../types/TAction";
 import { IContractsReducer } from "../../interfaces/IStore";
 
 const preloadedState: IContractsReducer = {
@@ -31,6 +31,14 @@ const contractsReducer = (curState: IContractsReducer = preloadedState, action: 
         ...curState,
         isLoading: false,
         errorText: action.errorText,
+      };
+      return newState;
+    }
+    case CONTRACTS_CLEAR_ERROR: {
+      const newState: IContractsReducer = {
+        ...curState,
+        isLoading: false,
+        errorText: "",
       };
       return newState;
     }

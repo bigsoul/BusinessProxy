@@ -22,6 +22,8 @@ export const GET_CONTRACTS = "GET_CONTRACTS";
 export const GET_CONTRACTS_SUCCESS = "GET_CONTRACTS_SUCCESS";
 export const GET_CONTRACTS_FAILED = "GET_CONTRACTS_FAILED";
 
+export const CONTRACTS_CLEAR_ERROR = "CONTRACTS_CLEAR_ERROR";
+
 // reports
 
 export const GET_REPORTS = "GET_REPORTS";
@@ -149,6 +151,12 @@ export interface IGetContractsSuccessAction {
 export interface IGetContractsFailedAction {
   type: typeof GET_CONTRACTS_FAILED;
   errorText: string;
+}
+
+// CONTRACTS_CLEAR_ERROR
+
+export interface IContractsClearErrorAction {
+  type: typeof CONTRACTS_CLEAR_ERROR;
 }
 
 // GET_REPORTS
@@ -465,4 +473,5 @@ export type TAction =
   | IGetContractsAction
   | IGetContractsSuccessAction
   | IGetContractsFailedAction
+  | IContractsClearErrorAction
   | IReportsClearErrorAction;
