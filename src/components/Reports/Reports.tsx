@@ -100,7 +100,11 @@ class Reports extends Component<IReportsProps, IReportsState> {
         editable: "never",
       },
       {
-        title: "",
+        title: (
+          <Button variant="outlined" color="primary" size="small">
+            {"Обновить"}
+          </Button>
+        ),
         field: "buttom",
         initialEditValue: "",
         render: (rowData: IReport) => {

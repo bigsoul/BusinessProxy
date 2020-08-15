@@ -25,7 +25,7 @@ let styles = (theme: Theme) =>
   createStyles<TStyleClasses, {}>({
     grow: { flexGrow: 1 },
     menuButton: { marginRight: theme.spacing(2) },
-    title: { display: "none", [theme.breakpoints.up("sm")]: { display: "block" } },
+    title: { display: "none", [theme.breakpoints.up("sm")]: { display: "block" }, cursor: "pointer" },
     typography: { paddingRight: "10px" },
   });
 
@@ -43,6 +43,10 @@ export class Header extends Component<IHeaderProps> {
     if (logoutAction) logoutAction(user.apikey);
   };
 
+  hendleGetContractsAction = (): void => {
+    window._history.push(`/contracts`);
+  };
+
   render = () => {
     const { classes, user } = this.props;
 
@@ -53,7 +57,7 @@ export class Header extends Component<IHeaderProps> {
             <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="open drawer">
               <MenuIcon />
             </IconButton>
-            <Typography className={classes.title} variant="h6" noWrap>
+            <Typography className={classes.title} variant="h6" noWrap onClick={this.hendleGetContractsAction}>
               НЕОМЕТРИЯ
             </Typography>
             <div className={classes.grow} />
