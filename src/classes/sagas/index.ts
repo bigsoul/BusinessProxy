@@ -227,6 +227,7 @@ function* workerLogin(action: ILoginAction) {
     const responseData: ILoginResponse = (yield call(axiosAsync, "LoginIn", requestData)).data;
 
     localStorage.setItem("apikey", responseData.apikey);
+    localStorage.setItem("name", responseData.name);
 
     yield put<ILoginSuccessAction>({ type: LOGIN_SUCCESS, apikey: responseData.apikey, name: responseData.name });
     window._history.push("/contracts");

@@ -54,7 +54,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 type TStyleClasses = "getFiles";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
-  getFiles: { marginTop: "10px", marginRight: "10px" },
+  getFiles: { float: "right" },
 };
 
 let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
@@ -82,55 +82,6 @@ interface IFilesState {
 }
 
 export class Files extends Component<IFilesProps, IFilesState> {
-  state: IFilesState = {
-    columns: [
-      { title: "Name", field: "name", initialEditValue: "" },
-      {
-        title: "Тип",
-        field: "type",
-        initialEditValue: "",
-        render: (rowData: IFile) => {
-          return <FilesRowControlSelect apikey={this.props.user.apikey} rowData={rowData} />;
-        },
-      },
-      {
-        title: "",
-        field: "buttom",
-        initialEditValue: "",
-        render: (rowData: IFile) => {
-          return (
-            <FilesRowControlButton
-              apikey={this.props.user.apikey}
-              id={rowData.id}
-              name={rowData.name}
-              loadedOriginal={rowData.loadedOriginal}
-            />
-          );
-        },
-      },
-    ],
-  };
-
-  tableIcons = {
-    Add: forwardRef<SVGSVGElement, {}>((props, ref) => <AddBox {...props} ref={ref} />),
-    Check: forwardRef<SVGSVGElement, {}>((props, ref) => <Check {...props} ref={ref} />),
-    Clear: forwardRef<SVGSVGElement, {}>((props, ref) => <Clear {...props} ref={ref} />),
-    Delete: forwardRef<SVGSVGElement, {}>((props, ref) => <DeleteOutline {...props} ref={ref} />),
-    DetailPanel: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronRight {...props} ref={ref} />),
-    Edit: forwardRef<SVGSVGElement, {}>((props, ref) => <Edit {...props} ref={ref} />),
-    Export: forwardRef<SVGSVGElement, {}>((props, ref) => <SaveAlt {...props} ref={ref} />),
-    Filter: forwardRef<SVGSVGElement, {}>((props, ref) => <FilterList {...props} ref={ref} />),
-    FirstPage: forwardRef<SVGSVGElement, {}>((props, ref) => <FirstPage {...props} ref={ref} />),
-    LastPage: forwardRef<SVGSVGElement, {}>((props, ref) => <LastPage {...props} ref={ref} />),
-    NextPage: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronRight {...props} ref={ref} />),
-    PreviousPage: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronLeft {...props} ref={ref} />),
-    ResetSearch: forwardRef<SVGSVGElement, {}>((props, ref) => <Clear {...props} ref={ref} />),
-    Search: forwardRef<SVGSVGElement, {}>((props, ref) => <Search {...props} ref={ref} />),
-    SortArrow: forwardRef<SVGSVGElement, {}>((props, ref) => <ArrowDownward {...props} ref={ref} />),
-    ThirdStateCheck: forwardRef<SVGSVGElement, {}>((props, ref) => <Remove {...props} ref={ref} />),
-    ViewColumn: forwardRef<SVGSVGElement, {}>((props, ref) => <ViewColumn {...props} ref={ref} />),
-  };
-
   componentDidMount = () => {
     this.handleGetReportsAction();
   };
@@ -164,16 +115,71 @@ export class Files extends Component<IFilesProps, IFilesState> {
     filesClearErrorAction && filesClearErrorAction();
   };
 
+  state: IFilesState = {
+    columns: [
+      { title: "Name", field: "name", initialEditValue: "" },
+      {
+        title: "Тип",
+        field: "type",
+        initialEditValue: "",
+        render: (rowData: IFile) => {
+          return <FilesRowControlSelect apikey={this.props.user.apikey} rowData={rowData} />;
+        },
+      },
+      {
+        title: (
+          <Button
+            className={this.props.classes.getFiles}
+            variant="outlined"
+            color="primary"
+            size="small"
+            onClick={this.handleGetReportsAction}
+          >
+            {"Обновить"}
+          </Button>
+        ),
+        field: "buttom",
+        initialEditValue: "",
+        sorting: false,
+        render: (rowData: IFile) => (
+          <FilesRowControlButton
+            apikey={this.props.user.apikey}
+            id={rowData.id}
+            name={rowData.name}
+            loadedOriginal={rowData.loadedOriginal}
+          />
+        ),
+      },
+    ],
+  };
+
+  tableIcons = {
+    Add: forwardRef<SVGSVGElement, {}>((props, ref) => <AddBox {...props} ref={ref} />),
+    Check: forwardRef<SVGSVGElement, {}>((props, ref) => <Check {...props} ref={ref} />),
+    Clear: forwardRef<SVGSVGElement, {}>((props, ref) => <Clear {...props} ref={ref} />),
+    Delete: forwardRef<SVGSVGElement, {}>((props, ref) => <DeleteOutline {...props} ref={ref} />),
+    DetailPanel: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronRight {...props} ref={ref} />),
+    Edit: forwardRef<SVGSVGElement, {}>((props, ref) => <Edit {...props} ref={ref} />),
+    Export: forwardRef<SVGSVGElement, {}>((props, ref) => <SaveAlt {...props} ref={ref} />),
+    Filter: forwardRef<SVGSVGElement, {}>((props, ref) => <FilterList {...props} ref={ref} />),
+    FirstPage: forwardRef<SVGSVGElement, {}>((props, ref) => <FirstPage {...props} ref={ref} />),
+    LastPage: forwardRef<SVGSVGElement, {}>((props, ref) => <LastPage {...props} ref={ref} />),
+    NextPage: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronRight {...props} ref={ref} />),
+    PreviousPage: forwardRef<SVGSVGElement, {}>((props, ref) => <ChevronLeft {...props} ref={ref} />),
+    ResetSearch: forwardRef<SVGSVGElement, {}>((props, ref) => <Clear {...props} ref={ref} />),
+    Search: forwardRef<SVGSVGElement, {}>((props, ref) => <Search {...props} ref={ref} />),
+    SortArrow: forwardRef<SVGSVGElement, {}>((props, ref) => <ArrowDownward {...props} ref={ref} />),
+    ThirdStateCheck: forwardRef<SVGSVGElement, {}>((props, ref) => <Remove {...props} ref={ref} />),
+    ViewColumn: forwardRef<SVGSVGElement, {}>((props, ref) => <ViewColumn {...props} ref={ref} />),
+  };
+
   render = (): JSX.Element => {
-    const { classes, files, errorText } = this.props;
+    const { files, errorText } = this.props;
     const { columns } = this.state;
     const { tableIcons } = this;
 
     return (
       <>
-        <Button className={classes.getFiles} variant="outlined" color="primary" size="small" onClick={this.handleGetReportsAction}>
-          {"Обновить"}
-        </Button>
         <MaterialTable
           icons={tableIcons}
           title="Список файлов по отчету: "

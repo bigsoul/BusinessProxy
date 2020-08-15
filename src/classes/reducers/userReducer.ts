@@ -22,12 +22,14 @@ const userReducer = (curState: IUser = preloadedState, action: TAction): IUser =
   switch (action.type) {
     case INIT: {
       const apikey = localStorage.getItem("apikey");
+      const name = localStorage.getItem("name") || "";
 
       if (!apikey) return curState;
 
       const newState: IUser = {
         ...curState,
         apikey: apikey,
+        name: name,
       };
       return newState;
     }
