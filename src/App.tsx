@@ -36,22 +36,22 @@ class App extends Component<IAppProps> {
       <>
         <Header user={user} />
         <Switch>
-          <Route exec path="/contracts">
+          <Route exec path={window.homepage + "/contracts"}>
             <Contracts user={user} contracts={contracts} />
           </Route>
-          <Route exec path="/reports/wizard">
+          <Route exec path={window.homepage + "/reports/wizard"}>
             <WizardReports user={user} router={router} />
           </Route>
-          <Route exec path="/reports">
+          <Route exec path={window.homepage + "/reports"}>
             <Reports user={user} reports={reports} router={router} />
           </Route>
-          <Route exec path="/files">
+          <Route exec path={window.homepage + "/files"}>
             <Files user={user} files={files} router={router} />
           </Route>
-          <Route exec path="/login">
+          <Route exec path={window.homepage + "/login"}>
             <Login />
           </Route>
-          <Route exec path="/">
+          <Route exec path={window.homepage + "/"}>
             {user.apikey ? () => window._history.push(`/contracts`) : <Login />}
           </Route>
         </Switch>

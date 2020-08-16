@@ -29,6 +29,8 @@ const { contracts, reports, files, router } = store.getState();
 
 const user = { apikey: "", name: "", isLoading: false, errorText: "" };
 
+window.homepage = window.location.origin === "http://localhost:3000" ? "" : "/business_proxy";
+
 ReactDOM.render(
   <>
     {/*<React.StrictMode>*/}
