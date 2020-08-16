@@ -25,6 +25,5 @@ declare global {
       dispatch: unknown;
     };
     _history: BrowserHistory;
-    origin: string;
   }
 }

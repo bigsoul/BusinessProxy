@@ -29,8 +29,6 @@ const { contracts, reports, files, router } = store.getState();
 
 const user = { apikey: "", name: "", isLoading: false, errorText: "" };
 
-window.origin = window.location.origin === "http://localhost:3000" ? "http://185.26.205.42:8086" : window.location.origin;
-
 ReactDOM.render(
   <>
     {/*<React.StrictMode>*/}
