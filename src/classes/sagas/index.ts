@@ -123,7 +123,7 @@ import moment from "moment";
 // net
 
 function axiosAsync(method: string, requestData: TRequest) {
-  const serviceUrl = "http://185.26.205.42:8086/do_demo/hs/BusinessProxy/";
+  const serviceUrl = window.origin + "/do_demo/hs/BusinessProxy/";
   const serviceLogin = "exchange";
   const servicePassword = "exchange2016";
 

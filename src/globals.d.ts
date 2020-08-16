@@ -25,8 +25,6 @@ declare global {
       dispatch: unknown;
     };
     _history: BrowserHistory;
-    serviceUrl: string;
-    serviceLogin: string;
-    servicePassword: string;
+    origin: string;
   }
 }
