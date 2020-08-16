@@ -27,6 +27,14 @@ window._history = history;
 
 const { contracts, reports, files, router } = store.getState();
 
+const user = { apikey: "", name: "", isLoading: false, errorText: "" };
+
+console.log(window.location);
+
+const serviceUrl = "";
+const serviceLogin = "";
+const servicePassword = "";
+
 ReactDOM.render(
   <>
     {/*<React.StrictMode>*/}
@@ -34,13 +42,7 @@ ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <ThemeProvider theme={theme}>
-          <App
-            user={{ apikey: "", name: "", isLoading: false, errorText: "" }}
-            contracts={contracts.list}
-            reports={reports.table.list}
-            files={files.list}
-            router={router}
-          />
+          <App user={user} contracts={contracts.list} reports={reports.table.list} files={files.list} router={router} />
         </ThemeProvider>
       </ConnectedRouter>
     </Provider>
