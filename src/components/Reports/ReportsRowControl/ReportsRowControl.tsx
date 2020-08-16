@@ -39,7 +39,7 @@ export class ReportsRowControl extends Component<IReportsRowControlProps> {
 
   handleGetFilesAction = () => {
     const { reportId } = this.props;
-    window._history.push(`/files?reportId=${reportId}`);
+    window._history.push(`${window.homepage}/files?reportId=${reportId}`);
   };
 
   render = (): JSX.Element | null => {

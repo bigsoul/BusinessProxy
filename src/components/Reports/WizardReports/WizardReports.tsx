@@ -187,7 +187,7 @@ const ResponsiveDialog = (props: { contractId: string }) => {
 
   const handleClose = () => {
     setOpen(false);
-    window._history.push(`/reports?contractId=${props.contractId}`);
+    window._history.push(`${window.homepage}/reports?contractId=${props.contractId}`);
   };
 
   return (

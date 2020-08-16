@@ -25,12 +25,12 @@ interface IContractsRowControlButtonProps extends WithStyles<typeof styles> {
 export class ContractsRowControlButton extends Component<IContractsRowControlButtonProps> {
   handleGetReportsAction = (): void => {
     const { contractId } = this.props;
-    window._history.push(`/reports?contractId=${contractId}`);
+    window._history.push(`${window.homepage}/reports?contractId=${contractId}`);
   };
 
   handleWizardReportsAction = (): void => {
     const { contractId } = this.props;
-    window._history.push(`/reports/wizard?contractId=${contractId}`);
+    window._history.push(`${window.homepage}/reports/wizard?contractId=${contractId}`);
   };
 
   render = (): JSX.Element => {

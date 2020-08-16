@@ -232,7 +232,7 @@ function* workerLogin(action: ILoginAction) {
     localStorage.setItem("name", responseData.name);
 
     yield put<ILoginSuccessAction>({ type: LOGIN_SUCCESS, apikey: responseData.apikey, name: responseData.name });
-    window._history.push("/contracts");
+    window._history.push(`${window.homepage}/contracts`);
   } catch (err) {
     yield put<ILoginFailedAction>({ type: LOGIN_FAILED, errorText: getUserError(err) });
   }
@@ -250,7 +250,7 @@ function* workerLogout(action: ILogoutAction) {
       localStorage.clear();
 
       yield put<ILogoutSuccessAction>({ type: LOGOUT_SUCCESS });
-      window._history.push("/login");
+      window._history.push(`${window.homepage}/login`);
     } else {
       throw new Error("Ошибка. Сервер сообщил о неудачной попытке выхода из системы.");
     }
@@ -268,7 +268,7 @@ function* workerGetContracts(action: IGetContractsAction) {
     };
 
     if (!requestData.apikey) {
-      window._history.push("/login");
+      window._history.push(`${window.homepage}/login`);
       return;
     }
 

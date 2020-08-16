@@ -44,7 +44,7 @@ export class Header extends Component<IHeaderProps> {
   };
 
   hendleGetContractsAction = (): void => {
-    window._history.push(`/contracts`);
+    window._history.push(`${window.homepage}/contracts`);
   };
 
   render = () => {

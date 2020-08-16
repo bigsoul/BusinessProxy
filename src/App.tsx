@@ -52,7 +52,7 @@ class App extends Component<IAppProps> {
             <Login />
           </Route>
           <Route exec path={window.homepage + "/"}>
-            {user.apikey ? () => window._history.push(`/contracts`) : <Login />}
+            {user.apikey ? () => window._history.push(`${window.homepage}/contracts`) : <Login />}
           </Route>
         </Switch>
       </>
