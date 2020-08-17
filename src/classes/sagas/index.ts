@@ -124,8 +124,12 @@ import moment from "moment";
 
 function axiosAsync(method: string, requestData: TRequest) {
   const origin = window.location.origin === "http://localhost:3000" ? "http://185.26.205.42:8086" : window.location.origin;
+  let serviceUrl = origin + "/do_demo/hs/BusinessProxy/";
 
-  const serviceUrl = origin + "/do_demo/hs/BusinessProxy/";
+  if (process.env.NODE_ENV === "production") {
+    serviceUrl = "/do/hs/BusinessProxy/";
+  }
+
   const serviceLogin = "exchange";
   const servicePassword = "exchange2016";
 
