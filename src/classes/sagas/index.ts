@@ -126,7 +126,7 @@ function axiosAsync(method: string, requestData: TRequest) {
   const origin = window.location.origin === "http://localhost:3000" ? "http://185.26.205.42:8086" : window.location.origin;
   let serviceUrl = origin + "/do_demo/hs/BusinessProxy/";
 
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "production" && origin !== "http://185.26.205.42:8086") {
     serviceUrl = "/do/hs/BusinessProxy/";
   }
 
