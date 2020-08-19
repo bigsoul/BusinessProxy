@@ -82,6 +82,7 @@ export const FILES_CLEAR_ERROR = "FILES_CLEAR_ERROR";
 
 export const WIZARD_SETUP_CONTRACT_ID = "WIZARD_SETUP_CONTRACT_ID";
 export const WIZARD_SETUP_FILE = "WIZARD_SETUP_FILE";
+export const WIZARD_SETUP_PROGRESS = "WIZARD_SETUP_PROGRESS";
 
 export const WIZARD_CLEAR_ERROR = "WIZARD_CLEAR_ERROR";
 
@@ -394,6 +395,14 @@ export interface IWizardSetupFileAction {
   file: File | null;
 }
 
+// WIZARD_SETUP_PROGRESS
+
+export interface IWizardSetupProgressAction {
+  type: typeof WIZARD_SETUP_PROGRESS;
+  fileType: number;
+  progress: number;
+}
+
 // WIZARD_CONFIRM
 
 export interface IWizardConfirmAction {
@@ -466,6 +475,7 @@ export type TAction =
   | IFileDownloadFailedAction
   | IWizardSetupContractIdAction
   | IWizardSetupFileAction
+  | IWizardSetupProgressAction
   | IWizardConfirmAction
   | IWizardConfirmSuccessAction
   | IWizardConfirmFailedAction

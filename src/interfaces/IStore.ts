@@ -41,5 +41,8 @@ export interface IWizardReducer {
   file10: File | null;
   file20: File | null;
   file30: File | null;
+  progressFile10: number;
+  progressFile20: number;
+  progressFile30: number;
   saccess: boolean;
 }

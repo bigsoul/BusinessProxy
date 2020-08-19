@@ -7,6 +7,7 @@ import {
   WIZARD_CONFIRM_SUCCESS,
   WIZARD_CONFIRM_FAILED,
   WIZARD_CLEAR_ERROR,
+  WIZARD_SETUP_PROGRESS,
 } from "../../../types/TAction";
 
 const preloadedState: IWizardReducer = {
@@ -16,6 +17,9 @@ const preloadedState: IWizardReducer = {
   file10: null,
   file20: null,
   file30: null,
+  progressFile10: 0,
+  progressFile20: 0,
+  progressFile30: 0,
   saccess: false,
 };
 
@@ -28,6 +32,9 @@ const wizardReducer = (curState: IWizardReducer = preloadedState, action: TActio
         file10: null,
         file20: null,
         file30: null,
+        progressFile10: 0,
+        progressFile20: 0,
+        progressFile30: 0,
         saccess: false,
       };
       return newState;
@@ -54,6 +61,28 @@ const wizardReducer = (curState: IWizardReducer = preloadedState, action: TActio
       }
       return newState;
     }
+    case WIZARD_SETUP_PROGRESS: {
+      const newState: IWizardReducer = {
+        ...curState,
+      };
+      switch (action.fileType) {
+        case 10: {
+          newState.progressFile10 = action.progress;
+          break;
+        }
+        case 20: {
+          newState.progressFile20 = action.progress;
+          break;
+        }
+        case 30: {
+          newState.progressFile30 = action.progress;
+          break;
+        }
+        default:
+          newState.errorText = "Внутренняя ошибка в процессе загрузки файла.";
+      }
+      return newState;
+    }
     case WIZARD_CONFIRM: {
       const newState: IWizardReducer = {
         ...curState,
@@ -76,6 +105,13 @@ const wizardReducer = (curState: IWizardReducer = preloadedState, action: TActio
       const newState: IWizardReducer = {
         ...curState,
         isLoading: false,
+        file10: null,
+        file20: null,
+        file30: null,
+        progressFile10: 0,
+        progressFile20: 0,
+        progressFile30: 0,
+        saccess: false,
         errorText: action.errorText,
       };
       return newState;

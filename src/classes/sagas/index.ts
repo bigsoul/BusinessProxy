@@ -84,6 +84,8 @@ import {
   IWizardConfirmFailedAction,
   WIZARD_CONFIRM_SUCCESS,
   WIZARD_CONFIRM_FAILED,
+  IWizardSetupProgressAction,
+  WIZARD_SETUP_PROGRESS,
 } from "./../../types/TAction";
 import {
   ILoginRequest,
@@ -122,7 +124,7 @@ import moment from "moment";
 
 // net
 
-function axiosAsync(method: string, requestData: TRequest) {
+function axiosAsync(method: string, requestData: TRequest, onUploadProgress: any = undefined) {
   const origin = window.location.origin === "http://localhost:3000" ? "http://185.26.205.42:8086" : window.location.origin;
   let serviceUrl = origin + "/do_demo/hs/BusinessProxy/";
 
@@ -138,6 +140,7 @@ function axiosAsync(method: string, requestData: TRequest) {
       username: serviceLogin,
       password: servicePassword,
     },
+    onUploadProgress: onUploadProgress,
   });
 }
 
@@ -211,6 +214,17 @@ function fileReaderAsync(action: IFileUploadAction) {
 }
 
 //
+
+function getFileUploadProgress(fileType: number) {
+  return function (progressEvent: any) {
+    if (!progressEvent) return;
+    window.store.dispatch<IWizardSetupProgressAction>({
+      type: WIZARD_SETUP_PROGRESS,
+      fileType: fileType,
+      progress: Math.round((progressEvent.loaded * 100) / progressEvent.total),
+    });
+  };
+}
 
 function getUserError(err: any): string {
   const serverError = err?.response?.data?.errorText;
@@ -484,7 +498,7 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
     };
 
     const requestFile10: IFileUploadRequest = yield call(fileReaderAsync, file10Action);
-    yield call(axiosAsync, "FileUpload", requestFile10);
+    yield call(axiosAsync, "FileUpload", requestFile10, getFileUploadProgress(10));
     //const responseFile10: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile10)).data;
 
     const file20Action: IFileUploadAction = {
@@ -496,7 +510,7 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
     };
 
     const requestFile20: IFileUploadRequest = yield call(fileReaderAsync, file20Action);
-    yield call(axiosAsync, "FileUpload", requestFile20);
+    yield call(axiosAsync, "FileUpload", requestFile20, getFileUploadProgress(20));
     //const responseFile20: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile20)).data;
 
     const file30Action: IFileUploadAction = {
@@ -508,7 +522,7 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
     };
 
     const requestFile30: IFileUploadRequest = yield call(fileReaderAsync, file30Action);
-    yield call(axiosAsync, "FileUpload", requestFile30);
+    yield call(axiosAsync, "FileUpload", requestFile30, getFileUploadProgress(30));
     //const responseFile30: IFileUploadResponse = (yield call(axiosAsync, "FileUpload", requestFile30)).data;
 
     const requestData: IConfirmRequest = {

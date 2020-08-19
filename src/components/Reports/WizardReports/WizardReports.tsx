@@ -35,6 +35,7 @@ import IUser from "../../../interfaces/IUser";
 import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
 import { Dispatch } from "redux";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 // difination styling plan
 
@@ -56,6 +57,10 @@ interface IWizardReportsProps extends WithStyles<typeof styles> {
   user: IUser;
   router: RouterState<LocationState>;
   contractId?: string;
+  isLoading?: boolean;
+  progressFile10?: number;
+  progressFile20?: number;
+  progressFile30?: number;
   file10?: File | null;
   file20?: File | null;
   file30?: File | null;
@@ -101,7 +106,19 @@ class WizardReports extends Component<IWizardReportsProps> {
   };
 
   render = () => {
-    const { classes, file10, file20, file30, errorText, contractId, saccess } = this.props;
+    const {
+      classes,
+      file10,
+      file20,
+      file30,
+      errorText,
+      contractId,
+      isLoading,
+      progressFile10,
+      progressFile20,
+      progressFile30,
+      saccess,
+    } = this.props;
 
     if (saccess) {
       return <ResponsiveDialog contractId={contractId ? contractId : ""} />;
@@ -130,6 +147,7 @@ class WizardReports extends Component<IWizardReportsProps> {
                   {"Загрузить оригинал КС2 "}
                   {!file10 ? "" : <CheckIcon style={{ color: green[500] }} />}
                 </Button>
+                {isLoading && <LinearProgress variant="determinate" value={progressFile10} />}
               </label>
             </div>
             <div className={classes.root}>
@@ -146,6 +164,7 @@ class WizardReports extends Component<IWizardReportsProps> {
                   {"Загрузить оригинал КС3 "}
                   {!file20 ? "" : <CheckIcon style={{ color: green[500] }} />}
                 </Button>
+                {isLoading && <LinearProgress variant="determinate" value={progressFile20} />}
               </label>
             </div>
             <div className={classes.root}>
@@ -162,6 +181,7 @@ class WizardReports extends Component<IWizardReportsProps> {
                   {"Загрузить исп. документацию "}
                   {!file30 ? "" : <CheckIcon style={{ color: green[500] }} />}
                 </Button>
+                {isLoading && <LinearProgress variant="determinate" value={progressFile30} />}
               </label>
             </div>
             <Button
@@ -215,12 +235,16 @@ const mapStateToProps = (state: IStore, ownProps: IWizardReportsProps): IWizardR
     user: user,
     router: router,
     contractId: reports.wizard.contractId,
+    isLoading: reports.wizard.isLoading,
+    progressFile10: reports.wizard.progressFile10,
+    progressFile20: reports.wizard.progressFile20,
+    progressFile30: reports.wizard.progressFile30,
     file10: reports.wizard.file10,
     file20: reports.wizard.file20,
     file30: reports.wizard.file30,
     errorText: reports.wizard.errorText,
-    classes: ownProps.classes,
     saccess: reports.wizard.saccess,
+    classes: ownProps.classes,
     wizardSetupContractIdAction: ownProps.wizardSetupContractIdAction,
     wizardSetupFileAction: ownProps.wizardSetupFileAction,
     wizardConfirmAction: ownProps.wizardConfirmAction,
