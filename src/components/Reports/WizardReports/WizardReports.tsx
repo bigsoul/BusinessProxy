@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Paper,
 } from "@material-ui/core";
 import {
   WIZARD_SETUP_FILE,
@@ -39,7 +40,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 
 // difination styling plan
 
-type TStyleClasses = "backInConracts" | "grid" | "root" | "input" | "sendAndConfirm";
+type TStyleClasses = "backInConracts" | "grid" | "root" | "input" | "sendAndConfirm" | "@keyframes tBlinker" | "blinker";
 
 const sourceStyles: Record<TStyleClasses, {}> = {
   root: { "& > *": { float: "right", marginTop: "10px" } },
@@ -47,6 +48,24 @@ const sourceStyles: Record<TStyleClasses, {}> = {
   backInConracts: { marginTop: "10px", marginLeft: "10px" },
   sendAndConfirm: { marginTop: "30px" },
   grid: { minHeight: "70vh" },
+  "@keyframes tBlinker": {
+    "0%": {
+      color: "rgba(0, 0, 0, 1)",
+    },
+    "50%": {
+      color: "rgba(172, 0, 0, 0.7)",
+    },
+    "100%": {
+      color: "rgba(0, 0, 0, 1)",
+    },
+  },
+  blinker: {
+    textAlign: "center",
+    animationName: "$tBlinker",
+    animationDuration: "2s",
+    animationTimingFunction: "linear",
+    animationIterationCount: "infinite",
+  },
 };
 
 let styles = (theme: Theme) => createStyles<TStyleClasses, {}>(sourceStyles);
@@ -125,14 +144,17 @@ class WizardReports extends Component<IWizardReportsProps> {
     } else {
       return (
         <>
-          {/** Обратная связь + */}
-          <Snackbar open={!!errorText} autoHideDuration={3000} onClose={this.handleWizardClearErrorAction}>
-            <MuiAlert elevation={6} variant="filled" severity="error" onClose={this.handleWizardClearErrorAction}>
-              {errorText}
-            </MuiAlert>
-          </Snackbar>
-          {/** Обратная связь - */}
           <Grid className={classes.grid} container spacing={0} direction="column" alignItems="center" justify="center">
+            {isLoading && (
+              <Grid item xs={3}>
+                <Paper variant="outlined" className={classes.blinker}>
+                  <strong>
+                    ВНИМАНИЕ !!! Выполняется создание отчета и загрузка файлов на сервер. Пожалуйста, не закрывайте вкладку, не переходите
+                    на другой раздел сайта, дождитесь сообщение об окончании операции.
+                  </strong>
+                </Paper>
+              </Grid>
+            )}
             <div className={classes.root}>
               <input
                 accept="*"
@@ -194,6 +216,13 @@ class WizardReports extends Component<IWizardReportsProps> {
               {"Отправить и согласовать"}
             </Button>
           </Grid>
+          {/** Обратная связь + */}
+          <Snackbar open={!!errorText} autoHideDuration={3000} onClose={this.handleWizardClearErrorAction}>
+            <MuiAlert elevation={6} variant="filled" severity="error" onClose={this.handleWizardClearErrorAction}>
+              {errorText}
+            </MuiAlert>
+          </Snackbar>
+          {/** Обратная связь - */}
         </>
       );
     }
