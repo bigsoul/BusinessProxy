@@ -142,12 +142,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
         initialEditValue: "",
         sorting: false,
         render: (rowData: IFile) => (
-          <FilesRowControlButton
-            apikey={this.props.user.apikey}
-            id={rowData.id}
-            name={rowData.name}
-            loadedOriginal={rowData.loadedOriginal}
-          />
+          <FilesRowControlButton apikey={this.props.user.apikey} id={rowData.id} name={rowData.name} loaded={rowData.loaded} />
         ),
       },
     ],
@@ -201,8 +196,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
                 const files: IFile[] = [
                   {
                     id: newData.id || "",
-                    loadedDraft: newData.loadedDraft || false,
-                    loadedOriginal: newData.loadedOriginal || false,
+                    loaded: newData.loaded || false,
                     name: newData.name || "",
                     reportId: newData.reportId || "",
                     type: newData.type || 0,
@@ -217,8 +211,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
                 const files: IFile[] = [
                   {
                     id: newData.id,
-                    loadedDraft: newData.loadedDraft,
-                    loadedOriginal: newData.loadedOriginal,
+                    loaded: newData.loaded,
                     name: newData.name,
                     reportId: newData.reportId,
                     type: newData.type,
@@ -238,8 +231,7 @@ export class Files extends Component<IFilesProps, IFilesState> {
                 const reports: IFile[] = [
                   {
                     id: oldData.id,
-                    loadedDraft: oldData.loadedDraft,
-                    loadedOriginal: oldData.loadedOriginal,
+                    loaded: oldData.loaded,
                     name: oldData.name,
                     reportId: oldData.reportId,
                     type: oldData.type,

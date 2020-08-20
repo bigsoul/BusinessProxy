@@ -25,7 +25,7 @@ interface IFilesRowControlButtonProps extends WithStyles<typeof styles> {
   apikey: string;
   id: string;
   name: string;
-  loadedOriginal: boolean;
+  loaded: boolean;
 }
 
 export class FilesRowControlButton extends Component<IFilesRowControlButtonProps> {
@@ -52,11 +52,11 @@ export class FilesRowControlButton extends Component<IFilesRowControlButtonProps
   handleFileDownloadAction = (): void => {};
 
   render = (): JSX.Element => {
-    const { classes, id, loadedOriginal } = this.props;
+    const { classes, id, loaded } = this.props;
 
     return (
       <div>
-        {loadedOriginal ? (
+        {loaded ? (
           <Button className={classes.ButtonLoadedOriginal} variant="outlined" size="small" onClick={this.handleFileDownloadAction}>
             {"Скачать"}
           </Button>

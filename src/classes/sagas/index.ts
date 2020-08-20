@@ -479,9 +479,9 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
     const requestFiles: ISetFilesRequest = {
       apikey: action.apikey,
       list: [
-        { id: "", name: action.file10.name, type: 10, loadedDraft: false, loadedOriginal: false, reportId: responseReports.list[0].id },
-        { id: "", name: action.file20.name, type: 20, loadedDraft: false, loadedOriginal: false, reportId: responseReports.list[0].id },
-        { id: "", name: action.file30.name, type: 30, loadedDraft: false, loadedOriginal: false, reportId: responseReports.list[0].id },
+        { id: "", name: action.file10.name, type: 10, loaded: false, reportId: responseReports.list[0].id },
+        { id: "", name: action.file20.name, type: 20, loaded: false, reportId: responseReports.list[0].id },
+        { id: "", name: action.file30.name, type: 30, loaded: false, reportId: responseReports.list[0].id },
       ],
     };
 
