@@ -10,3 +10,4 @@
 [0819/213610.825:ERROR:process_info.cc(375)] NtQuerySystemInformation SystemExtendedHandleInformation: Заданная длина записи со сведениями не соответствует длине, требуемой для указанного класса сведений. (0xc0000004)
 [0819/214747.727:ERROR:process_info.cc(375)] NtQuerySystemInformation SystemExtendedHandleInformation: Заданная длина записи со сведениями не соответствует длине, требуемой для указанного класса сведений. (0xc0000004)
 [0819/220400.893:ERROR:process_info.cc(375)] NtQuerySystemInformation SystemExtendedHandleInformation: Заданная длина записи со сведениями не соответствует длине, требуемой для указанного класса сведений. (0xc0000004)
+[0823/195928.659:ERROR:process_info.cc(375)] NtQuerySystemInformation SystemExtendedHandleInformation: Заданная длина записи со сведениями не соответствует длине, требуемой для указанного класса сведений. (0xc0000004)
