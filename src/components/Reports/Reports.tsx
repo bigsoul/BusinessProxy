@@ -42,13 +42,14 @@ import MuiAlert from "@material-ui/lab/Alert";
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 // components
 import ReportsRowControl from "./ReportsRowControl/ReportsRowControl";
+import ReportsRowComment from "./ReportsRowComment/ReportsRowComment";
 // others
 import moment from "moment";
 import IUser from "../../interfaces/IUser";
 import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
 import { Dispatch } from "redux";
-import { Snackbar } from "@material-ui/core";
+import { Snackbar, Popper } from "@material-ui/core";
 
 // difination styling plan
 
@@ -150,6 +151,16 @@ class Reports extends Component<IReportsProps, IReportsState> {
         editable: "never",
       },
       {
+        title: "Комментарий",
+        field: "comment",
+        initialEditValue: "",
+        sorting: false,
+        editable: "never",
+        render: (rowData: IReport) => {
+          return <ReportsRowComment comment={rowData.comment} />;
+        },
+      },
+      {
         title: (
           <Button
             className={this.props.classes.refreshReports}
@@ -205,6 +216,7 @@ class Reports extends Component<IReportsProps, IReportsState> {
                     name: newData.name,
                     state: newData.state,
                     files: [],
+                    comment: "",
                     contractId: contractId,
                   },
                 ];
@@ -219,6 +231,7 @@ class Reports extends Component<IReportsProps, IReportsState> {
                     name: newData.name,
                     state: newData.state,
                     files: [],
+                    comment: newData.comment || "",
                     contractId: contractId,
                   },
                 ];
@@ -240,6 +253,7 @@ class Reports extends Component<IReportsProps, IReportsState> {
                     name: oldData.name,
                     state: oldData.state,
                     files: [],
+                    comment: oldData.comment,
                     contractId: contractId,
                   },
                 ];

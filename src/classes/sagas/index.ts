@@ -467,6 +467,7 @@ function* workerWizardConfirm(action: IWizardConfirmAction) {
           name: "Отчет от " + moment().format().substr(0, 10),
           state: "Новый",
           files: [],
+          comment: "",
           contractId: action.contractId,
         },
       ],

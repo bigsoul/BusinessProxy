@@ -6,5 +6,6 @@ export default interface IReport {
   name: string;
   state: string;
   files: IFile[];
+  comment: string;
   contractId: string;
 }

@@ -12,8 +12,8 @@ import {
 import IUser from "../../interfaces/IUser";
 
 const preloadedState: IUser = {
-  apikey: "",
-  name: "",
+  apikey: localStorage.getItem("apikey") || "",
+  name: localStorage.getItem("name") || "",
   isLoading: false,
   errorText: "",
 };
@@ -21,17 +21,7 @@ const preloadedState: IUser = {
 const userReducer = (curState: IUser = preloadedState, action: TAction): IUser => {
   switch (action.type) {
     case INIT: {
-      const apikey = localStorage.getItem("apikey");
-      const name = localStorage.getItem("name") || "";
-
-      if (!apikey) return curState;
-
-      const newState: IUser = {
-        ...curState,
-        apikey: apikey,
-        name: name,
-      };
-      return newState;
+      return curState;
     }
     case LOGIN: {
       const newState: IUser = {
