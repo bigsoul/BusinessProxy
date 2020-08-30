@@ -20,6 +20,18 @@ import { ConnectedRouter } from "connected-react-router";
 import { history } from "./classes/reducers/routerReducer";
 import configureStore from "./classes/configureStore";
 
+const configUrl = window.location.origin + "/settings/config.ts";
+
+import(configUrl)
+  .then((module) => {
+    console.log("module", module);
+  })
+  .catch((err) => {
+    console.log("err", err);
+  });
+
+window.homepage = window.location.origin === "http://localhost:3000" ? "" : "/business_proxy";
+
 const store = configureStore();
 
 window.store = store;
@@ -28,8 +40,6 @@ window._history = history;
 const { contracts, reports, files, router } = store.getState();
 
 const user = { apikey: "", name: "", isLoading: false, errorText: "" };
-
-window.homepage = window.location.origin === "http://localhost:3000" ? "" : "/business_proxy";
 
 ReactDOM.render(
   <>
