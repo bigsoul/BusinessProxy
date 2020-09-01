@@ -60,7 +60,7 @@ export class Header extends Component<IHeaderProps> {
               <MenuIcon />
             </IconButton>
             <Typography className={classes.title} variant="h6" noWrap onClick={this.hendleGetContractsAction}>
-              НЕОМЕТРИЯ
+              {config.company}
             </Typography>
             <div className={classes.grow} />
             {user.name === "" ? (
