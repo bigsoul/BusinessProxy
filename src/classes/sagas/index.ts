@@ -86,7 +86,7 @@ import {
   WIZARD_CONFIRM_FAILED,
   IWizardSetupProgressAction,
   WIZARD_SETUP_PROGRESS,
-} from "./../../types/TAction";
+} from "../../interfaces/IAction";
 import {
   ILoginRequest,
   TRequest,

@@ -1,6 +1,6 @@
-import IContract from "../interfaces/IContract";
-import IReport from "../interfaces/IReport";
-import IFile from "../interfaces/IFile";
+import IContract from "./IContract";
+import IReport from "./IReport";
+import IFile from "./IFile";
 
 // auth
 

@@ -26,7 +26,7 @@ import {
   IWizardSetupContractIdAction,
   IWizardClearErrorAction,
   WIZARD_CLEAR_ERROR,
-} from "../../../types/TAction";
+} from "../../../interfaces/IAction";
 import IStore from "../../../interfaces/IStore";
 import { connect } from "react-redux";
 import CheckIcon from "@material-ui/icons/Check";

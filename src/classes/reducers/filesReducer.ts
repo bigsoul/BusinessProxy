@@ -17,7 +17,7 @@ import {
   FILE_UPLOAD_SUCCESS,
   FILE_UPLOAD_FAILED,
   FILES_CLEAR_ERROR,
-} from "../../types/TAction";
+} from "../../interfaces/IAction";
 
 const preloadedState: IFilesReducer = {
   isLoading: false,

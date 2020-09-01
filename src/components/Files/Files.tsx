@@ -15,7 +15,7 @@ import {
   DEL_FILES,
   IFilesClearErrorAction,
   FILES_CLEAR_ERROR,
-} from "./../../types/TAction";
+} from "../../interfaces/IAction";
 // interfaces
 import IStore from "../../interfaces/IStore";
 import IFile from "../../interfaces/IFile";

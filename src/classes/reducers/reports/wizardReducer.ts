@@ -8,7 +8,7 @@ import {
   WIZARD_CONFIRM_FAILED,
   WIZARD_CLEAR_ERROR,
   WIZARD_SETUP_PROGRESS,
-} from "../../../types/TAction";
+} from "../../../interfaces/IAction";
 
 const preloadedState: IWizardReducer = {
   isLoading: false,

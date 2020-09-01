@@ -14,7 +14,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
-import { ILogoutAction, LOGOUT } from "../../types/TAction";
+import { ILogoutAction, LOGOUT } from "../../interfaces/IAction";
 import { Dispatch } from "redux";
 
 // difination styling plan

@@ -12,7 +12,7 @@ import TextField from "@material-ui/core/TextField";
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import IUser from "../../interfaces/IUser";
 import { Dispatch } from "redux";
-import { ILoginAction, LOGIN, ILogoutAction, TAction, LOGOUT, USER_CLEAR_ERROR, IUserClearErrorAction } from "../../types/TAction";
+import { ILoginAction, LOGIN, ILogoutAction, TAction, LOGOUT, USER_CLEAR_ERROR, IUserClearErrorAction } from "../../interfaces/IAction";
 import Alert from "@material-ui/lab/Alert";
 import { Snackbar } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";

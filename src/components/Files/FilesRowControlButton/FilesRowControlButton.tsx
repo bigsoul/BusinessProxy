@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
-import { IFileUploadAction, FILE_UPLOAD } from "../../../types/TAction";
+import { IFileUploadAction, FILE_UPLOAD } from "../../../interfaces/IAction";
 // difination styling plan
 
 type TStyleClasses = "root" | "input" | "formControl" | "selectEmpty" | "ButtonLoadedDraft" | "ButtonLoadedOriginal";

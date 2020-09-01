@@ -3,7 +3,7 @@ import React, { Component, forwardRef } from "react";
 // react-redux
 import { connect } from "react-redux";
 // constants
-import { TAction, IGetContractsAction, GET_CONTRACTS, IContractsClearErrorAction, CONTRACTS_CLEAR_ERROR } from "../../types/TAction";
+import { TAction, IGetContractsAction, GET_CONTRACTS, IContractsClearErrorAction, CONTRACTS_CLEAR_ERROR } from "../../interfaces/IAction";
 // interfaces
 import IStore from "../../interfaces/IStore";
 import IContract from "../../interfaces/IContract";

@@ -8,7 +8,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
-import { UPD_FILES, IUpdFilesAction } from "../../../types/TAction";
+import { UPD_FILES, IUpdFilesAction } from "../../../interfaces/IAction";
 
 // difination styling plan
 

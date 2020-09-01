@@ -18,7 +18,7 @@ import {
   IConfirmSuccessAction,
   IUpdReportsSuccessAction,
   REPORTS_CLEAR_ERROR,
-} from "../../../types/TAction";
+} from "../../../interfaces/IAction";
 import { IReportsReducer } from "../../../interfaces/IStore";
 
 const preloadedState: IReportsReducer = {

@@ -8,7 +8,7 @@ import {
   LOGOUT_FAILED,
   USER_CLEAR_ERROR,
   INIT,
-} from "./../../types/TAction";
+} from "../../interfaces/IAction";
 import IUser from "../../interfaces/IUser";
 
 const preloadedState: IUser = {

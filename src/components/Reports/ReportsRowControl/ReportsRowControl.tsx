@@ -1,7 +1,7 @@
 // react
 import React, { Component } from "react";
 // constants
-import { IConfirmAction, CONFIRM } from "./../../../types/TAction";
+import { IConfirmAction, CONFIRM } from "../../../interfaces/IAction";
 // components-material-ui
 import Button from "@material-ui/core/Button";
 // classes-material-ui

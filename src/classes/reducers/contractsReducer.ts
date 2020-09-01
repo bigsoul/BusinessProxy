@@ -1,4 +1,4 @@
-import { TAction, GET_CONTRACTS, GET_CONTRACTS_SUCCESS, GET_CONTRACTS_FAILED, CONTRACTS_CLEAR_ERROR } from "./../../types/TAction";
+import { TAction, GET_CONTRACTS, GET_CONTRACTS_SUCCESS, GET_CONTRACTS_FAILED, CONTRACTS_CLEAR_ERROR } from "../../interfaces/IAction";
 import { IContractsReducer } from "../../interfaces/IStore";
 
 const preloadedState: IContractsReducer = {

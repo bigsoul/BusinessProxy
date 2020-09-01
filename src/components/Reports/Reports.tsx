@@ -15,7 +15,7 @@ import {
   IDelReportsAction,
   IReportsClearErrorAction,
   REPORTS_CLEAR_ERROR,
-} from "./../../types/TAction";
+} from "../../interfaces/IAction";
 // interfaces
 import IStore from "../../interfaces/IStore";
 import IReport from "../../interfaces/IReport";
