@@ -8,15 +8,15 @@ let service: string;
 if (port === "3000") {
   // для лакальной разработки
   homepage = "";
-  service = "http://185.26.205.42:8086/do_demo";
+  service = "http://10.10.10.10:8888/your-dev-base-name";
 } else if (port === "8085") {
   // для продакшен версии
-  homepage = "/business_proxy";
-  service = "http://185.26.205.42:8085/do";
-} else if (port === "8086" || port === "8087") {
+  homepage = "/business-proxy";
+  service = "http://10.10.10.10:7777/your-prod-base-name";
+} else if (port === "8888" || port === "9999") {
   // для сервера разработки и тестирования
-  homepage = "/business_proxy";
-  service = "http://185.26.205.42:" + port + "/do_demo";
+  homepage = "/business-proxy";
+  service = "http://10.10.10.10:" + port + "/your-dev-base-name";
 } else {
   throw Error("Задана не верная конфигурация приложения.");
 }
@@ -24,8 +24,8 @@ if (port === "3000") {
 const config = {
   homepage: homepage,
   serviceUrl: service + "/hs/BusinessProxy/",
-  serviceLogin: "exchange",
-  servicePassword: "exchange2016",
+  serviceLogin: "your-login",
+  servicePassword: "your-password",
 };
 
 export default config;
