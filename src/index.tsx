@@ -20,17 +20,9 @@ import { ConnectedRouter } from "connected-react-router";
 import { history } from "./classes/reducers/routerReducer";
 import configureStore from "./classes/configureStore";
 
-const configUrl = window.location.origin + "/settings/config.ts";
+import config from "./config";
 
-import(configUrl)
-  .then((module) => {
-    console.log("module", module);
-  })
-  .catch((err) => {
-    console.log("err", err);
-  });
-
-window.homepage = window.location.origin === "http://localhost:3000" ? "" : "/business_proxy";
+window.homepage = config.origin;
 
 const store = configureStore();
 
