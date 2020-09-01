@@ -20,6 +20,8 @@ import Files from "./components/Files/Files";
 import IFile from "./interfaces/IFile";
 import WizardReports from "./components/Reports/WizardReports/WizardReports";
 
+import config from "./config";
+
 interface IAppProps {
   user: IUser;
   contracts: IContract[];
@@ -36,23 +38,23 @@ class App extends Component<IAppProps> {
       <>
         <Header user={user} />
         <Switch>
-          <Route exec path={window.homepage + "/contracts"}>
+          <Route exec path={config.homepage + "/contracts"}>
             <Contracts user={user} contracts={contracts} />
           </Route>
-          <Route exec path={window.homepage + "/reports/wizard"}>
+          <Route exec path={config.homepage + "/reports/wizard"}>
             <WizardReports user={user} router={router} />
           </Route>
-          <Route exec path={window.homepage + "/reports"}>
+          <Route exec path={config.homepage + "/reports"}>
             <Reports user={user} reports={reports} router={router} />
           </Route>
-          <Route exec path={window.homepage + "/files"}>
+          <Route exec path={config.homepage + "/files"}>
             <Files user={user} files={files} router={router} />
           </Route>
-          <Route exec path={window.homepage + "/login"}>
+          <Route exec path={config.homepage + "/login"}>
             <Login />
           </Route>
-          <Route exec path={window.homepage + "/"}>
-            {user.apikey ? () => window._history.push(`${window.homepage}/contracts`) : <Login />}
+          <Route exec path={config.homepage + "/"}>
+            {user.apikey ? () => window._history.push(`${config.homepage}/contracts`) : <Login />}
           </Route>
         </Switch>
       </>

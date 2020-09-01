@@ -10,9 +10,6 @@ import IUser from "./interfaces/IUser";
 
 declare global {
   interface Window {
-    /*store: Store<CombinedState<IStore>, TAction> & {
-      dispatch: unknown;
-    };*/
     store: Store<
       CombinedState<{
         user: IUser;
@@ -23,6 +20,5 @@ declare global {
       dispatch: unknown;
     };
     _history: BrowserHistory;
-    homepage: string;
   }
 }

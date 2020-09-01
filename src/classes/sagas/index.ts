@@ -122,23 +122,15 @@ import {
 import axios from "axios";
 import moment from "moment";
 
+import config from "./../../config";
+
 // net
 
 function axiosAsync(method: string, requestData: TRequest, onUploadProgress: any = undefined) {
-  const origin = window.location.origin === "http://localhost:3000" ? "http://185.26.205.42:8086" : window.location.origin;
-  let serviceUrl = origin + "/do_demo/hs/BusinessProxy/";
-
-  if (process.env.NODE_ENV === "production" && origin !== "http://185.26.205.42:8086") {
-    serviceUrl = "/do/hs/BusinessProxy/";
-  }
-
-  const serviceLogin = "exchange";
-  const servicePassword = "exchange2016";
-
-  return axios.post<TResponse>(serviceUrl + method, requestData, {
+  return axios.post<TResponse>(config.serviceUrl + method, requestData, {
     auth: {
-      username: serviceLogin,
-      password: servicePassword,
+      username: config.serviceLogin,
+      password: config.servicePassword,
     },
     onUploadProgress: onUploadProgress,
   });
@@ -250,7 +242,7 @@ function* workerLogin(action: ILoginAction) {
     localStorage.setItem("name", responseData.name);
 
     yield put<ILoginSuccessAction>({ type: LOGIN_SUCCESS, apikey: responseData.apikey, name: responseData.name });
-    window._history.push(`${window.homepage}/contracts`);
+    window._history.push(`${config.homepage}/contracts`);
   } catch (err) {
     yield put<ILoginFailedAction>({ type: LOGIN_FAILED, errorText: getUserError(err) });
   }
@@ -268,7 +260,7 @@ function* workerLogout(action: ILogoutAction) {
       localStorage.clear();
 
       yield put<ILogoutSuccessAction>({ type: LOGOUT_SUCCESS });
-      window._history.push(`${window.homepage}/login`);
+      window._history.push(`${config.homepage}/login`);
     } else {
       throw new Error("Ошибка. Сервер сообщил о неудачной попытке выхода из системы.");
     }
@@ -286,7 +278,7 @@ function* workerGetContracts(action: IGetContractsAction) {
     };
 
     if (!requestData.apikey) {
-      window._history.push(`${window.homepage}/login`);
+      window._history.push(`${config.homepage}/login`);
       return;
     }
 

@@ -8,6 +8,8 @@ import Button from "@material-ui/core/Button";
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import IUser from "../../../interfaces/IUser";
 
+import config from "./../../../config";
+
 // difination styling plan
 
 type TStyleClasses = "viewFiles" | "confirm";
@@ -39,7 +41,7 @@ export class ReportsRowControl extends Component<IReportsRowControlProps> {
 
   handleGetFilesAction = () => {
     const { reportId } = this.props;
-    window._history.push(`${window.homepage}/files?reportId=${reportId}`);
+    window._history.push(`${config.homepage}/files?reportId=${reportId}`);
   };
 
   render = (): JSX.Element | null => {

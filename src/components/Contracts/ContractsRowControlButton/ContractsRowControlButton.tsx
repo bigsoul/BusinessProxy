@@ -5,6 +5,8 @@ import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 
+import config from "./../../../config";
+
 // difination styling plan
 
 type TStyleClasses = "buttonTableCell" | "buttonAddReport";
@@ -25,12 +27,12 @@ interface IContractsRowControlButtonProps extends WithStyles<typeof styles> {
 export class ContractsRowControlButton extends Component<IContractsRowControlButtonProps> {
   handleGetReportsAction = (): void => {
     const { contractId } = this.props;
-    window._history.push(`${window.homepage}/reports?contractId=${contractId}`);
+    window._history.push(`${config.homepage}/reports?contractId=${contractId}`);
   };
 
   handleWizardReportsAction = (): void => {
     const { contractId } = this.props;
-    window._history.push(`${window.homepage}/reports/wizard?contractId=${contractId}`);
+    window._history.push(`${config.homepage}/reports/wizard?contractId=${contractId}`);
   };
 
   render = (): JSX.Element => {

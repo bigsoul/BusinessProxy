@@ -20,10 +20,6 @@ import { ConnectedRouter } from "connected-react-router";
 import { history } from "./classes/reducers/routerReducer";
 import configureStore from "./classes/configureStore";
 
-import config from "./config";
-
-window.homepage = config.origin;
-
 const store = configureStore();
 
 window.store = store;

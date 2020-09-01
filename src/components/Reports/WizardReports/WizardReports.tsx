@@ -38,6 +38,8 @@ import { LocationState } from "history";
 import { Dispatch } from "redux";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
+import config from "./../../../config";
+
 // difination styling plan
 
 type TStyleClasses = "backInConracts" | "grid" | "root" | "input" | "sendAndConfirm" | "@keyframes tBlinker" | "blinker";
@@ -236,7 +238,7 @@ const ResponsiveDialog = (props: { contractId: string }) => {
 
   const handleClose = () => {
     setOpen(false);
-    window._history.push(`${window.homepage}/reports?contractId=${props.contractId}`);
+    window._history.push(`${config.homepage}/reports?contractId=${props.contractId}`);
   };
 
   return (

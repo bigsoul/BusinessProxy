@@ -17,6 +17,8 @@ import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/s
 import { ILogoutAction, LOGOUT } from "../../interfaces/IAction";
 import { Dispatch } from "redux";
 
+import config from "./../../config";
+
 // difination styling plan
 
 type TStyleClasses = "grow" | "menuButton" | "title" | "typography";
@@ -44,7 +46,7 @@ export class Header extends Component<IHeaderProps> {
   };
 
   hendleGetContractsAction = (): void => {
-    window._history.push(`${window.homepage}/contracts`);
+    window._history.push(`${config.homepage}/contracts`);
   };
 
   render = () => {
