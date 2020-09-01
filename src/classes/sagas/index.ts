@@ -121,8 +121,9 @@ import {
 } from "./../../interfaces/IResponse";
 import axios from "axios";
 import moment from "moment";
-
+import store from "./../../classes/configureStore";
 import config from "./../../config";
+import { history } from "./../../classes/reducers/routerReducer";
 
 // net
 
@@ -210,7 +211,7 @@ function fileReaderAsync(action: IFileUploadAction) {
 function getFileUploadProgress(fileType: number) {
   return function (progressEvent: any) {
     if (!progressEvent) return;
-    window.store.dispatch<IWizardSetupProgressAction>({
+    store.dispatch<IWizardSetupProgressAction>({
       type: WIZARD_SETUP_PROGRESS,
       fileType: fileType,
       progress: Math.round((progressEvent.loaded * 100) / progressEvent.total),
@@ -242,7 +243,7 @@ function* workerLogin(action: ILoginAction) {
     localStorage.setItem("name", responseData.name);
 
     yield put<ILoginSuccessAction>({ type: LOGIN_SUCCESS, apikey: responseData.apikey, name: responseData.name });
-    window._history.push(`${config.homepage}/contracts`);
+    history.push(`${config.homepage}/contracts`);
   } catch (err) {
     yield put<ILoginFailedAction>({ type: LOGIN_FAILED, errorText: getUserError(err) });
   }
@@ -260,7 +261,7 @@ function* workerLogout(action: ILogoutAction) {
       localStorage.clear();
 
       yield put<ILogoutSuccessAction>({ type: LOGOUT_SUCCESS });
-      window._history.push(`${config.homepage}/login`);
+      history.push(`${config.homepage}/login`);
     } else {
       throw new Error("Ошибка. Сервер сообщил о неудачной попытке выхода из системы.");
     }
@@ -278,7 +279,7 @@ function* workerGetContracts(action: IGetContractsAction) {
     };
 
     if (!requestData.apikey) {
-      window._history.push(`${config.homepage}/login`);
+      history.push(`${config.homepage}/login`);
       return;
     }
 

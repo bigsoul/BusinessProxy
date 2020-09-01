@@ -9,6 +9,7 @@ import Select from "@material-ui/core/Select";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { UPD_FILES, IUpdFilesAction } from "../../../interfaces/IAction";
+import store from "./../../../classes/configureStore";
 
 // difination styling plan
 
@@ -41,7 +42,7 @@ export class FilesRowControlSelect extends Component<IFilesRowControlSelectProps
     row.type = event.target.value as number;
     delete (row as any).tableData;
 
-    window.store.dispatch<IUpdFilesAction>({
+    store.dispatch<IUpdFilesAction>({
       type: UPD_FILES,
       apikey: apikey,
       list: [row],

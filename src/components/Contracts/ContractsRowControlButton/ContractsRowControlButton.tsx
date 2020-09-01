@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
-
+import { history } from "./../../../classes/reducers/routerReducer";
 import config from "./../../../config";
 
 // difination styling plan
@@ -27,12 +27,12 @@ interface IContractsRowControlButtonProps extends WithStyles<typeof styles> {
 export class ContractsRowControlButton extends Component<IContractsRowControlButtonProps> {
   handleGetReportsAction = (): void => {
     const { contractId } = this.props;
-    window._history.push(`${config.homepage}/reports?contractId=${contractId}`);
+    history.push(`${config.homepage}/reports?contractId=${contractId}`);
   };
 
   handleWizardReportsAction = (): void => {
     const { contractId } = this.props;
-    window._history.push(`${config.homepage}/reports/wizard?contractId=${contractId}`);
+    history.push(`${config.homepage}/reports/wizard?contractId=${contractId}`);
   };
 
   render = (): JSX.Element => {

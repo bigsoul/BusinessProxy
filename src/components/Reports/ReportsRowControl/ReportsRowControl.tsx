@@ -7,8 +7,9 @@ import Button from "@material-ui/core/Button";
 // classes-material-ui
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import IUser from "../../../interfaces/IUser";
-
+import store from "./../../../classes/configureStore";
 import config from "./../../../config";
+import { history } from "./../../../classes/reducers/routerReducer";
 
 // difination styling plan
 
@@ -32,7 +33,7 @@ export interface IReportsRowControlProps extends WithStyles<typeof styles> {
 export class ReportsRowControl extends Component<IReportsRowControlProps> {
   handleConfirm = () => {
     const { reportId, user } = this.props;
-    window.store.dispatch<IConfirmAction>({
+    store.dispatch<IConfirmAction>({
       type: CONFIRM,
       apikey: user.apikey,
       reportId: reportId,
@@ -41,7 +42,7 @@ export class ReportsRowControl extends Component<IReportsRowControlProps> {
 
   handleGetFilesAction = () => {
     const { reportId } = this.props;
-    window._history.push(`${config.homepage}/files?reportId=${reportId}`);
+    history.push(`${config.homepage}/files?reportId=${reportId}`);
   };
 
   render = (): JSX.Element | null => {

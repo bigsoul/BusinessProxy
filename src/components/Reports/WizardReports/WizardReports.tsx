@@ -37,7 +37,7 @@ import { RouterState } from "connected-react-router";
 import { LocationState } from "history";
 import { Dispatch } from "redux";
 import LinearProgress from "@material-ui/core/LinearProgress";
-
+import { history } from "./../../../classes/reducers/routerReducer";
 import config from "./../../../config";
 
 // difination styling plan
@@ -238,7 +238,7 @@ const ResponsiveDialog = (props: { contractId: string }) => {
 
   const handleClose = () => {
     setOpen(false);
-    window._history.push(`${config.homepage}/reports?contractId=${props.contractId}`);
+    history.push(`${config.homepage}/reports?contractId=${props.contractId}`);
   };
 
   return (

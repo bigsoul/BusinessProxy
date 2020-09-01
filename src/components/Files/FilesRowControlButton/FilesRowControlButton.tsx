@@ -6,6 +6,7 @@ import Button from "@material-ui/core/Button";
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { IFileUploadAction, FILE_UPLOAD } from "../../../interfaces/IAction";
 // difination styling plan
+import store from "./../../../classes/configureStore";
 
 type TStyleClasses = "root" | "input" | "formControl" | "selectEmpty" | "ButtonLoadedDraft" | "ButtonLoadedOriginal";
 
@@ -37,7 +38,7 @@ export class FilesRowControlButton extends Component<IFilesRowControlButtonProps
     if (inputNode.files && inputNode.files.length > 0) {
       const file = inputNode.files[0];
 
-      window.store.dispatch<IFileUploadAction>({
+      store.dispatch<IFileUploadAction>({
         type: FILE_UPLOAD,
         apikey: apikey,
         id: id,

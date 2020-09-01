@@ -19,7 +19,7 @@ import { LocationState } from "history";
 import Files from "./components/Files/Files";
 import IFile from "./interfaces/IFile";
 import WizardReports from "./components/Reports/WizardReports/WizardReports";
-
+import { history } from "./classes/reducers/routerReducer";
 import config from "./config";
 
 interface IAppProps {
@@ -54,7 +54,7 @@ class App extends Component<IAppProps> {
             <Login />
           </Route>
           <Route exec path={config.homepage + "/"}>
-            {user.apikey ? () => window._history.push(`${config.homepage}/contracts`) : <Login />}
+            {user.apikey ? () => history.push(`${config.homepage}/contracts`) : <Login />}
           </Route>
         </Switch>
       </>

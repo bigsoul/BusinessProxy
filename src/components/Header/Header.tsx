@@ -16,7 +16,7 @@ import Button from "@material-ui/core/Button";
 import { createStyles, withStyles, WithStyles, Theme } from "@material-ui/core/styles";
 import { ILogoutAction, LOGOUT } from "../../interfaces/IAction";
 import { Dispatch } from "redux";
-
+import { history } from "./../../classes/reducers/routerReducer";
 import config from "./../../config";
 
 // difination styling plan
@@ -46,7 +46,7 @@ export class Header extends Component<IHeaderProps> {
   };
 
   hendleGetContractsAction = (): void => {
-    window._history.push(`${config.homepage}/contracts`);
+    history.push(`${config.homepage}/contracts`);
   };
 
   render = () => {

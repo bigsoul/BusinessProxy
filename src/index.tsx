@@ -1,5 +1,3 @@
-/// <reference path="./globals.d.ts" />
-
 // css
 import "./index.css";
 // theme
@@ -18,12 +16,7 @@ import "typeface-roboto";
 import { ConnectedRouter } from "connected-react-router";
 
 import { history } from "./classes/reducers/routerReducer";
-import configureStore from "./classes/configureStore";
-
-const store = configureStore();
-
-window.store = store;
-window._history = history;
+import store from "./classes/configureStore";
 
 const { contracts, reports, files, router } = store.getState();
 
